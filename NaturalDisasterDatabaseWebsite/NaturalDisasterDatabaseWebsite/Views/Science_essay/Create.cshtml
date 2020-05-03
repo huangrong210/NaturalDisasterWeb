@@ -1,0 +1,189 @@
+﻿@model NaturalDisasterDatabaseWebsite.Models.Science_essayViewModel
+
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "新增文章";
+}
+<script src="~/lib/ueditor-1.4.3.3/ueditor.parse.js"></script>
+<style>
+    .content_nav {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+    }
+
+    .form-group {
+        display: inline-block;
+    }
+
+    .inputRow {
+        display: block;
+        width: 100%
+    }
+
+    .inputW {
+        width: 49.62%;
+    }
+</style>
+@*<h2>新增文章</h2>*@
+<p class="content_nav">新添文章<a asp-action="Index" style="float:right;">返回文章管理列表</a></p>
+
+@*<h4>Science_essayViewModel</h4>*@
+<hr />
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create" id="form1">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group inputRow">
+                @*<label asp-for="title" class="control-label"></label>*@
+                <input asp-for="title" id="title" class="form-control" placeholder="请输入文章标题" />
+                <span asp-validation-for="title" class="text-danger"></span>
+            </div>
+            <div class="form-group inputW">
+                <label asp-for="author" class="control-label"></label>
+                <input asp-for="author" class="form-control" placeholder="作者" />
+                <span asp-validation-for="author" class="text-danger"></span>
+            </div>
+            <div class="form-group inputW" style="margin-left:4px;">
+                <label asp-for="source" class="control-label"></label>
+                <input asp-for="source" class="form-control" placeholder="来源" />
+                <span asp-validation-for="source" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @*<label asp-for="fb_time" class="control-label"></label>*@
+                <input asp-for="fb_time" type="hidden" class="form-control" value="1900-01-01 00:00:00.000" />
+                <span asp-validation-for="fb_time" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+            <label asp-for="wz_img" class="control-label"></label>
+            <input asp-for="wz_img" class="form-control" />
+            <span asp-validation-for="wz_img" class="text-danger"></span>
+        </div>*@
+            <div class="form-group inputW" style="margin-left:-7px;">
+                <label asp-for="wz_style" class="control-label"></label>
+                <input asp-for="wz_style" id="wz_style" style="height:0px; width:0px; padding:0;margin:0; outline:none; border:none;" />
+                <span asp-validation-for="wz_style" class="text-danger"></span>
+                <select class="form-control onerow" onchange="document.getElementById('wz_style').value = this.value;">
+                    <option selected disabled value="" style="display:none;">请选择文章类型</option>
+                    <option value="地震灾害科普">地震灾害科普</option>
+                    <option value="气象灾害科普">气象灾害科普</option>
+                    <option value="海洋灾害科普">海洋灾害科普</option>
+                    <option value="洪水灾害科普">洪水灾害科普</option>
+                    <option value="地质灾害科普">地质灾害科普</option>
+                    <option value="农作物生物灾害科普">农作物生物灾害科普</option>
+                    <option value="森林生物灾害科普">森林生物灾害科普</option>
+                    <option value="森林火灾科普">森林火灾科普</option>
+                    <option value="地震灾害时政">地震灾害时政</option>
+                    <option value="气象灾害时政">气象灾害时政</option>
+                    <option value="海洋灾害时政">海洋灾害时政</option>
+                    <option value="洪水灾害时政">洪水灾害时政</option>
+                    <option value="地质灾害时政">地质灾害时政</option>
+                    <option value="农作物生物灾害时政">农作物生物灾害时政</option>
+                    <option value="森林生物灾害时政">森林生物灾害时政</option>
+                    <option value="森林火灾时政">森林火灾时政</option>
+                    <option value="未知">未知</option>
+                </select>
+            </div>
+            <div class="form-group">
+                @*<label asp-for="state" class="control-label"></label>*@
+                <input asp-for="state" class="form-control" type="hidden" value="待审核" />
+                <span asp-validation-for="state" class="text-danger"></span>
+            </div>
+            <div class="form-group inputW">
+                <label asp-for="userID" class="control-label">账号</label>
+                <select asp-for="userID" class="form-control" asp-items="ViewBag.userID">
+                    <option selected disabled value="" style="display:none;">请选择发布账号</option>
+                </select>
+            </div>
+                @*<label asp-for="wz_content" class="control-label"></label>*@
+                <input asp-for="wz_content" id="content" style="height:0px; width:0px; padding:0;margin:0; outline:none; border:none;" />
+                <span asp-validation-for="wz_content" class="text-danger"></span>
+        </form>
+    </div>
+</div>
+
+<div>
+    <textarea class="A4page" id="myEditor" name="NewsContent"></textarea>
+</div>
+<div style="text-align:center;margin:20px auto 0px auto;">
+    <input type="submit" value="提交" class="btn btn-success" form="form1" />
+</div>
+
+<!-- 实例化编辑器 -->
+<script type="text/javascript">
+    $(function () {
+        UE.delEditor('myEditor');
+        var ue = UE.getEditor('myEditor', {
+            //toolbars: [
+            //    ['fullscreen', 'source', '|', 'undo', 'redo', '|',
+            //        'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+            //        'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+            //        'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+            //        'directionalityltr', 'directionalityrtl', 'indent', '|',
+            //        'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
+            //        'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
+            //        'simpleupload', 'insertimage', 'insertvideo', 'emotion', 'scrawl', 'insertcode', 'pagebreak', 'template', 'background', '|',
+            //        'horizontal', 'date', 'time', 'spechars', '|',
+            //        'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+            //        'print', 'preview', 'searchreplace', 'help', 'drafts']
+            //],
+            //allHtmlEnabled: false,//提交到后台的数据是否包含整个html字符串
+            //autoHeightEnabled: false,
+            //autoFloatEnabled: true,
+            allowDivTransToP: false,//阻止div标签自动转换为p标签
+            autoHeightEnabled: true,
+            autoFloatEnabled: true,
+            maximumWords: 100000000000
+        });
+        //对编辑器的操作最好在编辑器ready之后再做
+        ue.ready(function () {
+            //ue.setHeigt(600);
+            //去掉本地保存成功的提示框
+            $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+        })
+
+    })
+</script>
+<script>
+    function cc() {
+        document.getElementById('content').value = UE.getEditor('myEditor').getContent();
+    }
+    setInterval(function () {
+        cc();
+    }, 100);
+</script>
+@*<div class="row">
+        <div class="col-lg-12">
+            <!-- 加载编辑器的容器 -->
+            <script id="container" name="container" type="text/plain">
+            </script>
+        </div>
+    </div>
+    <!-- 实例化编辑器 -->
+    <script type="text/javascript">
+        //var ue = UE.getEditor('container', {
+        //    initialFrameHeight:500
+        //})
+        $(function () {
+            UE.delEditor('container');
+            var ue = UE.getEditor('container', {
+                //autoHeight:false
+                //toolbars: [
+                //    ['fullscreen', 'source', 'undo', 'redo', 'bold']
+                //],
+                autoHeightEnabled: true,
+                autoFloatEnabled: true
+            });
+            //对编辑器的操作最好在编辑器ready之后再做
+            ue.ready(function () {
+                //ue.setHeigt(600);
+                //去掉本地保存成功的提示框
+                $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+            })
+        })
+    </script>*@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

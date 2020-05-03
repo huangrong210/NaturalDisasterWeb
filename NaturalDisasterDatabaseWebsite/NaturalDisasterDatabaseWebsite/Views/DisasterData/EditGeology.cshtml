@@ -1,0 +1,114 @@
+﻿@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "编辑地质灾害时刻数据";
+}
+
+<script src="~/lib/ueditor-1.4.3.3/ueditor.parse.js"></script>
+
+<style>
+    .content_nav {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 10px;
+    }
+
+    .form-control {
+        display: inline-block;
+        width: auto;
+    }
+
+    .diflex {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    label {
+        width: 100px;
+        text-align: center;
+    }
+</style>
+<p class="content_nav">
+    @ViewData["Title"]
+    <input type="submit" value="保 存" class="btn btn-warning" form="form1" />
+    <a asp-controller="DisasterData" asp-action="Index" style="float:right; padding-top:5px;">返回灾害数据管理列表</a>
+</p>
+<hr style="margin-top:12px;" />
+<div class="row">
+    <div class="col-md-12" style="margin:0 auto; text-align:center;">
+        <form asp-controller="DisasterData" asp-action="EditGeology" name="form1" id="form1">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @foreach (var geologyedit in ViewBag.geologyedit)
+            {
+                <input name="ID" type="hidden" value="@geologyedit.ID" />
+                <div class="form-group">
+                    <label>时&emsp;&emsp;间</label>
+                    <input name="geologytime" value="@DateTime.Parse(@geologyedit.geologytime.ToString()).ToString("yyyy-MM-dd HH:mm:ss")" class="form-control" />
+                </div>
+                <div class="form-group right">
+                    <label>经&emsp;&emsp;度(°)</label>
+                    <input name="geologylogitude" value="@geologyedit.geologylogitude" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>维&emsp;&emsp;度(°)</label>
+                    <input name="geologydimension" value="@geologyedit.geologydimension" class="form-control" />
+                </div>
+                <div class="form-group right">
+                    <label>灾害级别</label>
+                    <input name="geologylevel" value="@geologyedit.geologylevel" class="form-control" />
+                </div>
+                <div class="form-group right">
+                    <label>伤亡人数(人)</label>
+                    <input name="geologycasualty" value="@geologyedit.geologycasualty" class="form-control" />
+                </div>
+                <div class="form-group right">
+                    <label>灾害类型</label>
+                    <input name="geologystyle" value="@geologyedit.geologystyle" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>参考位置</label>
+                    <input name="geologyplace" value="@geologyedit.geologyplace" class="form-control" />
+                </div>
+                <div class="form-group right">
+                    <label>经济损失(万元)</label>
+                    <input name="geologyloss" value="@geologyedit.geologyloss" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>受灾范围(公顷)</label>
+                    <input name="geologyarea" value="@geologyedit.geologyarea" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <span style="font-weight: 600;">详&emsp;&emsp;情</span>
+                    <input name="geologydetails" type="hidden" class="form-control" id="content" />
+
+                    <script id="editor" type="text/plain" style="width:100%;height:auto;">
+                        @Html.Raw(System.Net.WebUtility.UrlDecode(@geologyedit.geologydetails))
+                    </script>
+                    <script type="text/javascript">
+                        $(function () {
+                            UE.delEditor('editor');
+                            var ue = UE.getEditor('editor', {
+                                allowDivTransToP: false,//阻止div标签自动转换为p标签
+                                autoHeightEnabled: true,
+                                autoFloatEnabled: true
+                            });
+                            ue.ready(function () {
+                                $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+                            })
+                        });
+                        function cc() {
+                            document.getElementById('content').value = UE.getEditor('editor').getContent();
+                        }
+                        setInterval(function () {
+                            cc();
+                        }, 100);
+                    </script>
+                </div>
+            }
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

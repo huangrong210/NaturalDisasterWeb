@@ -1,0 +1,309 @@
+﻿@using System.Security.Claims
+@{
+    @if (User.Identity.IsAuthenticated && User.FindFirstValue("status") == "管理员")
+    {
+        Layout = "_BackLayout";
+    }
+    ViewData["Title"] = "添加农作物生物灾害时刻数据";
+}
+<script src="~/lib/ueditor-1.4.3.3/ueditor.parse.js"></script>
+<style>
+    .content_nav {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 15px;
+        margin-bottom: 0px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    label {
+        width: 100px;
+        text-align: center;
+    }
+
+    .form-control {
+        display: inline-block;
+        width: auto;
+    }
+</style>
+<div class="content_nav">
+    <div>
+        <a href="javascript:void(0)" style="text-decoration:none;" onclick="getLongDimen1();">@ViewData["Title"]</a>&emsp;
+        <input type="submit" value="提交" class="btn btn-default" form="form1" />
+    </div>
+    <div>
+        <a href="javascript:void(0)" style="text-decoration:none;display: inline-block;padding-top: 6px;" onclick="getLongDimen2();">获取经纬度</a>&emsp;
+    </div>
+    @if (User.Identity.IsAuthenticated && User.FindFirstValue("status") == "管理员")
+    {
+        <a asp-controller="DisasterData" asp-action="Index" style="padding-top: 5px;">返回灾害数据管理列表</a>
+        <a asp-controller="PersonCenter" asp-action="Index" style="padding-top: 5px;">返回个人中心</a>
+    }
+    else
+    {
+        <a asp-controller="PersonCenter" asp-action="Index" style="padding-top: 5px;">返回个人中心</a>
+    }
+</div>
+
+<hr style="margin-top:15px;" />
+<div style="margin:0 auto; text-align:center;" class="cropform">
+    <form asp-controller="DisasterData" asp-action="CreateCrop" id="form1" name="form1">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input name="userID" type="hidden" value="@User.FindFirstValue("ID")" class="form-control userID" />
+        <table id="addTable">
+            <tbody style="">
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>时&emsp;&emsp;间</label>
+                            <input name="croptime" class="form-control croptime" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>经&emsp;&emsp;度(°)</label>
+                            <input name="croplongitude" class="form-control croplongitude" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>纬&emsp;&emsp;度(°)</label>
+                            <input name="cropdimension" class="form-control cropdimension" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>参考位置</label>
+                            <input name="cropplace" class="form-control cropplace" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>灾害类型</label>
+                            <input name="cropstyle" class="form-control cropstyle" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>经济损失(万元)</label>
+                            <input name="croploss" class="form-control croploss" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>灾害范围(公顷)</label>
+                            <input name="croparea" class="form-control croparea" />
+                        </div>
+                    </td>
+                    <td colspan="2">
+                        <span style="font-weight:600;">详情</span>
+                        <input name="cropdetails" class="form-control cropdetails" id="content" type="hidden" />
+                        <div style="width:500px; margin:0 auto;text-align:center;">
+                            <textarea class="A4page" id="myEditor" name="NewsContent"></textarea>
+                        </div>
+                    </td>
+                    <td><input type="button" value="-" onclick="deleteRow(this)" class="form-control" /></td>
+                </tr>
+                <tr>
+                    <td colspan="5"><hr /></td>
+                </tr>
+            </tbody>
+
+            <tbody class="footTbody"></tbody>
+        </table>
+    </form>
+    <input type="button" value="+" onclick="setValue()" class="form-control"><p style="font-size:1px; color:#ccc;">批量插入数据失败,请问操作</p>
+    <table style="display:none;">
+        @*模板*@
+        <tbody class="templeteTBody" style="">
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label>时&emsp;&emsp;间</label>
+                        <input name="croptime" class="form-control croptime" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label>经&emsp;&emsp;度</label>
+                        <input name="croplongitude" class="form-control croplongitude" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label>纬&emsp;&emsp;度</label>
+                        <input name="cropdimension" class="form-control cropdimension" />
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label>参考位置</label>
+                        <input name="cropplace" class="form-control cropplace" />
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label>灾害类型</label>
+                        <input name="cropstyle" class="form-control cropstyle" />
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label>经济损失(万元)</label>
+                        <input name="croploss" class="form-control croploss" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label>灾害范围(公顷)</label>
+                        <input name="croparea" class="form-control croparea" />
+                    </div>
+                </td>
+                <td colspan="2">
+                    <p style="font-weight:600; margin:0">详情</p>
+                    <textarea name="cropdetails" class="form-control cropdetails" cols="65"></textarea>
+                    @*<input name="cropdetails" class="form-control cropdetails" id="content" type="text" />
+                        <div style="width:500px;">
+                            <textarea class="A4page" id="myEditor" name="NewsContent"></textarea>
+                        </div>*@
+                </td>
+                <td><input type="button" value="-" onclick="deleteRow(this)" class="form-control" /></td>
+            </tr>
+            <tr>
+                <td colspan="5"><hr /></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div style="display:none;" class="longdimen">
+    <p style="color:red;">获取坐标并复制,皆是经度在前，维度在后</p>
+    <iframe id="pickupZuobiao" name="pickupZuobiao" scrolling="no" style="width:100%; min-height:500px;" allowfullscreen="true" frameborder="0" src="https://api.map.baidu.com/lbsapi/getpoint/index.html" onload="frameauto()"></iframe>
+    <script>
+        function frameauto() {
+            window.onerror = function () { return true; }
+            $(function () {
+                headerH = 0;
+                var h = $(window).height();
+                $("#pickupZuobiao").height((h - headerH) + "px");
+            });
+        }
+    </script>
+</div>
+<script>
+    function getLongDimen1() {
+        $(".cropform").show();
+        $(".longdimen").hide();
+    }
+    function getLongDimen2() {
+        $(".cropform").hide();
+        $(".longdimen").show();
+    }
+</script>
+@*新增模板*@
+<script type="text/javascript">
+    /*
+    *增加模板行
+    */
+    function addRow() {
+        var table = document.getElementById("addTable");
+        var tbody = $(".templeteTBody");
+        var newTBody = tbody[0].cloneNode(true);
+        newTBody.style.display = "";
+        var footTBody = $(".footTbody")[0];
+        return table.insertBefore(newTBody, footTBody);
+    }
+    /*
+    *删除模板行
+    */
+    function deleteRow(obj) {
+        var tbody = obj.parentNode.parentNode.parentNode;
+        var table = document.getElementById("addTable");
+        table.removeChild(tbody);
+    }
+    /**
+    *向模板中填充值
+    */
+    function setValue() {
+        var tbody = addRow();
+    }
+</script>
+@*详情*@
+<script type="text/javascript">
+    $(function () {
+        UE.delEditor('myEditor');
+        var ue = UE.getEditor('myEditor', {
+            toolbars: [
+
+            ],
+            allowDivTransToP: false,//阻止div标签自动转换为p标签
+            autoHeightEnabled: true,
+            autoFloatEnabled: true,
+            maximumWords: 10000,
+            wordCount: false
+        });
+        //对编辑器的操作最好在编辑器ready之后再做
+        ue.ready(function () {
+
+            $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+        })
+
+    });
+    function cc() {
+        document.getElementById('content').value = UE.getEditor('myEditor').getContent();
+    }
+    setInterval(function () {
+        cc();
+    }, 100);
+</script>
+
+
+@*批量插入数据失败*@
+@*<script>
+        function aa() {
+            var croptime = document.getElementsByClassName("croptime");
+            var cropplace = document.getElementsByClassName("cropplace");
+            var croplongitude = document.getElementsByClassName("croplongitude");
+            var cropdimension = document.getElementsByClassName("cropdimension");
+            var cropstyle = document.getElementsByClassName("cropstyle");
+            var croploss = document.getElementsByClassName("croploss");
+            var croparea = document.getElementsByClassName("croparea");
+            var cropdetails = document.getElementsByClassName("cropdetails");
+            var userID = document.getElementsByClassName("userID")[0].value;
+            var aa = [];
+            //var aa = [croptime, cropplace, croplongitude, cropdimension, cropstyle, croploss, croparea, cropdetails, userID];
+            aa[0] = [croptime[0].value, cropplace[0].value, croplongitude[0].value, cropdimension[0].value, cropstyle[0].value, croploss[0].value, croparea[0].value, cropdetails[0].value, userID];
+            //console.log(aa)
+            console.log(aa[0][0])
+            for (var i = 0; i < croptime.length - 1; i++) {
+
+                var det = "<p style='text-indent:2em;'>" + cropdetails[i].value+"</p>";
+                aa[i] = [croptime[i].value, cropplace[i].value, croplongitude[i].value, cropdimension[i].value, cropstyle[i].value, croploss[i].value, croparea[i].value, det, userID];
+            }
+            $(document).ready(function () {
+                $.ajax({
+                    type: "post",
+                    url: "/DisasterData/Createcrop",
+                    dataType: 'json',
+                    data: {
+                        aa
+                    },
+                    cache: false,
+                    success: function (response) {
+                        console.log(response);
+
+                    }
+                })
+            })
+        }
+    </script>*@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

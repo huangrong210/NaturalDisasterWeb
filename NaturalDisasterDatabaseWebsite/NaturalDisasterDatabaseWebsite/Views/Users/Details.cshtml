@@ -1,0 +1,190 @@
+﻿@*@model NaturalDisasterDatabaseWebsite.Models.UsersViewModel*@
+@model UsersViewModel
+
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "用户信息详情";
+}
+<style>
+    h2 {
+        text-align: center;
+    }
+
+    dl {
+        margin-top: 18px;
+    }
+
+    dt, dd {
+        margin-bottom: 10px;
+    }
+
+    dt::after {
+        content: "："
+    }
+
+    .table {
+        table-layout: fixed;
+    }
+
+    th, td {
+        text-align: center;
+    }
+
+    td {
+        overflow: hidden;
+        word-wrap: break-word;
+        text-align-last: left;
+        text-align: justify;
+        text-justify: newspaper;
+    }
+
+    .nopaleft {
+        padding-left: 0px !important;
+    }
+
+    .hr {
+        margin-top: -20px;
+        margin-bottom: 0px;
+        border-top: 1px solid #ddd;
+    }
+
+    tr td {
+        padding: 6px 50px 6px 0px;
+        font-size: 15px;
+    }
+
+    .icon {
+        margin: 0 auto;
+        text-align: center;
+        border-radius: 50%;
+        width: 100px;
+        height: auto;
+    }
+
+    .icon img {
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+    }
+    .modelforumimg p{
+        margin-bottom:0px;
+    }
+    .modelforumimg p img {
+        width: 20px;
+        height: 20px;
+    }
+</style>
+<h2>用户信息</h2>
+
+<div>
+    <hr />
+    <table align="center">
+        <tr>
+            <td colspan="4" style="padding-top:0; padding-right:0;">
+                <div class="icon">
+                    <img alt="头像" src="~/upfiles/@Html.DisplayFor(model => model.img)" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>@Html.DisplayNameFor(model => model.username):</strong>
+                @Html.DisplayFor(model => model.username)
+            </td>
+            <td>
+                <strong>@Html.DisplayNameFor(model => model.password):</strong>
+                @Html.DisplayFor(model => model.password)
+            </td>
+            <td>
+                <strong>@Html.DisplayNameFor(model => model.sex):</strong>
+                @Html.DisplayFor(model => model.sex)
+            </td>
+            <td>
+                <strong>@Html.DisplayNameFor(model => model.status):</strong>
+                @Html.DisplayFor(model => model.status)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong>@Html.DisplayNameFor(model => model.telephone):</strong>
+                @Html.DisplayFor(model => model.telephone)
+            </td>
+            <td colspan="2">
+                <strong>@Html.DisplayNameFor(model => model.email):</strong>
+                @Html.DisplayFor(model => model.email)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <strong>@Html.DisplayNameFor(model => model.occupation):</strong>
+                @Html.DisplayFor(model => model.occupation)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <strong>@Html.DisplayNameFor(model => model.workplace):</strong>
+                @Html.DisplayFor(model => model.workplace)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <strong>@Html.DisplayNameFor(model => model.address):</strong>
+                @Html.DisplayFor(model => model.address)
+            </td>
+        </tr>
+    </table>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.essay)
+        </dt>
+        <dd>
+            <table class="table">
+                <tr>
+                    <th style="border-right: 1px solid #DEE1E6;">文章标题</th>
+                    <th style="">状态</th>
+                </tr>
+                @foreach (var item in Model.essay)
+                {
+                    <tr>
+                        <td class="nopaleft">
+                            @Html.DisplayFor(modelItem => item.title)
+                        </td>
+                        <td style="">
+
+                            @Html.DisplayFor(modelItem => item.state)
+                        </td>
+                    </tr>
+                }
+            </table>
+            <hr class="hr" />
+        </dd>
+        <dt style="margin-bottom:0px; margin-top:40px;">
+            @Html.DisplayNameFor(model => model.forum_msgs)
+        </dt>
+        <dd style="margin-bottom:0px; margin-top:40px;">
+            <table class="table">
+                <tr>
+                    <th style="border-right: 1px solid #DEE1E6;">文章标题</th>
+                    <th style="">评论信息</th>
+                </tr>
+                @foreach (var item in Model.forum_msgs)
+                {
+                    <tr>
+                        <td class="nopaleft">
+                            @Html.DisplayFor(modelItem => item.essay.title)
+                        </td>
+                        <td class="modelforumimg">
+                            @*@Html.DisplayFor(modelItem => item.comment)*@
+                            @Html.Raw(System.Net.WebUtility.UrlDecode(item.comment))
+                        </td>
+                    </tr>
+                }
+            </table>
+            <hr class="hr" />
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">编辑</a> |
+    <a asp-action="Index">返回用户管理列表</a>
+</div>

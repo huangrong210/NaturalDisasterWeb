@@ -1,0 +1,1 @@
+﻿wwwroot文件夹包含静态文件，如HTML文件、JS文件和CSS文件

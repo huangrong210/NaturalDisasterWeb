@@ -1,0 +1,31 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = null;
+}
+<style>
+    h4,p{
+        text-align:center;
+    }
+    a{
+        display:inline-block;
+        text-decoration:none;
+        margin-left:12px;
+        background:#8acefa;
+        width:48px;
+    }
+</style>
+<div>
+    <h4>失 败 ! 请 在 次 尝 试 . . . <a asp-controller="Home" asp-action="Register">注 册</a></h4>
+    <p>
+        可能的原因有：<br />
+        ①此账号可能已经存在！<br />
+        ②哦噢~系统出错了！<br />
+    </p>
+    
+</div>
+<script type='text/javascript'>
+    //alert('失 败 ! 请 在 次 尝 试 . . .');
+    //window.location = 'Register';
+</script>

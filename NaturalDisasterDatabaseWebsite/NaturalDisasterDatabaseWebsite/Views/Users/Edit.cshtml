@@ -1,0 +1,129 @@
+﻿@* 全限定类名 *@
+@*@model NaturalDisasterDatabaseWebsite.Models.UsersViewModel*@
+@*@using NaturalDisasterDatabaseWebsite.Controllers*@
+@model UsersViewModel
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "编辑用户";
+}
+<style>
+    h2 {
+        text-align: center;
+    }
+    .form-group,#xb {
+        display: inline-block;
+    }
+    .form-group {
+        width: 48%;
+    }
+    .right {
+        float: right;
+    }
+
+    .obtn {
+        width: 100%;
+        text-align: center;
+        margin: 0 auto;
+        margin-top: 15px;
+    }
+    .Ohead,#xb{
+        color:#808080;
+    }
+    .Ohead {
+        padding: 4px 12px 6px 12px;
+        display: inline-block;
+        outline: none;
+        border: none;
+    }
+    #xb{
+        margin-left:10px;
+    }
+</style>
+<h2>编辑用户</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-controller="Users" asp-action="Edit" name="form1">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="form-group">
+                <label asp-for="username" class="control-label"></label>
+                <input asp-for="username" class="form-control" onfocus="javascript:this.select()" />
+                <span asp-validation-for="username" class="text-danger"></span>
+            </div>
+            <div class="form-group right">
+                <label asp-for="password" class="control-label"></label>
+                <input asp-for="password" class="form-control" onfocus="javascript:this.select()" />
+                <span asp-validation-for="password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="sex" class="control-label"></label>
+                <span id="xb"></span>
+                <input asp-for="sex" type="hidden" id="sex" />
+                <select id="basicSelect" class="form-control" onchange="document.getElementById('sex').value = this.value;">
+                    <option selected disabled value="" style="display:none;">请选择性别</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+                <span asp-validation-for="sex" class="text-danger"></span>
+            </div>
+            <div class="form-group right">
+                <label asp-for="email" class="control-label"></label>
+                <input asp-for="email" class="form-control" onfocus="javascript:this.select()" />
+                <span asp-validation-for="email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="status" class="control-label"></label>
+                <input asp-for="status" class="form-control" onfocus="javascript:this.select()" />
+                <span asp-validation-for="status" class="text-danger"></span>
+            </div>
+            <div class="form-group right">
+                <label asp-for="img" class="control-label"></label>
+                <input asp-for="img" type="text" id="textfield" class="Ohead" />
+                <span asp-validation-for="img" class="text-danger"></span>
+                <input type="file" class="form-control" id="files" style="padding:4px 12px 6px 10px; display:inline-block; width:88%;" />
+                <div class="input-group" style="display:inline-block; top:-2px;left:3px;">
+                    <input type="button" id="upload" class="btn btn-success" style="cursor:pointer;" value="上 传" />
+                </div>
+            </div>
+            <div style="clear:both;"></div>
+            <div class="form-group">
+                <label asp-for="telephone" class="control-label"></label>
+                <input asp-for="telephone" class="form-control" onfocus="javascript:this.select()" />
+                <span asp-validation-for="telephone" class="text-danger"></span>
+            </div>
+            <div class="form-group right">
+                <label asp-for="workplace" class="control-label"></label>
+                <input asp-for="workplace" class="form-control" onfocus="javascript:this.select()" />
+                <span asp-validation-for="workplace" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="occupation" class="control-label"></label>
+                <input asp-for="occupation" class="form-control" onfocus="javascript:this.select()" />
+                <span asp-validation-for="occupation" class="text-danger"></span>
+            </div>
+            <div class="form-group right">
+                <label asp-for="address" class="control-label"></label>
+                <input asp-for="address" class="form-control" onfocus="javascript:this.select()" />
+                <span asp-validation-for="address" class="text-danger"></span>
+            </div>
+            <div class="form-group obtn">
+                <input type="submit" value="保存" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">返回用户管理列表</a>
+</div>
+<script>
+    $(function () {
+        document.getElementById('xb').innerText = document.getElementById('sex').value;
+    })
+</script>
+<script src="~/js/jquery-3.4.1.min.js"></script>
+<script src="~/js/picture.js"></script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

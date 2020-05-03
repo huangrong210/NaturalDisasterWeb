@@ -1,0 +1,843 @@
+﻿@using System.Security.Claims
+<div id="meteoarea" style="width: 50%; height: 302px;"></div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+        var myMeteoareaCharts = echarts.init(document.getElementById('meteoarea'));
+        myMeteoareaCharts.clear();//用于清除已存在的内容
+        myMeteoareaCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetMeteorologyCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var meteoayears = [], meteotszarea = [], meteotjsarea = [], meteotszmen = [], meteotca = [];
+                    for (var m = 0; m < res.meteolist.length; m++) {
+                        meteoayears[m] = res.meteolist[m].mYears + '年';
+                        meteotszarea[m] = res.meteolist[m].mTShouzArea;
+                        meteotjsarea[m] = res.meteolist[m].mTJuesArea;
+                        meteotszmen[m] = res.meteolist[m].mManShouzNumbers;
+                        meteotca[m] = res.meteolist[m].mCasualtiesNumbers;
+                    }
+                    var meteotjsarea2 = meteotjsarea.map(Number);
+                    var meteotca2 = meteotca.map(Number);
+                    var meteotjsarea3 = [], meteotca3 = [], yeayandloss = [];
+                    for (var mm = 0; mm < meteotjsarea2.length; mm++) {
+                        meteotjsarea3[mm] = -1 * meteotjsarea2[mm];
+                        meteotca3[mm] = -1 * meteotca2[mm];
+                    }
+
+                    function calMax(arr) {
+                        var max = arr[0];
+                        for (var i = 1; i < arr.length; i++) { // 求出一组数组中的最大值
+                            if (max < arr[i]) {
+                                max = arr[i];
+                            }
+                        }
+                        var maxint = Math.ceil(max / 10); // 向上取整
+                        var maxval = maxint * 10; // 最终设置的最大值
+                        return maxval; // 输出最大值
+                    }
+                    var maxinum1 = calMax(meteotszarea.map(Number));
+                    var mininum1 = -1 * calMax(meteotjsarea.map(Number));
+                    myMeteoareaCharts.hideLoading();
+
+                    var emphasisStyle = {
+                        itemStyle: {
+                            barBorderWidth: 1,
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowOffsetY: 0,
+                            shadowColor: 'rgba(0,0,0,0.5)'
+                        }
+                    };
+
+                    option = {
+                        //backgroundColor: '#eee',
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.5)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.8)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        color: ["#B443EA", "#1AF2D3"],
+                        legend: {
+                            //data: ['bar', 'bar2', 'bar3', 'bar4'],
+                            data: ['总受灾面积', '总绝收面积', '总受灾人口', '总伤亡人数'],
+                            color: "#fff",
+                            top: '8%',
+                            //left: '10%',
+                            orient: 'horizontal', // 'vertical'
+                            x: 'center', // 'center' | 'left' | {number},
+                            y: 'top',
+                            itemGap: 25,
+                            itemWidth: 12,
+                            itemHeight: 12,
+                            textStyle: {
+                                color: "#fff",
+                                fontSize: 12
+                            },
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            iconStyle: {
+                                borderColor: '#fff'
+                            },
+                            emphasis: {
+                                iconStyle: {
+                                    borderColor: '#f00'
+                                },
+                            },
+                            feature: {
+                                dataView: { //数据视图
+                                    show: true,
+                                    readOnly: false,
+                                    lang: ['', '关闭', '导出Excel'],
+                                    buttonColor: '#30C76C',
+                                    contentToOption: function (opts) {
+                                        //console.log(opts)
+                                        $.noConflict(); //请务必加上这一句，否则无法下载excel
+                                        $("#tableExcel_Metearemen").table2excel({ //通过id即tableExcel_Day
+                                            exclude: ".noExl", //过滤位置的 css 类名：有class="noExl"的行不被导出
+                                            name: "表格-" + new Date().getTime(),
+                                            filename: "广西气象灾害" + new Date().getTime() + ".xls", //文件名称
+                                            exclude_img: true,
+                                            exclude_links: true,
+                                            exclude_inputs: true
+                                        });
+                                    },
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    },
+                                    optionToContent: function (opt) {
+                                        var axisData = opt.xAxis[0].data; // 坐标数据
+                                        var series = opt.series; // 折线图数据
+                                        var tdHeaders = '<td></td><td>年份</td>'; // 表头第一列
+                                        series.forEach(function (item) {
+                                            //console.log(item)
+                                            if (item.name == "总受灾面积" || item.name == "总绝收面积") {
+                                                tdHeaders += '<td style="padding:0px 2px;">' + item.name + '(千公顷)</td>'; //组装表头
+                                            } else if (item.name == "总受灾人口") {
+                                                tdHeaders += '<td style="padding:0px 2px;">' + item.name + '(万人次)</td>'; //组装表头
+                                            } else {
+                                                tdHeaders += '<td style="padding:0px 2px;">' + item.name + '(人)</td>'; //组装表头
+                                            }
+                                        });
+                                        var table = '<div style="overflow-y:auto;height: 100%; width:100%;"><table id="tableExcel_Metearemen" class="table-bordered table-striped" style="text-align:center; border-collapse:collapse; margin:0 auto; text-align:center;" border="1" ><tbody><tr>' + tdHeaders + '</tr>';
+                                        var tdBodys = ''; // 表数据
+                                        for (var i = 0, l = axisData.length; i < l; i++) {
+                                            for (var j = 0; j < series.length; j++) {
+                                                var temp = series[j].data[i];
+                                                if (temp != null && temp != undefined) {
+                                                    if (series[j].data[i] < 0) {
+                                                        var zheng = -1 * series[j].data[i];
+                                                        tdBodys += '<td>' + zheng + '</td>'; //组装表数据
+                                                    } else {
+                                                        tdBodys += '<td>' + series[j].data[i] + '</td>'; //组装表数据
+                                                    }
+                                                } else {
+                                                    tdBodys += '<td></td>';
+                                                }
+                                            }
+                                            table += '<tr><td style="padding:0 6px;">' + (i + 1) + '</td><td style="padding: 0 10px">' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                                            tdBodys = '';
+                                        }
+                                        table += '</tbody></table></div>';
+                                        return table;
+                                    },
+                                },
+                                magicType: {
+                                    show: true,
+                                    type: ['line', 'bar'],
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                saveAsImage: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        brush: {
+                            showTitle: false,
+                            toolbox: ['rect', 'polygon', 'lineX', 'lineY', 'keep', 'clear'],
+                            xAxisIndex: 0,
+                        },
+                        tooltip: {
+                            formatter: function (e) {
+                                //console.log(e)
+                                if (e.seriesName == "总受灾面积" || e.seriesName == "总绝收面积") {
+                                    return '<p style="text-align:center;">' + e.seriesName + '</p>' + e.marker + " " + e.name + "：" + e.value + "千公顷";
+                                } else if (e.seriesName == "总受灾人口") {
+                                    return '<p style="text-align:center;">' + e.seriesName + '</p>' + e.marker + " " + e.name + "：" + e.value + "万人次";
+                                } else {
+                                    return '<p style="text-align:center;">' + e.seriesName + '</p>' + e.marker + " " + e.name + "：" + e.value + "人";
+                                }
+                            }
+                        },
+                        xAxis: {
+                            data: meteoayears,
+                            axisLine: {
+                                onZero: true,
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            splitArea: {
+                                show: false
+                            },
+                            axisLabel: {
+                                color: '#fff', //x轴字体颜色
+                                interval: 0,
+                            },
+                        },
+                        yAxis: [
+                            {
+                                //inverse: true, //是否为反向坐标轴
+                                type: 'value',
+                                max: maxinum1,
+                                min: mininum1,
+                                name: '总受灾/绝收面积（单位：千公顷）',
+                                nameTextStyle: {
+                                    padding: [0, 0, 0, 108]    // 四个数字分别为上右下左与原位置距离
+                                },
+                                splitArea: {
+                                    show: false
+                                },
+                                splitLine: {
+                                    show: false
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }, {
+                                type: 'value',
+                                name: '总受灾/伤亡人口（单位：人）',
+                                nameTextStyle: {
+                                    padding: [0, 78, 0, 0]    // 四个数字分别为上右下左与原位置距离
+                                },
+                                max: maxinum1,
+                                min: mininum1,
+                                splitArea: {
+                                    show: false
+                                },
+                                splitLine: {
+                                    show: false
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }
+                        ],
+                        grid: {
+                            left: '9%',
+                            right: '9%',
+                            bottom: '9%',
+                            top: '25%'
+                        },
+
+                        series: [{
+                            name: '总受灾面积',
+                            type: 'bar',
+                            stack: 'one',
+                            yAxisIndex: 0,
+                            emphasis: emphasisStyle,
+                            data: meteotszarea
+                        },
+                        {
+                            name: '总绝收面积',
+                            type: 'bar',
+                            stack: 'one',
+                            yAxisIndex: 0,
+                            emphasis: emphasisStyle,
+                            data: meteotjsarea3
+                        }, {
+                            name: '总受灾人口',
+                            type: 'bar',
+                            stack: 'two',
+                            yAxisIndex: 1,
+                            emphasis: emphasisStyle,
+                            data: meteotszmen
+                        },
+                        {
+                            name: '总伤亡人数',
+                            type: 'bar',
+                            stack: 'two',
+                            yAxisIndex: 1,
+                            emphasis: emphasisStyle,
+                            data: meteotca3
+                        },
+                        ]
+                    };
+
+                    myMeteoareaCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        var myMeteoareaCharts = echarts.init(document.getElementById('meteoarea'));
+        myMeteoareaCharts.clear();//用于清除已存在的内容
+        myMeteoareaCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetMeteorologyCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var meteoayears = [], meteotszarea = [], meteotjsarea = [], meteotszmen = [], meteotca = [];
+                    for (var m = 0; m < res.meteolist.length; m++) {
+                        meteoayears[m] = res.meteolist[m].mYears + '年';
+                        meteotszarea[m] = res.meteolist[m].mTShouzArea;
+                        meteotjsarea[m] = res.meteolist[m].mTJuesArea;
+                        meteotszmen[m] = res.meteolist[m].mManShouzNumbers;
+                        meteotca[m] = res.meteolist[m].mCasualtiesNumbers;
+                    }
+                    var meteotjsarea2 = meteotjsarea.map(Number);
+                    var meteotca2 = meteotca.map(Number);
+                    var meteotjsarea3 = [], meteotca3 = [], yeayandloss = [];
+                    for (var mm = 0; mm < meteotjsarea2.length; mm++) {
+                        meteotjsarea3[mm] = -1 * meteotjsarea2[mm];
+                        meteotca3[mm] = -1 * meteotca2[mm];
+                    }
+
+                    function calMax(arr) {
+                        var max = arr[0];
+                        for (var i = 1; i < arr.length; i++) { // 求出一组数组中的最大值
+                            if (max < arr[i]) {
+                                max = arr[i];
+                            }
+                        }
+                        var maxint = Math.ceil(max / 10); // 向上取整
+                        var maxval = maxint * 10; // 最终设置的最大值
+                        return maxval; // 输出最大值
+                    }
+                    var maxinum1 = calMax(meteotszarea.map(Number));
+                    var mininum1 = -1 * calMax(meteotjsarea.map(Number));
+                    myMeteoareaCharts.hideLoading();
+
+                    var emphasisStyle = {
+                        itemStyle: {
+                            barBorderWidth: 1,
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowOffsetY: 0,
+                            shadowColor: 'rgba(0,0,0,0.5)'
+                        }
+                    };
+
+                    option = {
+                        //backgroundColor: '#eee',
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.5)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.8)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        color: ["#B443EA", "#1AF2D3"],
+                        legend: {
+                            //data: ['bar', 'bar2', 'bar3', 'bar4'],
+                            data: ['总受灾面积', '总绝收面积', '总受灾人口', '总伤亡人数'],
+                            color: "#fff",
+                            top: '8%',
+                            //left: '10%',
+                            orient: 'horizontal', // 'vertical'
+                            x: 'center', // 'center' | 'left' | {number},
+                            y: 'top',
+                            itemGap: 25,
+                            itemWidth: 12,
+                            itemHeight: 12,
+                            textStyle: {
+                                color: "#fff",
+                                fontSize: 12
+                            },
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            iconStyle: {
+                                borderColor: '#fff'
+                            },
+                            emphasis: {
+                                iconStyle: {
+                                    borderColor: '#f00'
+                                },
+                            },
+                            feature: {
+                                magicType: {
+                                    show: true,
+                                    type: ['line', 'bar'],
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        brush: {
+                            showTitle: false,
+                            toolbox: ['rect', 'polygon', 'lineX', 'lineY', 'keep', 'clear'],
+                            xAxisIndex: 0,
+                        },
+                        tooltip: {
+                            formatter: function (e) {
+                                //console.log(e)
+                                if (e.seriesName == "总受灾面积" || e.seriesName == "总绝收面积") {
+                                    return '<p style="text-align:center;">' + e.seriesName + '</p>' + e.marker + " " + e.name + "：" + e.value + "千公顷";
+                                } else if (e.seriesName == "总受灾人口") {
+                                    return '<p style="text-align:center;">' + e.seriesName + '</p>' + e.marker + " " + e.name + "：" + e.value + "万人次";
+                                } else {
+                                    return '<p style="text-align:center;">' + e.seriesName + '</p>' + e.marker + " " + e.name + "：" + e.value + "人";
+                                }
+                            }
+                        },
+                        xAxis: {
+                            data: meteoayears,
+                            axisLine: {
+                                onZero: true,
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            splitArea: {
+                                show: false
+                            },
+                            axisLabel: {
+                                color: '#fff', //x轴字体颜色
+                                interval: 0,
+                            },
+                        },
+                        yAxis: [
+                            {
+                                //inverse: true, //是否为反向坐标轴
+                                type: 'value',
+                                max: maxinum1,
+                                min: mininum1,
+                                name: '总受灾/绝收面积（单位：千公顷）',
+                                nameTextStyle: {
+                                    padding: [0, 0, 0, 108]    // 四个数字分别为上右下左与原位置距离
+                                },
+                                splitArea: {
+                                    show: false
+                                },
+                                splitLine: {
+                                    show: false
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }, {
+                                type: 'value',
+                                name: '总受灾/伤亡人口（单位：人）',
+                                nameTextStyle: {
+                                    padding: [0, 78, 0, 0]    // 四个数字分别为上右下左与原位置距离
+                                },
+                                max: maxinum1,
+                                min: mininum1,
+                                splitArea: {
+                                    show: false
+                                },
+                                splitLine: {
+                                    show: false
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }
+                        ],
+                        grid: {
+                            left: '9%',
+                            right: '9%',
+                            bottom: '9%',
+                            top: '25%'
+                        },
+
+                        series: [{
+                            name: '总受灾面积',
+                            type: 'bar',
+                            stack: 'one',
+                            yAxisIndex: 0,
+                            emphasis: emphasisStyle,
+                            data: meteotszarea
+                        },
+                        {
+                            name: '总绝收面积',
+                            type: 'bar',
+                            stack: 'one',
+                            yAxisIndex: 0,
+                            emphasis: emphasisStyle,
+                            data: meteotjsarea3
+                        }, {
+                            name: '总受灾人口',
+                            type: 'bar',
+                            stack: 'two',
+                            yAxisIndex: 1,
+                            emphasis: emphasisStyle,
+                            data: meteotszmen
+                        },
+                        {
+                            name: '总伤亡人数',
+                            type: 'bar',
+                            stack: 'two',
+                            yAxisIndex: 1,
+                            emphasis: emphasisStyle,
+                            data: meteotca3
+                        },
+                        ]
+                    };
+
+                    myMeteoareaCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+
+<div id="meteoeconomic" style="width: 50%; height: 302px;"></div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+        var myMeteoeconoCharts = echarts.init(document.getElementById('meteoeconomic'));
+        myMeteoeconoCharts.clear();//用于清除已存在的内容
+        myMeteoeconoCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetMeteorologyCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var meteolyears = [], meteoloss = [];
+                    for (var me = 0; me < res.meteolist.length; me++) {
+                        meteolyears[me] = res.meteolist[me].mYears + '年';
+                        meteoloss[me] = res.meteolist[me].mEconomicLosses;
+                    }
+                    var yearandloss = [];
+                    for (var mme = 0; mme < meteolyears.length; mme++) {
+                        yearandloss[mme + 1] = [meteoloss.map(Number)[mme], meteolyears[mme]]
+                    }
+                    yearandloss[0] = ["value", "name"]
+
+                    //数组转成json
+                    function formatJson(ary) {
+                        var result = [];
+                        var keys = ary[0];
+
+                        for (var i = 1; i < ary.length; i++) {
+                            var obj = {};
+                            var vals = ary[i];
+                            for (var j = 0; j < vals.length; j++) {
+                                obj[keys[j]] = vals[j];
+                            }
+                            result.push(obj);
+                        }
+
+                        return result;
+                    }
+                    yearandloss2 = formatJson(yearandloss);
+                    //console.log(yearandloss2)
+
+
+                    myMeteoeconoCharts.hideLoading();
+                    option = {
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.8)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.5)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        title: {
+                            text: '气象灾害之年度经济损失（亿元）',
+                            x: 'center',
+                            y: '2%',
+                            textStyle: {
+                                fontSize: 15,
+                                fontWeight: 'normal',
+                                color: '#fff',
+                            }
+                        },
+                        color: ['#ff9f7f', '#fb7293', '#1FF0C4', '#F5AA3E', '#32c5e9', '#9fe6b8', '#e7bcf3', '#8378ea', '#74D80D', '#ffdb5c', '#FF52AF'],
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: '<p style="text-align:center; padding-bottom:0;margin-bottom:0;">{a}</p>{b}：{c}亿元'
+                        },
+                        //toolbox: {
+                        //    show: true,
+                        //    feature: {
+                        //        mark: { show: true },
+                        //        dataView: { show: true, readOnly: false },
+                        //        magicType: {
+                        //            show: true,
+                        //            type: ['pie', 'funnel']
+                        //        },
+                        //        restore: { show: true },
+                        //        saveAsImage: { show: true }
+                        //    },
+
+                        //},
+                        toolbox: {
+                            showTitle: false,
+                            iconStyle: {
+                                borderColor: '#fff'
+                            },
+                            emphasis: {
+                                iconStyle: {
+                                    borderColor: '#f00'
+                                },
+                            },
+                            feature: {
+                                dataView: { //数据视图
+                                    show: true,
+                                    readOnly: false,
+                                    lang: ['', '关闭', '导出Excel'],
+                                    buttonColor: '#30C76C',
+                                    contentToOption: function (opts) {
+                                        console.log(opts)
+                                        $.noConflict(); //请务必加上这一句，否则无法下载excel
+                                        $("#tableExcel_Meteco").table2excel({ //通过id即tableExcel_Day
+                                            exclude: ".noExl", //过滤位置的 css 类名：有class="noExl"的行不被导出
+                                            name: "表格-" + new Date().getTime(),
+                                            filename: "广西气象灾害" + new Date().getTime() + ".xls", //文件名称
+                                            exclude_img: true,
+                                            exclude_links: true,
+                                            exclude_inputs: true
+                                        });
+                                    },
+                                    optionToContent: function (opt) {
+                                        console.log(opt)
+                                        var axisData = opt.series[0].data; // 坐标数据
+                                        var series = opt.series; // 折线图数据
+                                        var tdHeaders = '<td></td><td>年份</td>'; // 表头第一列
+                                        series.forEach(function (item) {
+                                            //console.log(item)
+                                            tdHeaders += '<td style="padding:0px 2px;">' + item.name + '(亿元)</td>'; //组装表头
+                                        });
+                                        var table = '<div style="overflow-y:auto;height: 100%; width:100%;"><table id="tableExcel_Meteco" class="table-bordered table-striped" style="text-align:center; border-collapse:collapse; margin:0 auto; text-align:center;" border="1" ><tbody><tr>' + tdHeaders + '</tr>';
+                                        var tdBodys = ''; // 表数据
+                                        for (var i = 0, l = axisData.length; i < l; i++) {
+                                            for (var j = 0; j < series.length; j++) {
+                                                var temp = series[j].data[i];
+                                                //console.log(temp)
+                                                if (temp != null && temp != undefined) {
+                                                    tdBodys += '<td>' + temp.value + '</td>'; //组装表数据
+                                                } else {
+                                                    tdBodys += '<td></td>';
+                                                }
+                                            }
+                                            //console.log(axisData[i])
+                                            table += '<tr><td style="padding:0 6px;">' + (i + 1) + '</td><td style="padding: 0 10px">' + axisData[i].name + '</td>' + tdBodys + '</tr>';
+                                            tdBodys = '';
+                                        }
+                                        table += '</tbody></table></div>';
+                                        return table;
+                                    },
+                                },
+                                saveAsImage: {
+                                    shoe: true
+                                }
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        calculable: true,
+                        series: [
+                            {
+                                name: '经济损失',
+                                type: 'pie',
+                                radius: [20, 100],
+
+                                roseType: 'area',
+                                data: yearandloss2
+                            }
+                        ]
+                    };
+
+
+                    myMeteoeconoCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        var myMeteoeconoCharts = echarts.init(document.getElementById('meteoeconomic'));
+        myMeteoeconoCharts.clear();//用于清除已存在的内容
+        myMeteoeconoCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetMeteorologyCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var meteolyears = [], meteoloss = [];
+                    for (var me = 0; me < res.meteolist.length; me++) {
+                        meteolyears[me] = res.meteolist[me].mYears + '年';
+                        meteoloss[me] = res.meteolist[me].mEconomicLosses;
+                    }
+                    var yearandloss = [];
+                    for (var mme = 0; mme < meteolyears.length; mme++) {
+                        yearandloss[mme + 1] = [meteoloss.map(Number)[mme], meteolyears[mme]]
+                    }
+                    yearandloss[0] = ["value", "name"]
+
+                    //数组转成json
+                    function formatJson(ary) {
+                        var result = [];
+                        var keys = ary[0];
+
+                        for (var i = 1; i < ary.length; i++) {
+                            var obj = {};
+                            var vals = ary[i];
+                            for (var j = 0; j < vals.length; j++) {
+                                obj[keys[j]] = vals[j];
+                            }
+                            result.push(obj);
+                        }
+
+                        return result;
+                    }
+                    yearandloss2 = formatJson(yearandloss);
+
+                    myMeteoeconoCharts.hideLoading();
+                    option = {
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.8)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.5)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        title: {
+                            text: '气象灾害之年度经济损失（亿元）',
+                            x: 'center',
+                            y: '2%',
+                            textStyle: {
+                                fontSize: 15,
+                                fontWeight: 'normal',
+                                color: '#fff',
+                            }
+                        },
+                        color: ['#ff9f7f', '#fb7293', '#1FF0C4', '#F5AA3E', '#32c5e9', '#9fe6b8', '#e7bcf3', '#8378ea', '#74D80D', '#ffdb5c', '#FF52AF'],
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: '<p style="text-align:center; padding-bottom:0;margin-bottom:0;">{a}</p>{b}：{c}亿元'
+                        },
+                        calculable: true,
+                        series: [
+                            {
+                                name: '经济损失',
+                                type: 'pie',
+                                radius: [20, 100],
+
+                                roseType: 'area',
+                                data: yearandloss2
+                            }
+                        ]
+                    };
+                    myMeteoeconoCharts.setOption(option);
+                }
+            })
+        })
+    </script>
+}

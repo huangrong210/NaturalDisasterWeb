@@ -1,0 +1,147 @@
+﻿@*八大灾害*@
+@{
+    ViewData["Title"] = "灾害数据";
+}
+<style>
+    #dingbu ul a, #nongzuowu a, #senlin a, #dizhi a, #huozai a, #hongshui a, #qixiang a, #haiyang a, #dizhen a {
+        text-decoration: none !important;
+        color: #333;
+    }
+
+        #dingbu ul a:hover, #nongzuowu a:hover, #senlin a:hover, #dizhi a:hover, #huozai a:hover, #hongshui a:hover, #qixiang a:hover, #haiyang a:hover, #dizhen a:hover {
+            color: #f34040;
+        }
+
+        #dingbu ul a:focus, #nongzuowu a:focus, #senlin a:focus, #dizhi a:focus, #huozai a:focus, #hongshui a:focus, #qixiang a:focus, #haiyang a:focus, #dizhen a:focus {
+            outline: 0;
+            color: #333;
+        }
+
+    #nongzuowu, #senlin, #dizhi, #huozai, #hongshui, #qixiang, #haiyang, #dizhen {
+        height: 42px;
+        line-height: 42px;
+        text-align: center;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 10px;
+        border-top: 1px solid #fd0;
+        font-size: 15px;
+    }
+
+    img[title="返回顶部"] {
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        vertical-align: middle;
+        transition: all 0.5s;
+    }
+
+        img[title="返回顶部"]:hover {
+            transform: scale(1.5);
+        }
+
+    #dingbu {
+        background: #F1F3F4;
+        height: 32px;
+        line-height: 32px;
+        border-top: 1px solid #fd0;
+        border-bottom: 1px solid #fd0;
+    }
+
+        #dingbu ul {
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15px;
+        }
+
+    #ControlArea, #ControlRate, #tarea, #szforestarea, #casunum, #jingjloss, #floodsczarea, #floodloss {
+        outline: none;
+        border: 1px solid #fff;
+        border-radius: 2px;
+        background: #2b6df5;
+    }
+</style>
+@*<script src="~/lib/jquery/dist/jquery.js"></script>*@
+<script src="~/lib/echarts/dist/echarts.js"></script>
+<script src="~/lib/jquery-table2excel/dist/jquery.table2excel.js"></script>
+<div id="dingbu">
+    <ul>
+        <li><a href="#nongzuowu">农作物生物灾害</a></li>
+        <li><a href="#senlin">森林生物灾害</a></li>
+        <li><a href="#dizhi">地质灾害</a></li>
+        <li><a href="#huozai">森林火灾</a></li>
+        <li><a href="#hongshui">洪水灾害</a></li>
+        <li><a href="#qixiang">气象灾害</a></li>
+        <li><a href="#haiyang">海洋灾害</a></li>
+        <li><a href="#dizhen">地震灾害</a></li>
+    </ul>
+</div>
+<div class="contentEcharts" style="width:100%; min-height:492px; position:relative;">
+    <p id="nongzuowu" style="padding-left: 232px; border-top:none;"><a href="javascript:(0)">农作物生物灾害</a><span style="float:right; letter-spacing:0px; font-weight:normal;" id="times"></span></p>
+    <div style="display:flex; justify-content:space-between;">
+            @{ await Html.RenderPartialAsync("Crop"); }
+    </div>
+    <p id="senlin"><a href="#dingbu">森林生物灾害<img src="~/images/top01.png" title="返回顶部" /></a></p>
+    <div style="display:flex; justify-content:space-between;">
+            @{ await Html.RenderPartialAsync("Forest"); }
+    </div>
+    <p id="dizhi"><a href="#dingbu">地质灾害<img src="~/images/top01.png" title="返回顶部" /></a></p>
+    <div style="display:flex; justify-content:space-between;">
+        @{ await Html.RenderPartialAsync("Geology");}
+    </div>
+    <p id="huozai"><a href="#dingbu">森林火灾<img src="~/images/top01.png" title="返回顶部" /></a></p>
+    <div style="display:flex; justify-content:space-between;">
+        @{ await Html.RenderPartialAsync("Fire");}
+    </div>
+    <p id="hongshui"><a href="#dingbu">洪水灾害<img src="~/images/top01.png" title="返回顶部" /></a></p>
+    <div style="display:flex; justify-content:space-between;">
+        @{ await Html.RenderPartialAsync("Flood");}
+    </div>
+    <p id="qixiang"><a href="#dingbu">气象灾害<img src="~/images/top01.png" title="返回顶部" /></a></p>
+    <div style="display:flex; justify-content:space-between;">
+        @{ await Html.RenderPartialAsync("Meteorology");}
+    </div>
+    <p id="haiyang"><a href="#dingbu">海洋灾害<img src="~/images/top01.png" title="返回顶部" /></a></p>
+    <div style="display:flex; justify-content:space-between;">
+        @{ await Html.RenderPartialAsync("Marine");}
+    </div>
+    <p id="dizhen"><a href="#dingbu">地震灾害<img src="~/images/top01.png" title="返回顶部" /></a></p>
+    <div style="display:flex; justify-content:space-between;">
+        @{ await Html.RenderPartialAsync("Earthquake");}
+    </div>
+</div>
+
+<script>
+    function getCurDate() {
+        var d = new Date();
+        var week;
+        switch (d.getDay()) {
+            case 1: week = "星期一"; break;
+            case 2: week = "星期二"; break;
+            case 3: week = "星期三"; break;
+            case 4: week = "星期四"; break;
+            case 5: week = "星期五"; break;
+            case 6: week = "星期六"; break;
+            default: week = "星期天";
+        }
+        var years = d.getFullYear();
+        var month = add_zero(d.getMonth() + 1);
+        var days = add_zero(d.getDate());
+        var hours = add_zero(d.getHours());
+        var minutes = add_zero(d.getMinutes());
+        var seconds = add_zero(d.getSeconds());
+        var ndate = years + "年" + month + "月" + days + "日 " + hours + ":" + minutes + ":" + seconds + " " + week;
+        var div1 = document.getElementById("times");
+        div1.innerHTML = ndate;
+    }
+
+    function add_zero(temp) {
+        if (temp < 10) return "0" + temp;
+        else return temp;
+    }
+
+    setInterval("getCurDate()", 100);
+
+</script>
+

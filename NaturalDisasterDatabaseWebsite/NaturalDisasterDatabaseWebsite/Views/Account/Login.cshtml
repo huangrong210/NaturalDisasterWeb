@@ -1,0 +1,215 @@
+﻿@*登录页面*@
+@model NaturalDisasterDatabaseWebsite.Models.UsersViewModel
+@{
+    ViewData["Title"] = "登录";
+}
+@*欢迎来到登录界面*@
+<style>
+
+    /*.outerDiv {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .innerDiv {
+        margin: 0 auto;
+    }*/
+
+    /*.outerDiv {
+        position: relative;
+    }
+
+    .innerDiv {
+        position: absolute;
+        margin: auto;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+    }*/
+
+    /*.outerDiv {
+        position: relative;
+    }
+
+    .innerDiv {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -75px; 
+        margin-top: -75px;
+    }*/
+    .outerDiv {
+        width: 100%;
+        height: 492px;
+        display: block;
+        position: relative;
+    }
+    .outerDiv::after {
+        content: "";
+        position: absolute;
+        background: url(/images/Login1.png) no-repeat center center;
+        background-size: 100% 100%;
+        opacity: 0.5;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: -1;
+        /*-webkit-filter: blur(1px);
+        filter: blur(1px);*/
+    }
+    .innerDiv {
+        position: absolute;
+        margin: auto 80px;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        width: 400px;
+        height: 368px;
+    }
+    .innerDiv::after {
+        content: "";
+        background-color: #ADDDFE;
+        position: absolute;
+        opacity: 0.3;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: -1;
+        border-radius: 5px;
+    }
+    .inputcenter {
+        margin: auto;
+        top: 0;
+        right: 0;
+        left: 5px;
+        bottom: 0;
+    }
+    .innerlogo {
+        position: absolute;
+        margin: -50px auto 0 auto;
+        /*top: 12px;*/
+        right: 0;
+        left: 0;
+        background: url(/images/login_logo3.png) no-repeat;
+        background-size: 100% 100%;
+        border-radius: 50%;
+        height: 80px;
+        width: 80px;
+        z-index: -1;
+        opacity: 0.9;
+    }
+    .input-group .form-control {
+         float: none; 
+         width: 80% !important; 
+        margin-bottom: 30px;
+    }
+    .form-control {
+        display: inline-block;
+        padding: 6px 6px;
+        margin-left:6px;
+    }
+    .iconsize{font-size:24px;color:#fff;}
+    label {
+        display: inline-block;
+        position: relative;
+        top: 5px;
+    }
+    .innerDiv p {
+        color: #444f00;
+        text-align: center;
+        padding-top: 13px;
+        letter-spacing:2px;
+    }
+    #basicSelect {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        width: 171px;
+        margin-bottom: 16px;
+        padding: 5px 18px 7px 18px;
+        margin-left: 5px;
+        /*appearance: none;*/
+        -moz-appearance: none; /* Firefox */
+        -webkit-appearance: none; /* Safari 和 Chrome */
+        text-align-last: center;
+        text-align: center;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        outline: none;
+    }
+    #basicSelect option {text-align: center;}
+    #retrieve {
+        font-size: 12px;
+        display: inline-block;
+        padding-left: 18px;
+        text-decoration: none;
+    }
+    #regis{
+        text-decoration:none;
+    }
+</style>
+
+<div class="outerDiv">
+    <div class="innerDiv">
+    <div class="innerlogo"></div>
+        @*<p>八桂自然灾害MIS</p>*@
+        <p>你好，请输入账号和密码登录</p>
+        <hr style="margin-top:6px; margin-bottom:30px;" />
+
+        <form asp-controller="Account" asp-action="Login" method="post">
+            <div class="input-group inputcenter">
+                <label for="exampleInputName"><i class="glyphicon glyphicon-user iconsize"></i></label>
+                <input name="username" type="text" class="form-control" placeholder="账号" id="exampleInputName" required />
+            </div>
+            <div class="input-group inputcenter">
+                <label for="exampleInputPassword1"><i class="glyphicon glyphicon-lock iconsize"></i></label>
+                <input name="password" type="password" class="form-control"  style="position:relative; z-index:0;" placeholder="密码" id="exampleInputPassword1" required />
+                <span class="see-passwordold" style="color:#666; position:absolute; right:20px; top:10px; z-index:10;">
+                    <i class="glyphicon glyphicon-eye-close no-see-password-icon oldpassword"></i>
+                    <i class="glyphicon glyphicon-eye-open see-password-icon oldpassword" style="display:none;"></i>
+                </span>
+            </div>
+            <div class="input-group inputcenter" style="left:-1px;">
+                <label><i class="glyphicon glyphicon-star iconsize"></i></label>    
+                <input name="status" type="hidden" id="status" />
+                <select id="basicSelect" onchange="document.getElementById('status').value = this.value;" required>  
+                    <option selected disabled value="" style="display:none;">- - 请选择身份 - -</option>
+                    <option value="普通用户">普通用户</option>
+                    <option value="管理员">管理员</option>
+                </select>
+            </div>
+            @*<div class="input-group inputcenter">
+                <label for="exampleInputCode"><i class="glyphicon glyphicon-tint iconsize"></i></label>
+                <input type="text" class="form-control" placeholder="验证码" id="exampleInputCode" />
+            </div>*@
+            <div class="input-group inputcenter">
+                <button type="submit" class="btn btn-default">立即登录</button>
+                <a asp-action="RetrievePassword" id="retrieve">找回密码?</a>
+            </div>
+        </form>
+        <hr style="margin-bottom:10px; margin-top:30px" />
+        <div class="input-group inputcenter" style="color:#8a8480;">
+            新来的吗?
+            <a id="regis" asp-area="" asp-controller="Account" asp-action="Register">注册</a>
+        </div>
+        <p style="color:#333; font-size:12px;">新注册用户身份为普通用户</p>
+    </div>
+</div>
+<script>
+    $('.see-passwordold').click(function () {
+        $('.oldpassword').toggle();
+        if ($('#exampleInputPassword1').attr('type') == 'password') {
+            $('#exampleInputPassword1').attr('type', 'text');
+            $('#exampleInputPassword1 .see-password-icon').style.display = "inline-block";
+        } else {
+            $('#exampleInputPassword1').attr('type', 'password');
+            $('#exampleInputPassword1 .no-see-password-icon').style.display = "none";
+        }
+    });
+</script>
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

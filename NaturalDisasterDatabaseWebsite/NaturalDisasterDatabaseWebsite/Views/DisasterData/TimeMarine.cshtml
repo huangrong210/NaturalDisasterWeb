@@ -1,0 +1,74 @@
+﻿<div style="">
+    <a asp-controller="DisasterData" asp-action="CreateMarine"><i class="glyphicon glyphicon-plus"></i><span>添加时刻灾害数据：海洋灾害</span></a>
+    <button onclick="downloadtimemarine();" class="btn btn-success" style="float:right; padding:3px 6px; border-radius:0px; font-size:14px;">导出EXCEL</button>
+</div>
+<table class="table" id="recorddatamarine">
+    <thead>
+        <tr>
+            <th style="width:4%;">序号</th>
+            <th style="width:8%;">时间</th>
+            <th style="width:8%;">经度(°)</th>
+            <th style="width:8%;">维度(°)</th>
+            <th style="width:8%;">伤亡(人)</th>
+            <th style="width:8%;">损失(万元)</th>
+            <th style="width:13%;">灾害类型</th>
+            <th style="width:13%;">参考地点</th>
+            <th style="width:20%;">详情</th>
+            <th style="width:6%;">上报人</th>
+            <th style="width:4%;" class="noExl">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 1;
+            var count = 0;
+            @foreach (var marinetime in ViewBag.marinetime)
+            {
+                <tr>
+                    <td class="t_center">@i</td>
+                    <td style="text-align:center;"> @DateTime.Parse(@marinetime.marinetime.ToString()).ToString("yyyy-MM-dd HH:mm:ss")  @*@crop.userID*@</td>
+                    <td>@marinetime.marinelogitude</td>
+                    <td>@marinetime.marinedimension</td>
+                    <td>@marinetime.marinecasualty</td>
+                    <td>@marinetime.marineloss</td>
+                    <td class="newsInfo" style="text-align:justify; text-align-last:left;">
+                        <div class="newInfoTruncation boxId">@marinetime.marinestyle</div>
+                        <span>@marinetime.marinestyle</span>
+                    </td>
+                    <td class="newsInfo" style="text-align:justify; text-align-last:left;">
+                        <div class="newInfoTruncation boxId">@marinetime.marineplace</div>
+                        <span>@marinetime.marineplace</span>
+                    </td>
+                    <td class="newsInfo" style="text-align:justify; text-align-last:left;">
+                        <div class="newInfoTruncation newInfoTruncation3 boxId" id="boxId">@Html.Raw(System.Net.WebUtility.UrlDecode(@marinetime.marinedetails))</div>
+                        <span>@Html.Raw(System.Net.WebUtility.UrlDecode(@marinetime.marinedetails))</span>
+                    </td>
+                    <td>@marinetime.username</td>
+                    <td class="noExl">
+                        <a asp-controller="DisasterData" asp-action="EditMarine" asp-route-id="@marinetime.ID">编辑</a>
+                        <a asp-controller="DisasterData" asp-action="DeleteMarine" asp-route-id="@marinetime.ID">删除</a>
+                    </td>
+                </tr>
+                i++;
+                count = i - 1;
+            }
+            @*@count;*@
+        }
+    </tbody>
+</table>
+@*导出excel*@
+<script>
+    function downloadtimemarine() {
+        $(".boxId").html("");
+        $.noConflict(); //请务必加上这一句，否则无法下载excel，因为$符号与其他jq版本冲突了
+        $("#recorddatamarine").table2excel({
+            exclude: ".noExl",
+            name: new Date().getTime(),
+            filename: new Date().getTime(),
+            exclude_img: true,
+            exclude_links: true,
+            exclude_inputs: true
+        });
+        window.location.reload(); //强制刷新，因为 table2excel只执行一次，如果不刷新就不能再下载数据
+    }
+</script>

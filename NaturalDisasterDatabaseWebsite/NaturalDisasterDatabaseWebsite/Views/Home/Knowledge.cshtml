@@ -1,0 +1,307 @@
+﻿@*灾害知识*@
+@model IEnumerable<NaturalDisasterDatabaseWebsite.Models.Science_essayViewModel>
+@{
+    ViewData["Title"] = "灾害知识";
+}
+
+<style>
+    .row {
+        margin-right: 0px;
+        margin-left: 0px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: 432px;
+    }
+
+    .carousel-inner {
+        background: url(/images/banner4.jpg) no-repeat center center;
+        background-size: 100% 100%;
+    }
+
+        .carousel-inner .item img[src$=".jpg"], .carousel-inner .item img[src$=".png"], .carousel-inner .item img[src$=".svg"] {
+            width: 100%;
+        }
+
+        .img-responsive, .carousel-inner > .item > img {
+            height: 360px;
+            margin: 0 auto;
+        }
+
+    .carousel-caption p {
+        font-size: 16px;
+        letter-spacing: 2px;
+        text-align-last: left;
+        text-align: justify;
+        text-justify: distribute-all-lines;
+    }
+
+        .carousel-caption p strong {
+            font-size: 20px;
+        }
+
+    .col-md-6 {
+        padding-left: 0px;
+    }
+
+    #ul1 {
+        /*min-height: 492px;*/
+        list-style: none;
+        float: none;
+        padding-left: 0px;
+        margin: 0 auto;
+        border-top: none;
+    }
+
+        #ul1 .ul1-li1 {
+            height: 35px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+    .more {
+        display: inline-block;
+        float: right;
+        font-size: 14px;
+        padding-right: 18px;
+        color: #484848;
+    }
+
+        .more i {
+            height: 35px;
+            line-height: 45px;
+            font-size: 10px;
+            width: 6px;
+        }
+
+    .ul2 li {
+        height: 20px;
+    }
+
+    .ts-title {
+        border-bottom: 2px solid #3e96d0;
+    }
+
+        .ts-title .title {
+            display: inline-block;
+            background: #3e96d0;
+            font-size: 16px;
+            color: #fff;
+            border-top: none;
+        }
+
+            .ts-title .title span {
+                padding-left: 15px;
+            }
+
+    .ts-icon-title-arrow {
+        display: inline-block;
+        width: 45px;
+        height: 35px;
+        background: #fff;
+    }
+
+    .bd {
+        border: 1px solid #ddd;
+        border-top: none;
+        padding: 15px;
+        height: 381px;
+    }
+
+    .ts-news-list-a {
+        padding-left: 18px;
+    }
+
+        .ts-news-list-a li {
+            /*padding-left: 18px;*/
+            height: 35px;
+            line-height: 35px;
+        }
+
+            .ts-news-list-a li a {
+                display: block;
+                width: 80%;
+                font-size: 15px;
+                height: 35px;
+                color: #484848;
+                text-decoration: none;
+                word-wrap: normal;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                float: left;
+            }
+
+                .ts-news-list-a li a:hover, .more:hover {
+                    color: #3e96d0;
+                    text-decoration: none;
+                }
+
+        .ts-news-list-a .date {
+            font-size: 15px;
+            display: block;
+            color: #999;
+            text-align: right;
+            width: 20%;
+            float: right;
+        }
+
+    .dateInput {
+        outline: none;
+        border: none;
+        width: 100%;
+        height: 35px;
+        text-align: right;
+    }
+</style>
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="3000">
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        @for (var i = 1; i <= 7; i++)
+        {
+            <li data-target="#myCarousel" data-slide-to="@i"></li>
+        }
+    </ol>
+    <div class="carousel-inner" role="listbox">
+        @foreach (var lunbo2 in ViewBag.lunbo2)
+        {
+            <div class="item active">
+                <img src="~/upfiles/@lunbo2.imgSrc" alt="@lunbo2.natrualDisasterName" class="img-responsive" />
+                <div class="carousel-caption" role="option">
+                    <p>
+                        <strong>@lunbo2.natrualDisasterName</strong>@lunbo2.natrualDisasterDefinition
+                    </p>
+                    <a class="btn btn-default" href="@lunbo2.href">
+                        了解更多
+                    </a>
+                </div>
+            </div>
+        }
+        @foreach (var lunbo in ViewBag.lunbo)
+        {
+            <div class="item">
+                <img src="~/upfiles/@lunbo.imgSrc" alt="@lunbo.natrualDisasterName" class="img-responsive" />
+                <div class="carousel-caption" role="option">
+                    <p>
+                        <strong>@lunbo.natrualDisasterName</strong>@lunbo.natrualDisasterDefinition
+                    </p>
+                    <a class="btn btn-default" href="@lunbo.href">
+                        了解更多
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <ul id="ul1">
+            <li class="ul1-li1">
+                <div class="ts-title">
+                    <div class="title">
+                        <span>自然灾害科普</span>
+                        <img class="ts-icon ts-icon-title-arrow" src="~/images/icon-title-bg-arrow.png" />
+                    </div>
+                    <a asp-action="MorePScience" class="more">更多<i class="glyphicon glyphicon-menu-right"></i><i class="glyphicon glyphicon-menu-right"></i></a>
+                </div>
+                <div class="bd">
+                    <ul class="ts-news-list-a">
+                        @*科普*@
+                        @foreach (var e in ViewBag.kepu)
+                        {
+                                <li id="li1">
+                                    <a asp-action="KnowledgeDetail" asp-route-id="@e.ID">@e.title</a>
+                                    @*<input id="date" value="@Html.DisplayFor(modelItem => e.fb_time)" />*@
+                                    <span class="date">
+                                        @*@Html.DisplayFor(modelItem => e.fb_time)*@
+                                        @*@Html.TextBoxFor(model => e.fb_time, new { Value = String.Format("{0:yyyy-MM-dd}", e.fb_time) })*@
+                                        @*@Html.TextBoxFor(model => e.fb_time, new { Value = e.fb_time.ToString("yyyy-MM-dd") })*@
+                                        @*@Html.TextBoxFor(model => e.fb_time, "{0:yyyy-MM-dd}", new { @class = "dateInput", @id = "", @readonly = "true" })*@
+                                        @Html.TextBox("txtTime", @e.fb_time, "{0:yyyy-MM-dd}", new { @class = "dateInput", @id = "", @readonly = "true", style = "outline:none; border:none;" })
+                                    </span>
+                                </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-md-6" style="padding-right:0px;">
+        <ul id="ul1">
+            <li class="ul1-li1">
+                <div class="ts-title">
+                    <div class="title">
+                        <span>自然灾害时政</span>
+                        <img class="ts-icon ts-icon-title-arrow" src="~/images/icon-title-bg-arrow.png" />
+                    </div>
+                    <a asp-action="MoreNews" class="more">更多<i class="glyphicon glyphicon-menu-right"></i><i class="glyphicon glyphicon-menu-right"></i></a>
+                </div>
+                <div class="bd">
+                    <ul class="ts-news-list-a">
+                        @* 时政 *@
+                        @foreach (var e2 in ViewBag.shizheng)
+                        {
+                            <li id="li1">
+                                <a asp-action="KnowledgeDetail" asp-route-id="@e2.ID">@e2.title</a>
+                                <span class="date">
+                                    @Html.TextBox("txtTime", @e2.fb_time, "{0:yyyy-MM-dd}", new { @class = "dateInput", @id = "", @readonly = "true", style = "outline:none; border:none;" })
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div style="margin-top:15px; height:224px; overflow:hidden;">
+    <div class="ts-title">
+        <div class="title">
+            <span>其他</span>
+            <img class="ts-icon ts-icon-title-arrow" src="~/images/icon-title-bg-arrow.png" />
+        </div>
+        <a asp-action="MoreOthers" class="more">更多<i class="glyphicon glyphicon-menu-right"></i><i class="glyphicon glyphicon-menu-right"></i></a>
+    </div>
+    <div class="" style="padding:0 15px; border:1px solid #ddd;height:187px; overflow:hidden;">
+        @* 未知 *@
+        <ul class="ts-news-list-a">
+            @foreach (var e3 in ViewBag.weizhi)
+            {
+                @*@if(@Html.DisplayFor(modelItem => e.wz_style)=="w") { }*@
+                <li id="li1" style="">
+                    <a asp-action="KnowledgeDetail" asp-route-id="@e3.ID">@e3.title</a>
+                    <span class="date">
+                        @Html.TextBox("txtTime", @e3.fb_time, "{0:yyyy-MM-dd}", new { @class = "dateInput", @id = "", @readonly = "true", style = "outline:none; border:none;" })
+                    </span>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var reg = /([^\s]+)\s.*/;
+        ////var str = "2020-03-22 18:25:06";
+        //var spans = document.getElementById('li1').getElementsByTagName("span");
+        //for (var i = 0; i < spans.length; i++) {
+        //    console.log(spans[i]);
+        //}
+        string = "海洋灾害时政"
+        //alert(string.substring(string.length - 2, string.length))
+
+        //alert("海洋灾害时政".match(/.*(.{2})/)[1])
+
+        //alert("海洋灾害时政".match(/.{2}$/))
+        //alert("未知".slice(-2))
+        //str = str.replace(/([^\s]+)\s.*/, "$1");
+        //alert(str.split(' ')[0])
+    })
+</script>

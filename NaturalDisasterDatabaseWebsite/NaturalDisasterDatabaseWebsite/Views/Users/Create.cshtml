@@ -1,0 +1,207 @@
+﻿@*@model NaturalDisasterDatabaseWebsite.Models.UsersViewModel*@
+@model UsersViewModel
+
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "新增用户";
+}
+<style>
+    span {
+        color: #ff0000;
+    }
+
+    h2 {
+        text-align: center;
+    }
+
+    #basicSelect {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        /*margin-bottom: 16px;*/
+        -moz-appearance: none; /* Firefox */
+        -webkit-appearance: none; /* Safari 和 Chrome */
+        border: 1px solid #ccc;
+        background-color: #fff;
+        outline: none;
+    }
+
+    .form-group {
+        width: 48%;
+        display: inline-block;
+    }
+
+    .right {
+        float: right;
+    }
+
+    .obtn {
+        width: 100%;
+        text-align: center;
+        margin: 0 auto;
+        margin-top: 15px;
+    }
+
+        .obtn input[value="新增"] {
+            margin-right: 120px;
+        }
+</style>
+<h2>新增用户</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create" name="form1">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="status" value="普通用户" type="hidden" />
+            <div class="form-group">
+                <label asp-for="username" class="control-label"></label>
+                <span>*</span>
+                <span asp-validation-for="username" class="text-danger" id="msg1"></span>
+                <input asp-for="username" class="form-control" id="isexist" placeholder="请设置账号" />
+            </div>
+            <div class="form-group right">
+                <label asp-for="password" class="control-label"></label>
+                <span>*</span>
+                <span asp-validation-for="password" class="text-danger"></span>
+                <input asp-for="password" type="password" class="form-control" id="oldpassword" placeholder="请设置6位数字密码" style="position:relative; z-index:0;" />
+                <span class="see-passwordold" style="color:#666; position:absolute; right:24px; top:32px; z-index:10;">
+                    <i class="glyphicon glyphicon-eye-close no-see-password-icon oldpassword"></i>
+                    <i class="glyphicon glyphicon-eye-open see-password-icon oldpassword" style="display:none;"></i>
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="sex" class="control-label"></label>
+                <span>*</span>
+                <span asp-validation-for="sex" class="text-danger"></span>
+                <input asp-for="sex" id="sex" type="hidden" />
+                <select id="basicSelect" class="form-control" onchange="document.getElementById('sex').value = this.value;" required>
+                    <option selected disabled value="" style="display:none;">请选择性别</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+            </div>
+            <div class="form-group right">
+                <label asp-for="email" class="control-label"></label>
+                <span>*</span>
+                <span asp-validation-for="email" class="text-danger" id="msg2"></span>
+                <input asp-for="email" class="form-control" id="verifyEmail" placeholder="电子邮箱,例如：xxx@xx.com" />
+            </div>
+            <div class="form-group">
+                <label asp-for="img" class="control-label" style="display:block;"></label>
+                <span asp-validation-for="img" class="text-danger"></span>
+                <input asp-for="img" type="hidden" id="textfield" value="head-default.png" />
+                <input type="file" class="form-control" id="files" style="display:inline-block; padding:4px 12px 0px 12px; width:88%;" />
+                <div class="input-group" style="display:inline-block; top:-2px;left:3px;">
+                    <input type="button" id="upload" class="btn btn-success" style="cursor:pointer;" value="上 传" />
+                </div>
+            </div>
+            <div class="form-group right">
+                <label asp-for="telephone" class="control-label"></label>
+                <span>*</span>
+                <span asp-validation-for="telephone" class="text-danger" id="msg3"></span>
+                <input asp-for="telephone" class="form-control" id="verifyTel" placeholder="请填写常用手机号" />
+            </div>
+            <div class="form-group">
+                <label asp-for="workplace" class="control-label"></label>
+                <span asp-validation-for="workplace" class="text-danger"></span>
+                <input asp-for="workplace" type="hidden" id="place" value="该用户很懒，什么也没留下~" />
+                <input name="workplace" class="form-control" placeholder="请填写现工作地点" onchange="document.getElementById('place').value = this.value;" />
+            </div>
+            <div class="form-group right">
+                <label asp-for="occupation" class="control-label"></label>
+                <span asp-validation-for="occupation" class="text-danger"></span>
+                <input asp-for="occupation" type="hidden" id="occu" value="该用户很懒，什么也没留下~">
+                <input name="occupation" class="form-control" placeholder="请填写现从事职业" onchange="document.getElementById('occu').value = this.value;">
+            </div>
+            <div>
+                <label asp-for="address" class="control-label"></label>
+                <span asp-validation-for="address" class="text-danger"></span>
+                <input asp-for="address" type="hidden" id="address" value="该用户很懒，什么也没留下~">
+                <input name="address" class="form-control" placeholder="请填写现居住地址" onchange="document.getElementById('address').value = this.value;">
+            </div>
+            <div class="form-group obtn">
+                <input type="submit" value="新增" class="btn btn-default" />
+                <input type="reset" value="重置" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">返回用户管理列表</a>
+</div>
+<script src="~/js/jquery-3.4.1.min.js"></script>
+<script src="~/js/picture.js"></script>
+<script>
+    $('.see-passwordold').click(function () {
+        $('.oldpassword').toggle();
+        if ($('#oldpassword').attr('type') == 'password') {
+            $('#oldpassword').attr('type', 'text');
+            $('#oldpassword .see-password-icon').style.display = "inline-block";
+        } else {
+            $('#oldpassword').attr('type', 'password');
+            $('#oldpassword .no-see-password-icon').style.display = "none";
+        }
+    });
+</script>
+<script>
+    //用户
+    $("#isexist").blur(function () {
+        var username = $("#isexist").val();
+        if (username) {
+            $.ajax({
+                type: "post",
+                url: "/Account/VerifyUsername",
+                data: {
+                    "username": username,
+                },
+                success: function (e) {
+                    //console.log(e);
+                    if (e.message) {
+                        document.getElementById('msg1').innerText = e.message;
+                    }
+                }
+            });
+        }
+    });
+    //邮箱
+    $("#verifyEmail").blur(function () {
+        var email = $("#verifyEmail").val();
+        if (email) {
+            $.ajax({
+                type: "post",
+                url: "/Account/VerifyEmail",
+                data: {
+                    "email": email,
+                },
+                success: function (e) {
+                    //console.log(e);
+                    if (e.message) {
+                        document.getElementById('msg2').innerText = e.message;
+                    }
+                }
+            });
+        }
+    });
+    //手机
+    $("#verifyTel").blur(function () {
+        var tel = $("#verifyTel").val();
+        if (tel) {
+            $.ajax({
+                type: "post",
+                url: "/Account/VerifyTelephone",
+                data: {
+                    "telephone": tel,
+                },
+                success: function (e) {
+                    //console.log(e);
+                    if (e.message) {
+                        document.getElementById('msg3').innerText = e.message;
+                    }
+                }
+            });
+        }
+    });
+</script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

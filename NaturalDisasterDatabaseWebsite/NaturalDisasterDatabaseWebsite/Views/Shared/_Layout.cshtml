@@ -1,0 +1,411 @@
+﻿@*支持文件，名称以下划线开头*@
+@*配置所有页面通用的UI元素。此文件设置页面顶部的导航菜单和页面底部的版权声明*@
+@using System.Security.Claims
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @*<title>@ViewData["Title"] - 八 桂 灾 害</title>*@
+    <title>@ViewData["Title"] - 八桂自然灾害网</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+    <environment include="Development">
+        <script src="~/js/jquery-3.4.1.min.js"></script>
+    </environment>
+    <!-- 配置文件 -->
+    <script src="~/lib/ueditor-1.4.3.3/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script src="~/lib/ueditor-1.4.3.3/ueditor.all.min.js"></script>
+    <script src="~/lib/ueditor-1.4.3.3/ueditor.all.js"></script>
+    <script src="~/lib/ueditor-1.4.3.3/lang/zh-cn/zh-cn.js"></script>
+    <style>
+        .navbar {
+            border: none;
+        }
+
+        .navbar-inverse {
+            background-color: #FFFFFF;
+            border-color: #FFFFFF;
+        }
+
+            .navbar-inverse .navbar-toggle .icon-bar {
+                /*可视界面小到一定程度出现下拉导航（菜单）*/
+                background-color: #333;
+            }
+
+        .navbar-toggle .icon-bar {
+            height: 1px;
+        }
+
+        .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
+            background-color: #F1F3F4;
+        }
+
+        .navbar-inverse .container .navbar-brand {
+            font-size: 20px;
+        }
+
+        .navbar-inverse .container a,
+        .navbar-inverse .navbar-nav > li > a {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .navbar-inverse .container .navbar-brand:hover {
+            /*background-image: url(/images/八桂灾害.jpg);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;*/
+            color: #000;
+            font-weight: bold;
+        }
+
+        .navbar-inverse .navbar-nav > li > a:hover {
+            background-color: #DEE1E6;
+            color: #091d01;
+        }
+
+        .navbar-collapse {
+            background-color: #F8FAFB;
+        }
+
+        .navbar > .container .navbar-brand {
+            margin-left: 0px;
+        }
+
+        .navbar-inverse .container .lastli {
+            display: inline-block;
+        }
+
+        .navbar-inverse .navbar-nav .lastli a:hover {
+            background-color: transparent;
+            color: #0026ff;
+        }
+
+        .navbar-inverse .container .lastli a {
+            color: #333333;
+        }
+
+        .cblue {
+            color: #2c55f5;
+        }
+
+        .navbar .navbar-header .navhome {
+            position: relative;
+            top: -4px;
+            letter-spacing: 5px;
+        }
+
+        .ts-links-box {
+            height:52px;
+            margin-top:15px;
+            /*border: 1px solid #f8f8f8;*/
+            background-color: #f1f1f1;
+            padding: 10px 15px;
+        }
+
+        .ts-links-box .title {
+            font-size: 14px;
+            line-height: 28px;
+            height: 28px;
+            background: #00469e;
+            color: #fff;
+            padding: 0 10px;
+            border-radius: 5px;
+            font-weight: 400;
+            margin:1px 20px 0px 0px;
+        }
+
+        .ts-links-box .items-select {
+            margin-bottom:0px;
+            padding-left:0px;
+
+        }
+
+        .ts-links-box .items-select li {
+            /*width: 214px;*/
+            width: 23.5%;
+            list-style: none;
+            float: left;
+            margin-right: 15px;
+        }
+
+        .ts-links-box .form-control-select {
+            display: block;
+            width: 100%;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            height: 30px;
+            padding: 5px 10px;
+            font-size: 12px;
+            line-height: 30px;
+            border-radius: 3px;
+            outline: 0;
+        }
+        i.csdn-write {
+            width: 17px;
+            height: 17px;
+            float: left;
+            margin-top: 1px;
+            margin-right: 1px;
+            background: url(/images/csdn-write.png) center center no-repeat;
+            background-size: contain;
+        }
+        .write:hover {
+            background: #FFF2F0;
+        }
+        .navbar-inverse .navbar-nav > li > a:focus, .navbar-inverse .navbar-brand:focus {
+            color: #333;
+            background-color: transparent;
+            outline:none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container head">
+            @*可视界面小到一定程度出现下拉导航（菜单）S*@
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand navhome">
+                    <i class="glyphicon glyphicon-home cblue" style="font-size:20px;"></i>
+                    八桂自然灾害网
+                </a>
+            </div>
+            @*可视界面小到一定程度出现下拉导航（菜单）E*@
+            @*导航条S*@
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a asp-area="" asp-controller="Home" asp-action="EightDisasters">灾害数据</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Knowledge">灾害知识</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="About">关于我们</a></li>
+                    @if (User.Identity.IsAuthenticated && User.FindFirstValue("status") == "管理员")
+                    {
+                        <li><a asp-area="" asp-controller="HomeBack" asp-action="Index">后台首页</a></li>
+                    }
+                </ul>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <ul class="nav navbar-nav" style="float:right;">
+                        <li class="lastli write">
+                            <a asp-controller="PersonCenter" asp-action="Create">
+                                <i class="csdn-write"></i><span style="color: #D92E2E;">写文章</span>
+                                @*@User.Identity.Name*@
+                                @*@User.FindFirstValue("status")*@
+                                @*@User.FindFirstValue("ID")*@
+                                @*@User.FindFirstValue("img")
+                                    @User.FindFirst("img")?.Value
+                                    @User.Claims.FirstOrDefault(o => o.Type == "img")?.Value*@
+                                @*<span style="color:#333;">&nbsp;|</span>*@
+                            </a>
+                        </li>
+                        <li class="lastli">
+                            <a asp-controller="PersonCenter" asp-action="Index" style="padding:2px 2px 0px 0px;">
+                                <img alt="暂无头像" id="navimgsrc" src="~/upfiles/@User.FindFirstValue("img")" title="@User.Identity.Name" width="46" height="46" style="border-radius:50%;" />
+                            </a>
+                        </li>
+                        <li class="lastli">
+                            <a href="javascript:void(0)" style="padding-left:3px; padding-top:13px; color:#4c65f2;">
+                                <form method="post" asp-controller="Account" asp-action="Logout">
+                                    <span style="color:#333;">&nbsp;|</span>
+                                    <input type="submit" value="登出" style="border:none; outline:none; background:none;" />
+                                </form>
+                            </a>
+                        </li>
+                    </ul>
+                }
+                else
+                {
+                    <ul class="nav navbar-nav" style="float:right;">
+                        <li class="lastli">
+                            <a asp-area="" asp-controller="Account" asp-action="Login" style="padding-right:0px;">
+                                登录
+                                <span style="color:#333;">&nbsp;|&nbsp;</span>
+                            </a>
+                        </li>
+                        <li class="lastli">
+                            <a asp-area="" asp-controller="Account" asp-action="Register" style="padding-left:3px;">注册</a>
+                        </li>
+                    </ul>
+                }
+            </div>
+            @*导航条E*@
+        </div>
+    </nav>
+
+    <partial name="_CookieConsentPartial" />
+
+    <div class="container body-content">
+        @*RenderBody显示所创建的全部页面专用视图的占位符，已包装在布局页中*@
+        @RenderBody()
+
+        <div class="ts-links-box" id="ts-links-box">
+            <div class="pull-left">
+                <h2 class="title">友情链接</h2>
+            </div>
+            <ul class="pull-left items-select">
+                <li>
+                    <select class="form-control-select" id="gjxgbw">
+                        <option value="">----国家相关部委----</option>
+                        <option value="http://www.gov.cn/">中华人民共和国中央人民政府</option>
+                        <option value="http://www.ndrc.gov.cn/">国家发展和改革委员会</option>
+                        <option value="http://www.most.gov.cn/">科学技术部</option>
+                        <option value="http://www.miit.gov.cn/">工业和信息化部</option>
+                        <option value="http://www.mca.gov.cn/">民政部</option>
+                        <option value="http://www.mnr.gov.cn/">自然资源部</option>
+                        <option value="http://www.zhb.gov.cn/">生态环境部</option>
+                        <option value="http://www.mohurd.gov.cn/">住房和城乡建设部</option>
+                        <option value="http://www.mot.gov.cn">交通运输部</option>
+                        <option value="http://www.mwr.gov.cn/">水利部</option>
+                        <option value="http://www.moa.gov.cn/">农业农村部</option>
+                        <option value="http://www.soa.gov.cn/">国家海洋局</option>
+                        <option value="http://www.cma.gov.cn/">中国气象局</option>
+                        <option value="http://www.sastind.gov.cn/">国家国防和科技工业局</option>
+                        <option value="http://www.forestry.gov.cn/">国家林业和草原局</option>
+                        <option value="http://www.sbsm.gov.cn/">国家测绘地理信息局</option>
+                        <option value="http://www.cea.gov.cn/">中国地震局</option>
+                    </select>
+                </li>
+                <li>
+                    <select class="form-control-select" id="xzdw">
+                        <option value="">----协作单位----</option>
+                        <option value="http://www.mnr.gov.cn">自然资源部</option>
+                        <option value="http://www.nasg.gov.cn/">自然资源部测绘地理信息管理</option>
+                        <option value="http://xxzx.mwr.gov.cn/">水利部信息中心</option>
+                        <option value="http://www.soa.gov.cn/">国家海洋局</option>
+                        <option value="http://www.cma.gov.cn">中国气象局</option>
+                        <option value="http://www.forestry.gov.cn/">国家林业和草原局</option>
+                        <option value="http://www.ngcc.cn/">国家基础地理信息中心</option>
+                        <option value="http://www.cresda.com/">中国资源卫星应用中心</option>
+                        <option value="http://www.spacechina.com/n25/index.html">中国航天科技集团有限公司</option>
+                        <option value="http://www.ceode.cas.cn/">中国科学院遥感与数字地球研究所</option>
+                        <option value="http://www.igsnrr.ac.cn/">中国科学院地理科学与资源研究所</option>
+                    </select>
+                </li>
+                <li>
+                    <select class="form-control-select" id="gnxgdw">
+                        <option value="">----国内相关单位----</option>
+                        <option value="http://220.178.99.139:9090/ahjjyj/">安徽省经济研究院</option>
+                        <option value="http://www.ciia.org.cn/">国家信息协会</option>
+                        <option value="http://www.amr.gov.cn/">国家发改委宏观经济研究院</option>
+                        <option value="http://www.nrscc.gov.cn/">国家遥感中心</option>
+                        <option value="http://www.cac.gov.cn/">国家互联网信息办公室</option>
+                        <option value="http://www.glac.org.cn/">中国卫星导航定位协会</option>
+                        <option value="http://www.fjgis.org.cn/">福建省基础地理信息中心</option>
+                        <option value="http://www.cagis.org.cn/">中国地理信息产业协会</option>
+                        <option value="http://www.cgs.gov.cn/">中国地质调查局</option>
+                        <option value="http://www.imagehlj.com/">国家测绘信息局黑龙江基础地理信息中心</option>
+                        <option value="http://www.sic.gov.cn/">国家信息中心</option>
+                        <option value="http://www.sxgis.cn/">国家测绘信息局陕西基础地理信息中心</option>
+                        <option value="http://www.carsa.org.cn/">中国遥感应用协会</option>
+                    </select>
+                </li>
+                <li>
+                    <select class="form-control-select" id="gwxgdw">
+                        <option value="">----国外相关单位----</option>
+                        <option value="http://eurogi.org/">欧洲地理信息组织（EUROGI）</option>
+                        <option value="http://gsdiassociation.org/">全球空间数据基础设施协会（GSDI）</option>
+                        <option value="http://www.esa.int/ESA">欧洲太空局（ESA）</option>
+                        <option value="http://en.unesco.org/">联合国教科文组织（UNESCO）</option>
+                        <option value="https://www.apec.org/">亚太经合组织（APEC）</option>
+                        <option value="https://www.wmo.int/pages/index_zh.html">世界气象组织（WMO）</option>
+                        <option value="http://www.ceos.org/">对地观测协会（CEOS）</option>
+                        <option value="http://www.isotc211.org/">地理信息标准化技术委员会（ISOTC211）</option>
+                        <option value="https://www.ifad.org/">国际农业发展基金（IFAD）</option>
+                        <option value="http://www.opengeospatial.org/">开放地理信息系统联盟（OGC）</option>
+                        <option value="http://www.isprs.org/">国际摄影测量与遥感协会（ISPRS）</option>
+                        <option value="http://www.shihang.org/">世界银行经济发展论坛（IBRDIDA）</option>
+                        <option value="http://www.thegef.org/">全球环境资金（GEF）</option>
+                        <option value="https://www.itc.nl/">国际空间测量与地球科学协会（ITC）</option>
+                        <option value="https://www.usgs.gov/">美国地质调查局（USGS）</option>
+                        <option value="http://www.iho.shom.fr/">国际水道测量组织（IHO）</option>
+                        <option value="http://www.unisdr.org/">国际减少灾害战略（UNISDR）</option>
+                    </select>
+                </li>
+            </ul>
+        </div>
+        <div style="clear:both;"></div>
+        <hr />
+        <footer>
+            <p style="text-align:center; font-size: 16px;">Copyright &copy; 2020 - 八桂自然灾害网(GXND).All Rights Reserved</p>
+        </footer>
+    </div>
+    @*友情链接跳转*@
+    <script>
+        //国家相关部委
+        $("#gjxgbw").change(function () {
+            var checkValue = $("#gjxgbw option:selected").val();
+            window.open(checkValue, "_blank");
+        });
+        //协作单位
+        $("#xzdw").change(function () {
+            var checkValue = $("#xzdw option:selected").val();
+            window.open(checkValue, "_blank");
+        });
+        //国内相关单位
+        $("#gnxgdw").change(function () {
+            var checkValue = $("#gnxgdw option:selected").val();
+            window.open(checkValue, "_blank");
+        });
+        //国外相关单位
+        $("#gwxgdw").change(function () {
+            var checkValue = $("#gwxgdw option:selected").val();
+            window.open(checkValue, "_blank");
+        });
+    </script>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+@*个人中心：修改头像导航栏也跟着变*@
+<script>
+    let oldimgsrc = $("#navimgsrc")[0].src;
+    let newimgsrc = $("#datapicture")[0].src;
+    //console.log(oldimgsrc, newimgsrc)
+    var oldsrc = oldimgsrc.split("/");
+    var newsrc = newimgsrc.split("/");
+    //console.log(oldsrc[oldsrc.length-1], newsrc)
+    if (oldsrc[oldsrc.length - 1] != newsrc[newsrc.length - 1]) {
+        var oSrc = "/upfiles/" + newsrc[newsrc.length - 1];
+        $("#navimgsrc").attr("src", oSrc);
+    }
+</script>

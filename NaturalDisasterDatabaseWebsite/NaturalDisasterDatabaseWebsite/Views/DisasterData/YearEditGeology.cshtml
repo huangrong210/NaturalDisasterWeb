@@ -1,0 +1,106 @@
+﻿@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "编辑地质灾害年度数据";
+}
+
+<script src="~/lib/ueditor-1.4.3.3/ueditor.parse.js"></script>
+
+<style>
+    .content_nav {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 10px;
+    }
+
+    .form-control {
+        display: inline-block;
+        width: auto;
+    }
+
+    .diflex {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    label {
+        width: 120px;
+        text-align: center;
+    }
+</style>
+<p class="content_nav">
+    @ViewData["Title"]
+    <input type="submit" value="保 存" class="btn btn-warning" form="form1" />
+    <a asp-controller="DisasterData" asp-action="Index" style="float:right; padding-top:5px;">返回灾害数据管理列表</a>
+</p>
+<hr style="margin-top:12px;" />
+<div class="row">
+    <div class="col-md-12" style="margin:0 auto; text-align:center;">
+        <form asp-controller="DisasterData" asp-action="YearEditGeology" name="form1" id="form1">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @foreach (var geologyyear in ViewBag.geologyyear)
+            {
+                <input name="ID" type="hidden" value="@geologyyear.ID" />
+                <div class="form-group">
+                    <label>年&emsp;&emsp;份</label>
+                    <input name="gYears" value="@geologyyear.gYears" class="form-control" />
+                </div>
+                <div class="form-group right">
+                    <label>发生次数(次)</label>
+                    <input name="gTOccurNumbers" value="@geologyyear.gTOccurNumbers" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>伤亡人数(人)</label>
+                    <input name="gCasualtiesNumbers" value="@geologyyear.gCasualtiesNumbers" class="form-control" />
+                </div>
+                <div class="form-group right">
+                    <label>经济损失(万元)</label>
+                    <input name="gEconomicLosses" value="@geologyyear.gEconomicLosses" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>防治项目数(个)</label>
+                    <input name="gCProjectNumbers" value="@geologyyear.gCProjectNumbers" class="form-control" />
+                </div>
+                <div class="form-group right">
+                    <label>防治投资(万元)</label>
+                    <input name="gControlInvest" value="@geologyyear.gControlInvest" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>治理面积(千公顷)</label>
+                    <input name="gZhiliArea" value="@geologyyear.gZhiliArea" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <span style="font-weight: 600;">备&emsp;&emsp;注</span>
+                    <input name="gRemarks" type="hidden" class="form-control" id="content" />
+
+                    <script id="editor" type="text/plain" style="width:100%;height:auto;">
+                        @Html.Raw(System.Net.WebUtility.UrlDecode(@geologyyear.gRemarks))
+                    </script>
+                    <script type="text/javascript">
+                        $(function () {
+                            UE.delEditor('editor');
+                            var ue = UE.getEditor('editor', {
+                                allowDivTransToP: false,//阻止div标签自动转换为p标签
+                                autoHeightEnabled: true,
+                                autoFloatEnabled: true
+                            });
+                            ue.ready(function () {
+                                $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+                            })
+                        });
+                        function cc() {
+                            document.getElementById('content').value = UE.getEditor('editor').getContent();
+                        }
+                        setInterval(function () {
+                            cc();
+                        }, 100);
+                    </script>
+                </div>
+            }
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

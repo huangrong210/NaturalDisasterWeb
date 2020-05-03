@@ -1,0 +1,181 @@
+﻿@*支持文件，名称以下划线开头*@
+@*配置所有页面通用的UI元素。此文件设置页面顶部的导航菜单和页面底部的版权声明*@
+@using System.Security.Claims
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @*<title>@ViewData["Title"] - 八 桂 灾 害</title>*@
+    <title>@ViewData["Title"] - 八桂自然灾害管理信息系统后台</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+    <environment include="Development">
+        <script src="~/js/jquery-3.4.1.min.js"></script>
+    </environment>
+    <style>
+        .navbar-inverse {
+            background-color: #FFFFFF;
+            border-color: #FFFFFF;
+        }
+
+            .navbar-inverse .navbar-toggle .icon-bar {
+                /*可视界面小到一定程度出现下拉导航（菜单）*/
+                background-color: #333;
+            }
+
+        .navbar-toggle .icon-bar {
+            height: 1px;
+        }
+
+        .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
+            background-color: #F1F3F4;
+        }
+
+        .navbar-inverse .container a,
+        .navbar-inverse .navbar-nav > li > a {
+            font-size: 16px;
+        }
+
+            .navbar-inverse .navbar-nav > li > a:hover {
+                background-color: #DEE1E6;
+                color: #091d01;
+            }
+
+        .navbar-collapse {
+            background-color: #F8FAFB;
+        }
+
+        .navbar-inverse .container .lastli {
+            display: inline-block;
+        }
+
+        .navbar-inverse .navbar-nav .lastli a:hover {
+            background-color: transparent;
+            color: #0026ff;
+        }
+
+        .navbar-inverse .container .lastli a {
+            color: #333333;
+        }
+        .navbar-inverse .navbar-nav > li > a:focus {
+            color: #333;
+        }
+    </style>
+    <script src="~/lib/ueditor-1.4.3.3/ueditor.config.js"></script>
+    <script src="~/lib/ueditor-1.4.3.3/ueditor.all.min.js"></script>
+    <script src="~/lib/ueditor-1.4.3.3/ueditor.all.js"></script>
+    <script src="~/lib/ueditor-1.4.3.3/lang/zh-cn/zh-cn.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container head">
+            @*可视界面小到一定程度出现下拉导航（菜单）S*@
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            @*可视界面小到一定程度出现下拉导航（菜单）E*@
+            @*导航条S*@
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">前台首页</a></li>
+                    <li><a asp-area="" asp-controller="HomeBack" asp-action="Index">后台首页</a></li>
+                    <li><a asp-area="" asp-controller="DisasterData" asp-action="Index">灾害数据管理</a></li>
+                    <li><a asp-area="" asp-controller="Users" asp-action="Index">用户管理</a></li>
+                    <li><a asp-area="" asp-controller="Science_essay" asp-action="Index">文章管理</a></li>
+                    <li><a asp-area="" asp-controller="Forum_msg" asp-action="Index">论坛管理</a></li>
+                </ul>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <ul class="nav navbar-nav" style="float:right;">
+                        <li class="lastli">
+                            <a asp-controller="PersonCenter" asp-action="Index" style="padding-right:0px;">
+                                @User.Identity.Name
+                            </a>
+                        </li>
+                        <li class="lastli">
+                            <a asp-controller="PersonCenter" asp-action="Index" style="padding:2px 2px 0px 8px;">
+                                <img alt="暂无头像" src="~/upfiles/@User.FindFirstValue("img")" id="navimgsrc" width="46" height="46" style="border-radius:50%;" />
+                            </a>
+                        </li>
+                        <li class="lastli">
+                            <a href="javascript:void(0)" style="padding-left:3px; padding-top:13px; color:#4c65f2;">
+                                <form method="post" asp-controller="Account" asp-action="Logout">
+                                    <span style="color:#333;">&nbsp;|</span>
+                                    <input type="submit" value="登出" style="border:none; outline:none; background:none;" />
+                                </form>
+                            </a>
+                        </li>
+                    </ul>
+                }
+                else
+                {
+                    <ul class="nav navbar-nav" style="float:right;">
+                        <li class="lastli">
+                            <a asp-area="" asp-controller="Account" asp-action="Login" style="padding-right:0px;">
+                                登录
+                                <span style="color:#333;">&nbsp;|&nbsp;</span>
+                            </a>
+                        </li>
+                        <li class="lastli">
+                            <a asp-area="" asp-controller="Account" asp-action="Register" style="padding-left:3px;">注册</a>
+                        </li>
+                    </ul>
+                }
+            </div>
+            @*导航条E*@
+        </div>
+    </nav>
+
+    <partial name="_CookieConsentPartial" />
+
+    <div class="container body-content">
+        @*RenderBody显示所创建的全部页面专用视图的占位符，已包装在布局页中*@
+        @RenderBody()
+        <hr />
+        <footer>
+            <p style="text-align:center; font-size: 16px;">Copyright &copy; 2020 - 八桂自然灾害MIS(GXND).All Rights Reserved</p>
+        </footer>
+    </div>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+    
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,180 @@
+﻿@model IEnumerable<NaturalDisasterDatabaseWebsite.Models.Science_essayViewModel>
+
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "文章管理";
+}
+<style>
+    .essaymanage {
+        text-align: center;
+        width: 100%;
+        font-size: 18px;
+        font-weight: 500;
+        color: #808080;
+        letter-spacing: 3px;
+        margin-top: 20px;
+    }
+    .createessay {
+        display: inline-block;
+    }
+    .createessay i {
+        color: #333;
+    }
+    .createessay i, .createessay a {
+        font-size: 14px;
+    }
+    .createessay a span {
+        display: inline-block;
+        width: 60px;
+        height: 28px;
+        line-height: 28px;
+        background: #F1F3F4;
+        text-align: center;
+    }
+    .form_search {
+        float: right;
+    }
+
+    .table {
+        table-layout: fixed;
+    }
+
+    th, td {
+        text-align: center;
+    }
+
+    .td_noAlign {
+        text-align: left;
+    }
+
+    .text-overflow {
+        overflow: hidden;
+        /*text-overflow: -o-ellipsis-lastline;*/
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        /*line-clamp: 2;*/
+        -webkit-box-orient: vertical;
+        word-break: break-all;
+    }
+
+    .overflow-img {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .th_owidth {
+        width: 6.5%;
+    }
+
+    .th_swidth {
+        width: 8%;
+    }
+</style>
+<p class="essaymanage">文章管理</p>
+<div class="createessay">
+    <a asp-action="Create"><i class="glyphicon glyphicon-plus"></i><span>新添文章</span></a>
+</div>
+<form asp-controller="Science_essay" asp-action="Index" method="get" class="form_search">
+    <input type="text" name="SearchString" placeholder="关键词搜索" value="@ViewData["currentFilter"]" style="padding-left:6px;" />
+    <input type="submit" value="搜索" />
+</form>
+<hr style="margin-bottom:0px; border-width:2px; color:#DDDDDD;" />
+<table class="table">
+    <thead>
+        <tr>
+            <th style="width:4%;">
+                序号
+            </th>
+            <th style="width: 16%;">
+                @Html.DisplayNameFor(model => model.title)
+            </th>
+            <th class="th_owidth">
+                @Html.DisplayNameFor(model => model.author)
+            </th>
+            <th class="th_swidth">
+                @Html.DisplayNameFor(model => model.source)
+            </th>
+            <th class="th_swidth">
+                @Html.DisplayNameFor(model => model.fb_time)
+            </th>
+            <th style="width:31%;">
+                @Html.DisplayNameFor(model => model.wz_content)
+            </th>
+            @*<th style="width:11%;">
+                @Html.DisplayNameFor(model => model.wz_img)
+            </th>*@
+            <th class="th_owidth">
+                @Html.DisplayNameFor(model => model.wz_style)
+            </th>
+            <th style="width:5.5%">
+                @Html.DisplayNameFor(model => model.state)
+            </th>
+            <th class="th_owidth">
+                @Html.DisplayNameFor(model => model.user)
+            </th>
+            <th class="th_swidth">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 1;
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @i
+                    </td>
+                    <td class="td_noAlign">
+                        <div class="text-overflow">
+                            @Html.DisplayFor(modelItem => item.title)
+                        </div>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.author)
+                    </td>
+                    <td>
+                        <div class="text-overflow">
+                            @Html.DisplayFor(modelItem => item.source)
+                        </div>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.fb_time)
+                    </td>
+                    <td class="td_noAlign">
+                        <div class="text-overflow" style="overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        word-break: break-all;height:40px;">
+                            @*@Html.DisplayFor(modelItem => item.wz_content)*@
+                            @Html.Raw(System.Net.WebUtility.UrlDecode(@item.wz_content))
+                        </div>
+                    </td>
+                    @*<td class="overflow-img">
+                        @Html.DisplayFor(modelItem => item.wz_img)
+                    </td>*@
+                    <td>
+                        <div class="text-overflow">
+                            @Html.DisplayFor(modelItem => item.wz_style)
+                        </div>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.state)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.user.username)
+                    </td>
+                    <td class="td_center">
+                        <a asp-action="Edit" asp-route-id="@item.ID">编辑</a> |
+                        <a asp-action="Details" asp-route-id="@item.ID">详情</a> 
+                        <a asp-action="Delete" asp-route-id="@item.ID">删除</a>
+                    </td>
+                </tr>
+                i++;
+            }
+        }
+    </tbody>
+</table>

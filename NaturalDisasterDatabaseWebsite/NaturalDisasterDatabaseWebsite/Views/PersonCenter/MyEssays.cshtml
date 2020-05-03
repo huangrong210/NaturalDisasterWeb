@@ -1,0 +1,190 @@
+﻿@using System.Security.Claims
+<div class="main-nav-tabs">
+    <ul class="navItem">
+        <li class="navli selected">
+            <span class="nav-link navactive">全部(@ViewBag.essay.Count)</span>
+        </li>
+        <li class="navli"><span class="nav-link">已发布(@ViewBag.essay2.Count)</span></li>
+        <li class="navli"><span class="nav-link">待审核(@ViewBag.essay3.Count)</span></li>
+        <li class="navli"><span class="nav-link">不通过(@ViewBag.essay4.Count)</span></li>
+    </ul>
+</div>
+<div class="contentessay">
+    @*全部*@
+    <div class="list">
+        @* 全部搜索 *@
+        <div style="margin-top:10px;padding: 16px;font-size: 14px;background-color: #f2f5f7;margin-left: auto;">
+            @*失败*@
+            @*<form asp-controller="PersonCenter" asp-action="SearchString" method="get" class="form_search" onsubmit="return false;">
+                    <input type="text" name="SearchString" placeholder="标题、状态、时间搜索" class="el-input__inner" />
+                    <input class="el-button" type="button" value="搜索" onclick="" />
+                </form>*@
+            @*成功*@
+            <div class="form_search">
+                <input id="nickname" value="@User.FindFirstValue("ID")" type="hidden" />
+                <input placeholder="标题、状态搜索" class="el-input__inner" id="SearchArticle" />
+                <input class="el-button" type="button" value="搜索" onclick="searcharticle();" />
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+        @*文章条目*@
+        <div class="listessays">
+            @* 全部 *@
+            @for (var i = 0; i < ViewBag.essay.Count; i++)
+            {
+                <div class="article-list-item-mp">
+                    <div class="list-item-title">
+                        <span class="article-list-item-tag">@*@essays.state*@ @ViewBag.essay[i].state</span>
+                        <p class="article-list-item-txt ">
+                            <a asp-action="Details" asp-route-id="@ViewBag.essay[i].ID" title="查看">@ViewBag.essay[i].title</a>
+                        </p>
+                    </div>
+                    <div class="article-list-item-info">
+                        <div class="item-info-left">
+                            <span id="essayfbtime">
+                                @*@ViewBag.essay[i].fb_time*@
+                                @Html.TextBox("txtTime", (DateTime)ViewBag.essay[i].fb_time, "{0:yyyy年MM月dd日 HH:mm:ss}", new { @class = "dateInput", @id = "", @readonly = "true", style = "outline:none; border:none;" })
+                            </span>
+                            <span class="article-list-item-readComment">
+                                <img src="~/images/comment.png" title="评论" alt="" class="icon" />
+                                @ViewBag.essaynums[i]
+                            </span>
+                        </div>
+                        <div class="item-info-oper">
+                            <a asp-controller="PersonCenter" asp-action="Edit" asp-route-id="@ViewBag.essay[i].ID">编辑</a> |
+                            <input type="hidden" id="delessay" value="@ViewBag.essay[i].ID" />
+                            <a asp-controller="PersonCenter" asp-action="Delete" asp-route-id="@ViewBag.essay[i].ID" class="del">删除</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    @*已发布*@
+    <div class="list" style="display: none">
+        @for (var j = 0; j < ViewBag.essay2.Count; j++)
+        {
+            <div class="article-list-item-mp">
+                <div class="list-item-title">
+                    @*<span class="article-list-item-tag">@ViewBag.essay2[j].state</span>*@
+                    <p class="article-list-item-txt ">
+                        <a asp-controller="PersonCenter" asp-action="Details" asp-route-id="@ViewBag.essay2[j].ID" title="查看">@ViewBag.essay2[j].title</a>
+                    </p>
+                </div>
+                <div class="article-list-item-info">
+                    <div class="item-info-left">
+                        <span id="essayfbtime">
+                            @*@ViewBag.essay[i].fb_time*@
+                            @Html.TextBox("txtTime", (DateTime)ViewBag.essay2[j].fb_time, "{0:yyyy年MM月dd日 HH:mm:ss}", new { @class = "dateInput", @id = "", @readonly = "true", style = "outline:none; border:none;" })
+                        </span>
+                        <span class="article-list-item-readComment">
+                            <img src="~/images/comment.png" title="评论" alt="" class="icon">
+                            @ViewBag.essaynums2[j]
+                        </span>
+                    </div>
+                    <div class="item-info-oper">
+                        <a asp-controller="PersonCenter" asp-action="Edit" asp-route-id="@ViewBag.essay2[j].ID">编辑</a> |
+                        @*<input type="hidden" id="delessay" value="@ViewBag.essay2[j].ID" />*@
+                        <a asp-controller="PersonCenter" asp-action="Delete" asp-route-id="@ViewBag.essay2[j].ID" class="del">删除</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    @*待审核*@
+    <div class="list" style="display: none">
+        @for (var k = 0; k < ViewBag.essay3.Count; k++)
+        {
+            <div class="article-list-item-mp">
+                <div class="list-item-title">
+                    @*<span class="article-list-item-tag">@ViewBag.essay3[k].state</span>*@
+                    <p class="article-list-item-txt ">
+                        <a asp-controller="PersonCenter" asp-action="Details" asp-route-id="@ViewBag.essay3[k].ID" title="查看">@ViewBag.essay3[k].title</a>
+                    </p>
+                </div>
+                <div class="article-list-item-info">
+                    <div class="item-info-left">
+                        <span id="essayfbtime">
+                            @*@ViewBag.essay[i].fb_time*@
+                            @Html.TextBox("txtTime", (DateTime)ViewBag.essay3[k].fb_time, "{0:yyyy年MM月dd日 HH:mm:ss}", new { @class = "dateInput", @id = "", @readonly = "true", style = "outline:none; border:none;" })
+                        </span>
+                        <span class="article-list-item-readComment">
+                            <img src="~/images/comment.png" title="评论" alt="" class="icon">
+                            @ViewBag.essaynums3[k]
+                        </span>
+                    </div>
+                    <div class="item-info-oper">
+                        <a asp-controller="PersonCenter" asp-action="Edit" asp-route-id="@ViewBag.essay3[k].ID">编辑</a> |
+                        @*<input type="hidden" id="delessay" value="@ViewBag.essay3[k].ID" />*@
+                        <a asp-controller="PersonCenter" asp-action="Delete" asp-route-id="@ViewBag.essay3[k].ID" class="del">删除</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    @*不通过*@
+    <div class="list" style="display: none">
+        @for (var o = 0; o < ViewBag.essay4.Count; o++)
+        {
+            <div class="article-list-item-mp">
+                <div class="list-item-title">
+                    @*<span class="article-list-item-tag">@ViewBag.essay3[k].state</span>*@
+                    <p class="article-list-item-txt ">
+                        <a asp-controller="PersonCenter" asp-action="Details" asp-route-id="@ViewBag.essay4[o].ID" title="查看">@ViewBag.essay4[o].title</a>
+                    </p>
+                </div>
+                <div class="article-list-item-info">
+                    <div class="item-info-left">
+                        <span id="essayfbtime">
+                            @*@ViewBag.essay[i].fb_time*@
+                            @Html.TextBox("txtTime", (DateTime)ViewBag.essay4[o].fb_time, "{0:yyyy年MM月dd日 HH:mm:ss}", new { @class = "dateInput", @id = "", @readonly = "true", style = "outline:none; border:none;" })
+                        </span>
+                        <span class="article-list-item-readComment">
+                            <img src="~/images/comment.png" title="评论" alt="" class="icon">
+                            @ViewBag.essaynums4[o]
+                        </span>
+                    </div>
+                    <div class="item-info-oper">
+                        <a asp-controller="PersonCenter" asp-action="Edit" asp-route-id="@ViewBag.essay4[o].ID">编辑</a> |
+                        @*<input type="hidden" id="delessay" value="@ViewBag.essay4[o].ID" />*@
+                        <a asp-controller="PersonCenter" asp-action="Delete" asp-route-id="@ViewBag.essay4[o].ID" class="del">删除</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    function searcharticle() {
+        let oSearch = $("#SearchArticle").val();
+        let oUserID = $("#nickname").val();
+        //console.log(oUserID)
+        if (oSearch) {
+            $.ajax({
+                type: "post",
+                url: "/PersonCenter/SearchArticle",
+                data: {
+                    "userID": oUserID,
+                    "searchString": oSearch,
+                },
+                success: function (e) {
+                    console.log(e);
+                    //console.log(e.length);
+                    var searchStr = "";
+                    if (e.length > 0) {
+                        $(".listessays").html("");
+                      //  ViewBag.essaynums[i]
+                        for (var i = 0; i < e.length; i++) {
+                            searchStr += "<div class='article-list-item-mp'><div class='list-item-title'><span class='article-list-item-tag'>" + e[i].state + "</span><p class='article-list-item-txt'><a href='/PersonCenter/Details/" + e[i].id + "' title='查看'>" + e[i].title + "</a></p></div><div class='article-list-item-info'><div class='item-info-left'><span id='essayfbtime'>" + e[i].fb_time.replace("-", "年").replace(/(.*)-/, '$1月').replace("T", "日 ") + "</span></div><div class='item-info-oper'><a href='/PersonCenter/Edit/" + e[i].id + "'>编辑</a> |<input type='hidden' id='delessay' value='" + e[i].id + "' /><a href='/PersonCenter/Delete/" + e[i].id + "' class='del'>删除</a></div></div></div>";
+                        }
+                        $(".listessays").append(searchStr);
+                    } else {
+                        alert("暂无数据")
+                    }
+                }
+            });
+        } else {
+            alert("请输入内容");
+        }
+    }
+</script>

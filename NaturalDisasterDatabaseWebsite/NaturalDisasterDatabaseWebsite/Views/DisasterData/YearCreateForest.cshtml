@@ -1,0 +1,205 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "添加森林生物灾害年度数据";
+}
+<script src="~/lib/ueditor-1.4.3.3/ueditor.parse.js"></script>
+<style>
+    .content_nav {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 15px;
+        margin-bottom: 0px;
+        display:flex;
+        justify-content:space-between;
+    }
+
+    label {
+        width: 150px;
+        text-align: center;
+    }
+
+    .form-control {
+        display: inline-block;
+        width: auto;
+    }
+</style>
+<div class="content_nav">
+    <div>
+        @ViewData["Title"]&emsp;
+        <input type="submit" value="提交" class="btn btn-default" form="form1" />
+    </div>
+    <a asp-controller="DisasterData" asp-action="Index" style="padding-top: 5px;">返回灾害数据管理列表</a>
+</div>
+
+<hr style="margin-top:15px;" />
+<div style="margin:0 auto; text-align:center;">
+    <form asp-controller="DisasterData" asp-action="YearCreateForest" id="form1" name="form1">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <table id="addTable" style="width:100%">
+            <tbody style="">
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>年&emsp;&emsp;份</label>
+                            <input name="fbYears" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>经济损失(万元)</label>
+                            <input name="fbEconomicLosses" class="form-control" />
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>总发生面积(万公顷次)</label>
+                            <input name="fbTotalOccurArea" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>总防治面积(万公顷次)</label>
+                            <input name="fbTotalControlArea" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>总防治率(%)</label>
+                            <input name="fbTotalControlRate" class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>病害发生面积(公顷)</label>
+                            <input name="fbDiseasesOccurArea" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>病害防治面积(公顷)</label>
+                            <input name="fbDiseasesControlArea" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>病害防治率(%)</label>
+                            <input name="fbDiseasesControlRate" class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>虫害发生面积(公顷)</label>
+                            <input name="fbPestOccurArea" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>虫害防治面积(公顷)</label>
+                            <input name="fbPestControlArea" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>虫害防治率(%)</label>
+                            <input name="fbPestControlRate" class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>鼠害发生面积(公顷)</label>
+                            <input name="fbMouseOccurArea" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>鼠害防治面积(公顷)</label>
+                            <input name="fbMouseControlArea" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>鼠害防治率(%)</label>
+                            <input name="fbMouseControlRate" class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>有害植物发生面积(公顷)</label>
+                            <input name="fbHarmPlantsOccurArea" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>有害植物防治面积(公顷)</label>
+                            <input name="fbHarmPlantsControlArea" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>有害植物防治率(%)</label>
+                            <input name="fbHarmlPlantsControlRate" class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span style="font-weight:600;">备注</span>
+                        <input name="fbRemarks" class="form-control" id="content" type="hidden" />
+                        <div style="width:500px; margin:0 auto; text-align:center;">
+                            <textarea class="A4page" id="myEditor" name="NewsContent"></textarea>
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="3"><hr /></td>
+                </tr>
+            </tbody>
+            <tbody class="footTbody"></tbody>
+        </table>
+    </form>
+</div>
+@*备注*@
+<script type="text/javascript">
+    $(function () {
+        UE.delEditor('myEditor');
+        var ue = UE.getEditor('myEditor', {
+            toolbars: [
+
+            ],
+            allowDivTransToP: false,//阻止div标签自动转换为p标签
+            autoHeightEnabled: true,
+            autoFloatEnabled: true,
+            maximumWords: 10000,
+            wordCount: false
+        });
+        //对编辑器的操作最好在编辑器ready之后再做
+        ue.ready(function () {
+
+            $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+        })
+
+    });
+    function cc() {
+        document.getElementById('content').value = UE.getEditor('myEditor').getContent();
+    }
+    setInterval(function () {
+        cc();
+    }, 100);
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

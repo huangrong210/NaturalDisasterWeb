@@ -1,0 +1,342 @@
+﻿@using System.Security.Claims
+@model NaturalDisasterDatabaseWebsite.Models.Science_essayViewModel
+@*@model NaturalDisasterDatabaseWebsite.Models.Forum_msgViewModel*@
+
+@{
+    //Layout = "_BackLayout";
+    ViewData["Title"] = Model.title;
+    var k = ViewBag.forumMsg.Count;
+}
+<meta charset="utf-8" />
+<script src="~/lib/ueditor-1.4.3.3/ueditor.parse.js"></script>
+<script src="~/lib/ueditor-1.4.3.3/lang/zh-cn/"></script>
+
+<style>
+    p {
+        /*padding-top: 20px;*/
+        font-size: 16px;
+    }
+
+        p span {
+            font-weight: 300;
+            /*letter-spacing:8px;*/
+        }
+
+    dt, dd {
+        margin-bottom: 8px;
+    }
+
+        dt::after {
+            content: "："
+        }
+
+    .content_title {
+        text-align: center;
+        font-weight: 700;
+        padding-top: 0px;
+    }
+
+    .content_source {
+        text-align: center;
+        color: #7E8489;
+        margin-bottom: 12px;
+    }
+
+        .content_source .span, .content_nav .span {
+            display: inline-block;
+            margin-right: 2em;
+        }
+
+    .content_txt {
+        /*padding: 15px 0 50px 0;*/
+        line-height: 30px;
+    }
+
+    .content_nav {
+        display: inline-block;
+    }
+
+        .content_nav i {
+            font-style: normal;
+            font-weight: 500;
+        }
+
+    #imgCent {
+        margin: 0 auto;
+        text-align: center;
+        width: 300px;
+        height: auto;
+    }
+
+        #imgCent img {
+            width: 300px;
+            height: auto;
+        }
+
+    .edui-default .edui-editor-bottomContainer td {
+        border-top: none;
+    }
+
+    .row {
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+
+    .col-md-1, .col-md-11 {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .btn-red {
+        color: #fff !important;
+        border: 1px solid #ca0c16 !important;
+        background-color: #ca0c16 !important;
+        -webkit-transition: background-color .1s ease-in-out,border-color .1s ease-in-out;
+        transition: background-color .1s ease-in-out,border-color .1s ease-in-out;
+    }
+
+        .btn-red:hover {
+            background-color: #f21f2b !important;
+            border-color: #f21f2b !important;
+        }
+    .liuyan .lyul {
+        width: 100%;
+        list-style: none;
+        padding-left: 0px;
+    }
+
+    ul#lyul li:last-child > div {
+        border-bottom: none !important;
+    }
+
+    .liuyan .lirow {
+        border-bottom: 1px dashed #e0e0e0;
+        margin-top: 10px;
+    }
+
+    .liuyan .rowone {
+        width: 35px;
+        margin-right: 5px;
+    }
+
+        .liuyan .rowone > a {
+            cursor: pointer;
+        }
+
+        .liuyan .rowone img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+    .liuyan .rowoo .rowonep {
+        height: 30px;
+        line-height: 30px;
+        margin: 0px;
+    }
+
+    .liuyan .rowonep > a {
+        cursor: pointer;
+    }
+
+    .liuyan .rowonep .spanone {
+        font-size: 15px;
+        font-weight: bold;
+        color: #2e2e2e;
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    .liuyan .rowonep .spantwo {
+        font-size: 15px;
+        color: #999;
+    }
+
+    .liuyan .rowoodiv p {
+        font-size: 15px;
+    }
+
+    .liuyan .rowoodiv img {
+        width: 20px;
+    }
+</style>
+
+@*文章详情S*@
+<div>
+    @*<hr style="margin-top: 12px;" />*@
+    <p class="content_title" style="padding-top:20px;">@Html.DisplayFor(model => model.title)</p>
+    <div class="content_source">
+        <span class="span">来源：@Html.DisplayFor(model => model.source)</span>
+        <span class="span">发布时间：@Html.DisplayFor(model => model.fb_time)</span>
+        <span class="span">
+            <a>
+                <img alt="@Html.DisplayFor(model => model.user.username)" title="账号：@Html.DisplayFor(model => model.user.username)" src="~/upfiles/@Html.DisplayFor(model => model.user.img)" style="width:25px; height:25px; border-radius:50%; margin-right:3px;" />
+            </a>
+            作者：@Html.DisplayFor(model => model.author)
+            @*@if (@Html.DisplayFor(model => model.author) == null)
+                {<a>@Html.DisplayFor(model => model.user.username)</a>}
+                else{@Html.DisplayFor(model => model.author) <a> @Html.DisplayFor(model => model.user.username)</a>}*@
+        </span>
+        <span>
+            类型：@Html.DisplayFor(model => model.wz_style)
+        </span>
+    </div>
+    <div class="content_txt">
+        <div>
+            @Html.Raw(System.Net.WebUtility.UrlDecode(@Model.wz_content))
+        </div>
+    </div>
+</div>
+@*文章详情E*@
+@*提交发表评论S*@
+<div>
+    <form asp-controller="Home" asp-action="NewForumMsg" name="form1" id="form1" method="post" onsubmit="return IsUserLogin();">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="userID" type="hidden" class="form-control" value="@User.FindFirstValue("ID")" />
+        <input name="essayID" type="hidden" class="form-control" value="@Html.DisplayFor(model => model.ID)" />
+        <input class="form-control" name="comment" id="content" type="hidden" />
+        <input class="form-control" name="comment_time" id="Now" type="hidden" />
+    </form>
+</div>
+<hr style="border: 1px solid #D8FAFA" />
+<div class="row" style="height:120px;">
+    <div class="col-md-1" style=" margin:0 auto; text-align:center;height:106px;">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a style="display:inline-block; margin:8px auto 3px auto; text-align:center; text-decoration:none; cursor:pointer; height:60px;">
+                <img alt="暂无头像" title="账号：@User.Identity.Name" src="~/upfiles/@User.FindFirstValue("img")" style="width:45px; height:45px; border-radius:50%;" />
+                <p style="font-size:10px; margin:0;padding:0">@User.Identity.Name</p>
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Login" style="display:inline-block; margin:8px auto 3px auto; text-align:center; text-decoration:none; cursor:pointer; height:60px;" id="pleaselogin">请先登录</a>
+        }
+        <div class="form-group" style="display:inline-block; margin-bottom:0px;">
+            <input type="submit" value="发表评论" class="btn btn-default btn-red" form="form1" />
+        </div>
+    </div>
+    <div class="col-md-11" style="height:80px;">
+        <textarea class="A4page A4pageColor" id="myEditor" name="NewsContent" placeholder="想对作者说什么~" maxlength="100" style="display:inline-block;"></textarea>
+    </div>
+</div>
+<hr style="border: 1px solid #D8FAFA" />
+@*提交发表评论E*@
+@*查看文章留言S*@
+<div class="liuyan">
+    <ul class="lyul" id="lyul">
+        @foreach (var forumMsg in ViewBag.forumMsg)
+        {
+            <li>
+                <div class="row lirow">
+                    <div class="col-md-1 rowone"><a><img alt="暂无图片" title="@forumMsg.user.username" src="~/upfiles/@forumMsg.user.img" /></a></div>
+                    <div class="col-md-11 rowoo">
+                        <p class="rowonep">
+                            <a><span class="spanone">@forumMsg.user.username</span></a>
+                            <span class="spantwo">
+                                @Html.TextBox("txtTime", @forumMsg.comment_time, "{0:yyyy-MM-dd HH:mm:ss}", new { @class = "dateInput", @id = "", @readonly = "true", style = "outline:none; border:none;width:140px;" })
+                            </span>
+                            <span style="margin-left:12px; color:#999;">#<i>@k</i>楼</span>
+                        </p>
+                        <div class="rowoodiv">@Html.Raw(System.Net.WebUtility.UrlDecode(forumMsg.comment))</div>
+                    </div>
+                </div>
+
+            </li>
+            k--;
+        }
+    </ul>
+</div>
+<hr style="border: 1px solid #D8FAFA" />
+@*查看文章留言E*@
+<script>
+    function IsUserLogin() {
+        let ologin = $("#pleaselogin").text();
+        console.log(ologin)
+        if (ologin == "请先登录") {
+            let oConfirmLogin = confirm("请先登录");
+            if (oConfirmLogin == false) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+</script>
+<script>
+    $(() => {
+        setInterval(function () {
+            var time = new Date();   // 程序计时的月从0开始取值后+1
+            var m = time.getMonth() + 1;
+            var d = time.getDate();
+            var h = time.getHours();
+            var mi = time.getMinutes();
+            var s = time.getSeconds();
+            if (m < 10) { m = '0' + m; }
+            if (d < 10) { d = '0' + d; }
+            if (h < 10) { h = '0' + h; }
+            if (mi < 10) { mi = '0' + mi; }
+            if (s < 10) { s = '0' + s; }
+            var t = time.getFullYear() + "-" + m + "-"
+                + d + " " + h + ":"
+                + mi + ":" + s;
+            document.getElementById('Now').value = t;
+        }, 1000);
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        UE.delEditor('myEditor');
+        var ue = UE.getEditor('myEditor', {
+            toolbars: [
+                ['link', 'emotion']
+            ],
+            allowDivTransToP: false,//阻止div标签自动转换为p标签
+            autoHeightEnabled: true,
+            autoFloatEnabled: true,
+            maximumWords: 100,
+            initialFrameHeight: 40,
+        });
+        //对编辑器的操作最好在编辑器ready之后再做
+        ue.ready(function () {
+            $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+            //UE.Editor.prototype.placeholder = function (justPlainText) {
+            //    var _editor = this;
+            //    _editor.addListener("focus", function () {
+            //        var localHtml = _editor.getPlainTxt();
+            //        if ($.trim(localHtml) === $.trim(justPlainText)) {
+            //            _editor.setContent("");
+            //        }
+            //    });
+            //    _editor.addListener("blur", function () {
+            //        var localHtml = _editor.getContent();
+            //        if (!localHtml) {
+            //            _editor.setContent(justPlainText);
+            //        }
+            //    });
+            //    _editor.ready(function () {
+            //        _editor.fireEvent("blur");
+            //    });
+            //};
+            //ue.placeholder("想对作者说什么~");
+        });
+
+    })
+</script>
+<script type="text/javascript">
+    var myUrl = document.location.href;
+    document.getElementById('url').value = muUrl;
+    //alert(myUrl);//在需要的地方调用myUrl
+</script>
+<script>
+    function cc() {
+        document.getElementById('content').value = UE.getEditor('myEditor').getContent();
+    }
+    setInterval(function () {
+        cc();
+    }, 100);
+</script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+@*<script src="~/js/isShowPic.js"></script>*@

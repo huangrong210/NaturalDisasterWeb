@@ -1,0 +1,104 @@
+﻿@model IEnumerable<NaturalDisasterDatabaseWebsite.Models.Science_essayViewModel>
+@{
+    ViewData["Title"] = "其他";
+}
+<style>
+    .ts-title {
+        border-bottom: 2px solid #3e96d0;
+    }
+    .ts-title .title {
+        display: inline-block;
+        background: #3e96d0;
+        font-size: 16px;
+        color: #fff;
+        border-top: none;
+    }
+    .ts-title .title span {
+        padding-left: 15px;
+    }
+    .ts-icon-title-arrow {
+        display: inline-block;
+        width: 45px;
+        height: 35px;
+        background: #fff;
+    }
+    .ts-news-list-a {
+        padding-left: 18px;
+    }
+    .ts-news-list-a li {
+        height: 35px;
+        line-height: 35px;
+    }
+    .ts-news-list-a li a {
+        display: block;
+        width: 80%;
+        font-size: 15px;
+        height: 35px;
+        color: #484848;
+        text-decoration: none;
+        word-wrap: normal;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        float: left;
+    }
+    .ts-news-list-a li a:hover {
+        color: #3e96d0;
+        text-decoration: none;
+    }
+    .ts-news-list-a .date {
+        font-size: 15px;
+        display: block;
+        color: #999;
+        text-align: right;
+        width: 20%;
+        float: right;
+    }
+    .dateInput {
+        outline: none;
+        border: none;
+        width: 100%;
+        height: 35px;
+        text-align: right;
+    }
+    .ul {
+        padding: 0 15px 0 20px;
+        border: 1px solid #ddd;
+    }
+    #li1 {
+        list-style: decimal-leading-zero;
+    }
+    .title a{
+        text-decoration:none;
+        font-size:16px;
+        color:#fff;
+    }
+    .title a:hover{
+        color:#00469e;
+        text-decoration:underline;
+    }
+</style>
+<div style="margin-top:15px;">
+    <div class="ts-title">
+        <div class="title">
+            <span><a asp-action="Knowledge">灾害知识</a>&gt;&gt;@ViewData["Title"]</span>
+            <img class="ts-icon ts-icon-title-arrow" src="~/images/icon-title-bg-arrow.png" />
+        </div>
+    </div>
+    <div class="ul">
+        <ul class="ts-news-list-a">
+            @foreach (var e in Model)
+            {
+                if (e.wz_style == "未知")
+                {
+                    <li id="li1">
+                        <a asp-action="KnowledgeDetail" asp-route-id="@e.ID">@Html.DisplayFor(modelItem => e.title)</a>
+                        <span class="date">
+                            @Html.TextBoxFor(model => e.fb_time, "{0:yyyy-MM-dd}", new { @class = "dateInput", @id = "", @readonly = "true" })
+                        </span>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,989 @@
+﻿@using System.Security.Claims
+@*放置echarts图表*@
+<div id="earth" style="width: 50%; height: 302px;"></div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+        var myEarthCharts = echarts.init(document.getElementById('earth'));
+        myEarthCharts.clear();//用于清除已存在的内容
+        myEarthCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetEarthquakeCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var earthyears = [], earthoccur = [], earthcasul = [];
+                    for (var ea = 0; ea < res.earthlist.length; ea++) {
+                        earthyears[ea] = res.earthlist[ea].eYears;
+                        earthoccur[ea] = res.earthlist[ea].eTotalNumbers;
+                        earthcasul[ea] = res.earthlist[ea].eCasualties;
+                    }
+                    //console.log(earthyears, earthoccur, earthcasul)
+                    myEarthCharts.hideLoading();
+                    option = {
+                        //backgroundColor: '#394056',
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.4)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,1)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                lineStyle: {
+                                    color: '#57617B'
+                                }
+                            },
+                            formatter: function (e) {
+                                var str = '<p style="text-align:center;margin-bottom:0;padding-bottom:0;">' + e[0].name + "年</p>";
+                                for (var te = 0; te < e.length; te++) {
+                                    if (e[te].seriesName == "地震次数") {
+                                        str += e[te].marker + " " + e[te].seriesName + "：" + e[te].value + " 次<br />";
+                                    } else {
+                                        str += e[te].marker + " " + e[te].seriesName + "：" + e[te].value + " 人<br />";
+                                    }
+
+                                }
+                                return str;
+                            }
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            feature: {
+                                dataView: { //数据视图
+                                    show: true,
+                                    readOnly: false,
+                                    lang: ['', '关闭', '导出Excel'],
+                                    buttonColor: '#30C76C',
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    },
+                                    contentToOption: function (opts) {
+                                        //console.log(opts)
+                                        $.noConflict(); //请务必加上这一句，否则无法下载excel
+                                        $("#tableExcel_Earth").table2excel({ //通过id即tableExcel_Day
+                                            exclude: ".noExl", //过滤位置的 css 类名：有class="noExl"的行不被导出
+                                            name: "表格-" + new Date().getTime(),
+                                            filename: "广西地震灾害" + new Date().getTime() + ".xls", //文件名称
+                                            exclude_img: true,
+                                            exclude_links: true,
+                                            exclude_inputs: true
+                                        });
+                                    },
+                                    optionToContent: function (opt) {
+                                        var axisData = opt.xAxis[0].data; // 坐标数据
+                                        var series = opt.series; // 折线图数据
+                                        var tdHeaders = '<td></td><td>年份</td>'; // 表头第一列
+                                        for (var k = 0; k < series.length; k++) {
+                                            if (series[k].name == "地震次数") {
+                                                tdHeaders += '<td style="padding:0px 2px;">' + series[k].name + '(次)</td>'; //组装表头
+                                            } else {
+                                                tdHeaders += '<td style="padding:0px 2px;">' + series[k].name + '(人)</td>'; //组装表头
+                                            }
+                                        }
+                                        var table = '<div style="overflow-y:auto;height: 100%;width:100%;"><table id="tableExcel_Earth" class="table-bordered table-striped" style="text-align:center; border-collapse:collapse; margin:0 auto; text-align:center;" border="1" ><tbody><tr>' + tdHeaders + '</tr>';
+                                        var tdBodys = ''; // 表数据
+                                        for (var i = 0, l = axisData.length; i < l; i++) {
+                                            for (var j = 0; j < series.length; j++) {
+                                                var temp = series[j].data[i];
+                                                if (temp != null && temp != undefined) {
+                                                    tdBodys += '<td>' + series[j].data[i] + '</td>'; //组装表数据
+                                                } else {
+                                                    tdBodys += '<td></td>';
+                                                }
+                                            }
+                                            table += '<tr><td style="padding:0 6px;">' + (i + 1) + '</td><td style="padding: 0 10px">' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                                            tdBodys = '';
+                                        }
+                                        table += '</tbody></table></div>';
+                                        return table;
+                                    },
+                                },
+                                magicType: {
+                                    type: ['line', 'bar'],
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                restore: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                saveAsImage: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        legend: {
+                            icon: 'rect',
+                            itemWidth: 14,
+                            itemHeight: 5,
+                            itemGap: 13,
+                            data: ['地震次数', '伤亡人数'],
+                            orient: 'horizontal', // 'vertical'
+                            x: 'center', // 'center' | 'left' | {number},
+                            y: 'top',
+                            top: '2%',
+                            textStyle: {
+                                fontSize: 12,
+                                color: '#fff'
+                            }
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '6.5%',
+                            bottom: '4%',
+                            containLabel: true
+                        },
+                        xAxis: [{
+                            type: 'category',
+                            data: earthyears,
+                            name: '年',
+                            boundaryGap: false,
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            axisLabel: {
+                                interval: 0
+                            }
+                        }],
+                        yAxis: [{
+                            type: 'value',
+                            name: '地震次数&伤亡人数',
+                            nameTextStyle: {
+                                padding: [0, 0, 0, 70]    // 四个数字分别为上右下左与原位置距离
+                            },
+                            axisTick: {
+                                show: true
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                },
+                                //symbol: ['none', 'arrow'],
+                                //symbolSize: [4, 8],
+                            },
+                            axisLabel: {
+                                margin: 10,
+                                textStyle: {
+                                    fontSize: 14
+                                }
+                            },
+                            splitLine: {
+                                show: false,
+                                lineStyle: {
+                                    color: '#57617B'
+                                }
+                            }
+                        }],
+                        series: [{
+                            name: '地震次数',
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'circle',
+                            symbolSize: 5,
+                            showSymbol: false,
+                            lineStyle: {
+                                normal: {
+                                    width: 1
+                                }
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 0,
+                                        color: 'rgba(137, 189, 27, 0.3)'
+                                    }, {
+                                        offset: 0.8,
+                                        color: 'rgba(137, 189, 27, 0)'
+                                    }], false),
+                                    shadowColor: 'rgba(0, 0, 0, 0.1)',
+                                    shadowBlur: 10
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(137,189,27)',
+                                    borderColor: 'rgba(137,189,2,0.27)',
+                                    borderWidth: 12
+
+                                }
+                            },
+                            data: earthoccur
+                        }, {
+                            name: '伤亡人数',
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'circle',
+                            symbolSize: 5,
+                            showSymbol: false,
+                            lineStyle: {
+                                normal: {
+                                    width: 1
+                                }
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 0,
+                                        color: 'rgba(0, 136, 212, 0.3)'
+                                    }, {
+                                        offset: 0.8,
+                                        color: 'rgba(0, 136, 212, 0)'
+                                    }], false),
+                                    shadowColor: 'rgba(0, 0, 0, 0.1)',
+                                    shadowBlur: 10
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(0,136,212)',
+                                    borderColor: 'rgba(0,136,212,0.2)',
+                                    borderWidth: 12
+
+                                }
+                            },
+                            data: earthcasul
+                        },]
+                    };
+                    myEarthCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        var myEarthCharts = echarts.init(document.getElementById('earth'));
+        myEarthCharts.clear();//用于清除已存在的内容
+        myEarthCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetEarthquakeCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var earthyears = [], earthoccur = [], earthcasul = [];
+                    for (var ea = 0; ea < res.earthlist.length; ea++) {
+                        earthyears[ea] = res.earthlist[ea].eYears;
+                        earthoccur[ea] = res.earthlist[ea].eTotalNumbers;
+                        earthcasul[ea] = res.earthlist[ea].eCasualties;
+                    }
+                    //console.log(earthyears, earthoccur, earthcasul)
+                    myEarthCharts.hideLoading();
+                    option = {
+                        //backgroundColor: '#394056',
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.4)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,1)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                lineStyle: {
+                                    color: '#57617B'
+                                }
+                            },
+                            formatter: function (e) {
+                                var str = '<p style="text-align:center;margin-bottom:0;padding-bottom:0;">' + e[0].name + "年</p>";
+                                for (var te = 0; te < e.length; te++) {
+                                    if (e[te].seriesName == "地震次数") {
+                                        str += e[te].marker + " " + e[te].seriesName + "：" + e[te].value + " 次<br />";
+                                    } else {
+                                        str += e[te].marker + " " + e[te].seriesName + "：" + e[te].value + " 人<br />";
+                                    }
+
+                                }
+                                return str;
+                            }
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            feature: {
+                                magicType: {
+                                    type: ['line', 'bar'],
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                restore: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        legend: {
+                            icon: 'rect',
+                            itemWidth: 14,
+                            itemHeight: 5,
+                            itemGap: 13,
+                            data: ['地震次数', '伤亡人数'],
+                            orient: 'horizontal', // 'vertical'
+                            x: 'center', // 'center' | 'left' | {number},
+                            y: 'top',
+                            top: '2%',
+                            textStyle: {
+                                fontSize: 12,
+                                color: '#fff'
+                            }
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '6.5%',
+                            bottom: '4%',
+                            containLabel: true
+                        },
+                        xAxis: [{
+                            type: 'category',
+                            data: earthyears,
+                            name: '年',
+                            boundaryGap: false,
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            axisLabel: {
+                                interval: 0
+                            }
+                        }],
+                        yAxis: [{
+                            type: 'value',
+                            name: '地震次数&伤亡人数',
+                            nameTextStyle: {
+                                padding: [0, 0, 0, 70]    // 四个数字分别为上右下左与原位置距离
+                            },
+                            axisTick: {
+                                show: true
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                },
+                                //symbol: ['none', 'arrow'],
+                                //symbolSize: [4, 8],
+                            },
+                            axisLabel: {
+                                margin: 10,
+                                textStyle: {
+                                    fontSize: 14
+                                }
+                            },
+                            splitLine: {
+                                show: false,
+                                lineStyle: {
+                                    color: '#57617B'
+                                }
+                            }
+                        }],
+                        series: [{
+                            name: '地震次数',
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'circle',
+                            symbolSize: 5,
+                            showSymbol: false,
+                            lineStyle: {
+                                normal: {
+                                    width: 1
+                                }
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 0,
+                                        color: 'rgba(137, 189, 27, 0.3)'
+                                    }, {
+                                        offset: 0.8,
+                                        color: 'rgba(137, 189, 27, 0)'
+                                    }], false),
+                                    shadowColor: 'rgba(0, 0, 0, 0.1)',
+                                    shadowBlur: 10
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(137,189,27)',
+                                    borderColor: 'rgba(137,189,2,0.27)',
+                                    borderWidth: 12
+
+                                }
+                            },
+                            data: earthoccur
+                        }, {
+                            name: '伤亡人数',
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'circle',
+                            symbolSize: 5,
+                            showSymbol: false,
+                            lineStyle: {
+                                normal: {
+                                    width: 1
+                                }
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 0,
+                                        color: 'rgba(0, 136, 212, 0.3)'
+                                    }, {
+                                        offset: 0.8,
+                                        color: 'rgba(0, 136, 212, 0)'
+                                    }], false),
+                                    shadowColor: 'rgba(0, 0, 0, 0.1)',
+                                    shadowBlur: 10
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(0,136,212)',
+                                    borderColor: 'rgba(0,136,212,0.2)',
+                                    borderWidth: 12
+
+                                }
+                            },
+                            data: earthcasul
+                        },]
+                    };
+                    myEarthCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+
+<div id="earthEconomic" style="width: 50%; height: 302px;"></div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+        var myEarthECharts = echarts.init(document.getElementById('earthEconomic'));
+        myEarthECharts.clear();//用于清除已存在的内容
+        myEarthECharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetEarthquakeCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var eartheyears = [], eartheyears2 = [], eartheconomic = [], earthec = [];
+                    for (var ee = 0; ee < res.earthlist.length; ee++) {
+                        eartheyears[ee] = res.earthlist[ee].eYears;
+                        eartheyears2[ee + 1] = res.earthlist[ee].eYears;
+                        eartheconomic[ee + 1] = res.earthlist[ee].eEconomicLosses;
+                    }
+                    eartheyears2[0] = "year";
+                    eartheconomic[0] = "value";
+                    for (var eeco = 0; eeco < eartheyears2.length; eeco++) {
+                        earthec[eeco] = [eartheyears2[eeco], eartheconomic[eeco]];
+                    }
+                    //console.log(earthec)
+
+                    function formatJson(source) {
+                        var json = source.slice(1).map(vals => {
+                            //console.log("vals: ", vals)
+                            var obj = {};
+                            vals.forEach((val, index) => {
+                                obj[source[0][index]] = val
+                            })
+                            return obj;
+                        });
+                        return json
+                    }
+                    var earthchart = formatJson(earthec)
+                    //console.log(earthchart)
+                    myEarthECharts.hideLoading();
+
+                    let data = {
+                        "chart": earthchart
+                    }
+
+
+                    let xAxisYear = [],
+                        barData = []
+                    for (let i = 0; i < data.chart.length; i++) {
+                        xAxisYear.push(data.chart[i].year);
+                        barData.push({
+                            "name": xAxisYear[i],
+                            "value": data.chart[i].value
+                        })
+                    }
+
+                    option = {
+                        //backgroundColor: "#999",
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.5)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,1)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        title: '',
+                        grid: {
+                            top: '14%',
+                            left: '3%',
+                            right: '6.5%',
+                            bottom: '4%',
+                            containLabel: true
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'none'
+                            },
+                            formatter: function (e) {
+                                console.log(e);
+                                return e[0].marker + " " + e[0].name + "年：" + e[0].value + " 万元";
+                            }
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            iconStyle: {
+                                borderColor: '#fff'
+                            },
+                            emphasis: {
+                                iconStyle: {
+                                    borderColor: '#f00'
+                                },
+                            },
+                            feature: {
+                                dataView: { //数据视图
+                                    show: true,
+                                    readOnly: false,
+                                    lang: ['', '关闭', '导出Excel'],
+                                    buttonColor: '#30C76C',
+                                    contentToOption: function (opts) {
+                                        //console.log(opts)
+                                        $.noConflict(); //请务必加上这一句，否则无法下载excel
+                                        $("#tableExcel_EarthEco").table2excel({ //通过id即tableExcel_Day
+                                            exclude: ".noExl", //过滤位置的 css 类名：有class="noExl"的行不被导出
+                                            name: "表格-" + new Date().getTime(),
+                                            filename: "广西地震灾害" + new Date().getTime() + ".xls", //文件名称
+                                            exclude_img: true,
+                                            exclude_links: true,
+                                            exclude_inputs: true
+                                        });
+                                    },
+                                    optionToContent: function (opt) {
+                                        var axisData = opt.xAxis[0].data; // 坐标数据
+                                        var series = opt.series; // 折线图数据
+                                        var tdHeaders = '<td></td><td>年份</td>'; // 表头第一列
+                                        for (var k = 0; k < series.length - 1; k++) {
+                                            tdHeaders += '<td style="padding:0px 2px;">' + series[k].name + '(万元)</td>'; //组装表头
+                                        }
+                                        var table = '<div style="overflow-y:auto;height: 100%;width:100%;"><table id="tableExcel_EarthEco" class="table-bordered table-striped" style="text-align:center; border-collapse:collapse; margin:0 auto; text-align:center;" border="1" ><tbody><tr>' + tdHeaders + '</tr>';
+                                        var tdBodys = ''; // 表数据
+                                        for (var i = 0, l = axisData.length; i < l; i++) {
+                                            for (var j = 0; j < series.length - 1; j++) {
+                                                var temp = series[j].data[i];
+                                                if (temp != null && temp != undefined) {
+                                                    tdBodys += '<td>' + series[j].data[i].value + '</td>'; //组装表数据
+                                                } else {
+                                                    tdBodys += '<td></td>';
+                                                }
+                                            }
+                                            table += '<tr><td style="padding:0 6px;">' + (i + 1) + '</td><td style="padding: 0 10px">' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                                            tdBodys = '';
+                                        }
+                                        table += '</tbody></table></div>';
+                                        return table;
+                                    },
+                                },
+                                saveAsImage: {
+                                    show: true
+                                }
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        xAxis: [
+                            {
+                                type: 'category',
+                                show: true,
+                                name: "年",
+                                data: eartheyears,
+                                axisLabel: {
+                                    textStyle: {
+                                        color: '#fff'
+                                    }
+                                },
+                                axisTick: {
+                                    show: false,
+                                    color: "#fff"
+                                },
+                                axisLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        color: "#fff"
+                                    }
+                                }
+                            },
+                            {
+                                type: 'category',
+                                position: "bottom",
+                                // data: xAxisMonth,
+                                boundaryGap: true,
+                                // offset: 40,
+                                axisLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        color: "#fff"
+                                    }
+                                },
+                                axisLabel: {
+                                    textStyle: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }
+
+                        ],
+                        yAxis: [{
+                            show: true,
+                            name: '经济损失（单位：万元）',
+                            nameTextStyle: {
+                                padding: [0, 0, 0, 42]    // 四个数字分别为上右下左与原位置距离
+                            },
+                            splitLine: {
+                                show: false,
+                                lineStyle: {
+                                    color: "#fff"
+                                }
+                            },
+                            axisLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: "#fff"
+                                }
+                            },
+                            axisLabel: {
+                                show: true,
+                                color: '#fff'
+                            }
+                        }],
+                        color: ['#A7F5F9'],
+                        series: [{
+                            name: '经济损失',
+                            type: 'pictorialBar',
+                            xAxisIndex: 1,
+                            barWidth: 10,
+                            symbol: 'path://d="M150 130 L130 50 L170 50 Z"',
+                            itemStyle: {
+                                emphasis: {
+                                    opacity: 1
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: "#2ec7c9",
+                                    lineStyle: {
+                                        color: "#2ec7c9"
+                                    }
+                                }
+                            },
+                            data: barData,
+                        },
+                        {
+                            symbol: 'circle',
+                            symbolSize: 16,
+                            symbolOffset: [0, '-80%'],
+                            symbolPosition: 'end',
+                            name: "经济损失",
+                            type: "pictorialBar",
+                            xAxisIndex: 0,
+                            data: barData
+                        }
+                        ]
+                    }
+                    myEarthECharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        var myEarthECharts = echarts.init(document.getElementById('earthEconomic'));
+        myEarthECharts.clear();//用于清除已存在的内容
+        myEarthECharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetEarthquakeCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var eartheyears = [], eartheyears2 = [], eartheconomic = [], earthec = [];
+                    for (var ee = 0; ee < res.earthlist.length; ee++) {
+                        eartheyears[ee] = res.earthlist[ee].eYears;
+                        eartheyears2[ee + 1] = res.earthlist[ee].eYears;
+                        eartheconomic[ee + 1] = res.earthlist[ee].eEconomicLosses;
+                    }
+                    eartheyears2[0] = "year";
+                    eartheconomic[0] = "value";
+                    for (var eeco = 0; eeco < eartheyears2.length; eeco++) {
+                        earthec[eeco] = [eartheyears2[eeco], eartheconomic[eeco]];
+                    }
+                    //console.log(earthec)
+
+                    function formatJson(source) {
+                        var json = source.slice(1).map(vals => {
+                            //console.log("vals: ", vals)
+                            var obj = {};
+                            vals.forEach((val, index) => {
+                                obj[source[0][index]] = val
+                            })
+                            return obj;
+                        });
+                        return json
+                    }
+                    var earthchart = formatJson(earthec)
+                    //console.log(earthchart)
+                    myEarthECharts.hideLoading();
+
+                    let data = {
+                        "chart": earthchart
+                    }
+
+
+                    let xAxisYear = [],
+                        barData = []
+                    for (let i = 0; i < data.chart.length; i++) {
+                        xAxisYear.push(data.chart[i].year);
+                        barData.push({
+                            "name": xAxisYear[i],
+                            "value": data.chart[i].value
+                        })
+                    }
+
+                    option = {
+                        //backgroundColor: "#999",
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.5)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,1)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        title: '',
+                        grid: {
+                            top: '14%',
+                            left: '3%',
+                            right: '6.5%',
+                            bottom: '4%',
+                            containLabel: true
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'none'
+                            },
+                            formatter: function (e) {
+                                console.log(e);
+                                return e[0].marker + " " + e[0].name + "年：" + e[0].value + " 万元";
+                            }
+                        },
+                        xAxis: [
+                            {
+                                type: 'category',
+                                show: true,
+                                name: "年",
+                                data: eartheyears,
+                                axisLabel: {
+                                    textStyle: {
+                                        color: '#fff'
+                                    }
+                                },
+                                axisTick: {
+                                    show: false,
+                                    color: "#fff"
+                                },
+                                axisLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        color: "#fff"
+                                    }
+                                }
+                            },
+                            {
+                                type: 'category',
+                                position: "bottom",
+                                // data: xAxisMonth,
+                                boundaryGap: true,
+                                // offset: 40,
+                                axisLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        color: "#fff"
+                                    }
+                                },
+                                axisLabel: {
+                                    textStyle: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }
+
+                        ],
+                        yAxis: [{
+                            show: true,
+                            name: '经济损失（单位：万元）',
+                            nameTextStyle: {
+                                padding: [0, 0, 0, 42]    // 四个数字分别为上右下左与原位置距离
+                            },
+                            splitLine: {
+                                show: false,
+                                lineStyle: {
+                                    color: "#fff"
+                                }
+                            },
+                            axisLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: "#fff"
+                                }
+                            },
+                            axisLabel: {
+                                show: true,
+                                color: '#fff'
+                            }
+                        }],
+                        color: ['#A7F5F9'],
+                        series: [{
+                            name: '经济损失',
+                            type: 'pictorialBar',
+                            xAxisIndex: 1,
+                            barWidth: 10,
+                            symbol: 'path://d="M150 130 L130 50 L170 50 Z"',
+                            itemStyle: {
+                                emphasis: {
+                                    opacity: 1
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: "#2ec7c9",
+                                    lineStyle: {
+                                        color: "#2ec7c9"
+                                    }
+                                }
+                            },
+                            data: barData,
+                        },
+                        {
+                            symbol: 'circle',
+                            symbolSize: 16,
+                            symbolOffset: [0, '-80%'],
+                            symbolPosition: 'end',
+                            name: "经济损失",
+                            type: "pictorialBar",
+                            xAxisIndex: 0,
+                            data: barData
+                        }
+                        ]
+                    }
+                    myEarthECharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}

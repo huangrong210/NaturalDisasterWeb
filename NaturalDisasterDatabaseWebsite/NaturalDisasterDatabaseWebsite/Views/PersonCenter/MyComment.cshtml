@@ -1,0 +1,66 @@
+﻿<div class="comment-nav-tabs">
+    <div class="comment-nav-item activecomment">我的文章评论</div>
+    <div class="comment-nav-item">我发表的评论</div>
+</div>
+<div class="box">
+    <div class="con0">
+        @foreach (var p in ViewBag.othermsg)
+        {
+            <div class="comment-list-box">
+                <div class="img-avatar-box"><img src="~/upfiles/@p.img" width="32" height="32"></div>
+                <div class="comment-item-content">
+                    <div class="comment-item-title">
+                        <div class="item-title-left">
+                            <span class="user-name" style="color: rgb(79, 79, 79);">@p.username</span>
+                            <span class="date">@Html.TextBox("txtTime", @p.time, "{0:yyyy-MM-dd HH:mm:ss}", new { @class = "dateInput", @id = "", @readonly = "true", style = "outline:none; border:none;width:140px;" })</span>
+                            <span>回复了你的文章</span>
+                            <a asp-controller="PersonCenter" asp-action="Details" asp-route-id="@p.seid" class="article-title">@p.title</a>
+                        </div>
+                        <div class="opt-box">
+                            <a asp-controller="PersonCenter" asp-action="DeleteForumMsg" asp-route-id="@p.fmid" style="color: rgb(202, 12, 22); text-decoration:none; cursor:pointer;">删除</a>
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
+                    <div class="comment-item-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" viewBox="0 0 32 32" class="zuo-icon icon">
+                            <path d="M14.75 26c0 2.05-1.65 3.7-3.7 3.7H3.7C1.65 29.7 0 28.05 0 26V12.45C0 7.05 4.4 2.6 9.85 2.6h1.25c.65 0 1.25.55 1.25 1.25V6.3c0 .65-.55 1.25-1.25 1.25H9.85c-2.7 0-4.9 2.2-4.9 4.9v.6c0 1 .85 1.85 1.85 1.85h4.3c2.05 0 3.7 1.65 3.7 3.7V26zM32 26c0 2.05-1.65 3.7-3.7 3.7h-7.4c-2.05 0-3.7-1.65-3.7-3.7V12.45c0-5.4 4.4-9.85 9.85-9.85h1.25c.65 0 1.25.55 1.25 1.25V6.3c0 .65-.55 1.25-1.25 1.25h-1.25c-2.7 0-4.9 2.2-4.9 4.9v.6c0 1 .85 1.85 1.85 1.85h4.3c2.05 0 3.7 1.65 3.7 3.7V26z"></path>
+                        </svg>
+                        <span style="font-size:15px; height:25px;line-height:25px;" class="comment-ue nop">@Html.Raw(System.Net.WebUtility.UrlDecode(@p.comment))</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" viewBox="0 0 32 32" class="you-icon icon">
+                            <path d="M14.9 19.6c0 5.4-4.4 9.85-9.85 9.85H3.8c-.65 0-1.25-.55-1.25-1.25v-2.45c0-.65.55-1.25 1.25-1.25h1.25c2.7 0 4.9-2.2 4.9-4.9V19c0-1-.85-1.85-1.85-1.85H3.8c-2.05 0-3.7-1.65-3.7-3.7v-7.4c0-2.05 1.65-3.7 3.7-3.7h7.4c2.05 0 3.7 1.65 3.7 3.7V19.6zm17.2 0c0 5.4-4.4 9.85-9.85 9.85H21c-.65 0-1.25-.55-1.25-1.25v-2.45c0-.65.55-1.25 1.25-1.25h1.25c2.7 0 4.9-2.2 4.9-4.9V19c0-1-.85-1.85-1.85-1.85H21c-2.05 0-3.7-1.65-3.7-3.7v-7.4c0-2.05 1.65-3.7 3.7-3.7h7.4c2.05 0 3.7 1.65 3.7 3.7V19.6z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="con1" style="display: none">
+        @*我发表的评论*@
+        @foreach (var q in ViewBag.allsmg)
+        {
+            <div data-v-46b7af3d="" class="comment-list-box">
+                <div class="comment-item-content">
+                    <div class="comment-item-title">
+                        <div class="item-title-left">
+                            <span class="user-name" style="color: rgb(79, 79, 79);">我</span>
+                            <span class="date" style="font-weight: normal;">
+                                @Html.TextBox("txtTime", @q.time, "{0:yyyy-MM-dd HH:mm:ss}", new { @class = "dateInput", @id = "", @readonly = "true", style = "outline:none; border:none;width:140px;" })
+                            </span>
+                            <span>评论了</span>
+                            <span><span class="user-name" style="color: rgb(79, 79, 79);">@q.name</span>的文章</span>
+                            <a asp-controller="PersonCenter" asp-action="Details" asp-route-id="@q.eid" class="article-title">@q.title</a>
+                        </div>
+                        <div class="opt-box">
+                            <a asp-controller="PersonCenter" asp-action="DeleteForumMsg" asp-route-id="@q.fid" style="color: rgb(202, 12, 22); text-decoration:none; cursor:pointer;">删除</a>
+                        </div>
+                    </div>
+                    <div class="comment-item-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" viewBox="0 0 32 32" class="zuo-icon icon"><path d="M14.75 26c0 2.05-1.65 3.7-3.7 3.7H3.7C1.65 29.7 0 28.05 0 26V12.45C0 7.05 4.4 2.6 9.85 2.6h1.25c.65 0 1.25.55 1.25 1.25V6.3c0 .65-.55 1.25-1.25 1.25H9.85c-2.7 0-4.9 2.2-4.9 4.9v.6c0 1 .85 1.85 1.85 1.85h4.3c2.05 0 3.7 1.65 3.7 3.7V26zM32 26c0 2.05-1.65 3.7-3.7 3.7h-7.4c-2.05 0-3.7-1.65-3.7-3.7V12.45c0-5.4 4.4-9.85 9.85-9.85h1.25c.65 0 1.25.55 1.25 1.25V6.3c0 .65-.55 1.25-1.25 1.25h-1.25c-2.7 0-4.9 2.2-4.9 4.9v.6c0 1 .85 1.85 1.85 1.85h4.3c2.05 0 3.7 1.65 3.7 3.7V26z"></path></svg>
+                        <span class="comment-ue">@Html.Raw(System.Net.WebUtility.UrlDecode(@q.comment))</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" viewBox="0 0 32 32" class="you-icon icon"><path d="M14.9 19.6c0 5.4-4.4 9.85-9.85 9.85H3.8c-.65 0-1.25-.55-1.25-1.25v-2.45c0-.65.55-1.25 1.25-1.25h1.25c2.7 0 4.9-2.2 4.9-4.9V19c0-1-.85-1.85-1.85-1.85H3.8c-2.05 0-3.7-1.65-3.7-3.7v-7.4c0-2.05 1.65-3.7 3.7-3.7h7.4c2.05 0 3.7 1.65 3.7 3.7V19.6zm17.2 0c0 5.4-4.4 9.85-9.85 9.85H21c-.65 0-1.25-.55-1.25-1.25v-2.45c0-.65.55-1.25 1.25-1.25h1.25c2.7 0 4.9-2.2 4.9-4.9V19c0-1-.85-1.85-1.85-1.85H21c-2.05 0-3.7-1.65-3.7-3.7v-7.4c0-2.05 1.65-3.7 3.7-3.7h7.4c2.05 0 3.7 1.65 3.7 3.7V19.6z"></path></svg>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

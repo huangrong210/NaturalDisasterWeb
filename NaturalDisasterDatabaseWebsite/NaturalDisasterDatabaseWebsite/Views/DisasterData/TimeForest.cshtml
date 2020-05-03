@@ -1,0 +1,75 @@
+﻿<div style="">
+    <a asp-controller="DisasterData" asp-action="CreateForest"><i class="glyphicon glyphicon-plus"></i><span>添加时刻灾害数据：森林生物灾害</span></a>
+    <button onclick="downloadtimeforest();" class="btn btn-success" style="float:right; padding:3px 6px; border-radius:0px; font-size:14px;">导出EXCEL</button>
+</div>
+<table class="table" id="recorddataforest">
+    <thead>
+        <tr>
+            <th style="width:4%;">序号</th>
+            <th style="width:8%;">时间</th>
+            <th style="width:8%;">经度(°)</th>
+            <th style="width:8%;">维度(°)</th>
+            <th style="width:8%;">损失(万元)</th>
+            <th style="width:8%;">范围(公顷)</th>
+            <th style="width:13%;">灾害类型</th>
+            <th style="width:13%;">参考地点</th>
+            <th style="width:20%;">详情</th>
+            <th style="width:6%;">上报人</th>
+            <th style="width:4%;" class="noExl">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 1;
+            var count = 0;
+            @foreach (var forest in ViewBag.foresttime)
+            {
+                <tr>
+                    <td class="t_center">@i</td>
+                    <td style="text-align:center;"> @DateTime.Parse(@forest.foresttime.ToString()).ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@forest.forestlogitude</td>
+                    <td>@forest.forestdimension</td>
+                    <td>@forest.forestloss</td>
+                    <td>@forest.forestarea</td>
+                    <td class="newsInfo" style="text-align:justify; text-align-last:left;">
+                        <div class="newInfoTruncation boxId">@forest.foreststyle</div>
+                        <span>@forest.foreststyle</span>
+                    </td>
+                    <td class="newsInfo" style="text-align:justify; text-align-last:left;">
+                        <div class="newInfoTruncation boxId">@forest.forestplace</div>
+                        <span>@forest.forestplace</span>
+                    </td>
+                    <td class="newsInfo" style="text-align:justify; text-align-last:left;">
+                        <div class="newInfoTruncation newInfoTruncation3 boxId" id="boxId">@Html.Raw(System.Net.WebUtility.UrlDecode(@forest.forestdetails))</div>
+                        <span>@Html.Raw(System.Net.WebUtility.UrlDecode(@forest.forestdetails))</span>
+                    </td>
+                    <td>@forest.username</td>
+                    <td class="noExl">
+                        <a asp-controller="DisasterData" asp-action="EditForest" asp-route-id="@forest.ID">编辑</a>
+                        <a asp-controller="DisasterData" asp-action="DeleteForest" asp-route-id="@forest.ID">删除</a>
+                    </td>
+                </tr>
+                i++;
+                count = i - 1;
+            }
+            @*@count;*@
+        }
+    </tbody>
+</table>
+@*导出excel*@
+<script>
+    function downloadtimeforest() {
+        //console.log(1);
+        $(".boxId").html("");
+        $.noConflict(); //请务必加上这一句，否则无法下载excel，因为$符号与其他jq版本冲突了
+        $("#recorddataforest").table2excel({
+            exclude: ".noExl",
+            name: new Date().getTime(),
+            filename: new Date().getTime(),
+            exclude_img: true,
+            exclude_links: true,
+            exclude_inputs: true
+        });
+        window.location.reload(); //强制刷新，因为 table2excel只执行一次，如果不刷新就不能再下载数据
+    }
+</script>

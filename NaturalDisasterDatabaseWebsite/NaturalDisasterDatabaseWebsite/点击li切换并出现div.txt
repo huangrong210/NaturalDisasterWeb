@@ -1,0 +1,68 @@
+法一：
+	    <ul class="point">
+                <li><a href="#">全部</a></li>
+                <li><a href="#">已发布</a></li>
+                <li><a href="#">待审核</a></li>
+            </ul>
+            <div class="box">
+                <div class="con0">全部</div>
+                <div class="con1" style="display: none">已发布</div>
+                <div class="con2" style="display: none">待审核</div>
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $(".point li a").click(function () {
+                        var order = $(".point li a").index(this);//获取点击之后返回当前a标签index的值
+                        $(".con" + order).show().siblings("div").hide();//显示class中con加上返回值所对应的DIV
+                    });
+                })
+            </script>
+法二：
+            <ul class="switch">
+                <li class="selected">全部</li>
+                <li>已发布</li>
+                <li>待审核</li>
+            </ul>
+            <div class="essaycontent">
+                <div>全部</div>
+                <div style="display: none">已发布</div>
+                <div style="display: none">待审核</div>
+            </div>
+            <script>
+                $(function () {
+                    $(".switch li").click(/*单击切换*/function () {
+                        var divShow = $(".essaycontent").children("div");/*每个li下属的div*/
+                        if (!$(this).hasClass("selected")) {/*利用selected进行判断*/
+                            var index = $(this).index();/*li标签的顺序和div的顺序是对应的，获取索引*/
+                            $(this).addClass("selected");/*当前对象设置class属性*/
+                            $(this).siblings("li").removeClass("selected");/*移除其他同级元素属性*/
+                            $(divShow[index]).show();/*展示当前li对应的div内容,利用方法显示和隐藏*/
+                            $(divShow[index]).siblings("div").hide();/*隐藏同级元素*/
+                        }
+                    });
+                });
+            </script>
+法三：
+	    <ul class="navItem">
+                <li class="selected">全部</li>
+                <li>已发布</li>
+                <li>待审核</li>
+            </ul>
+            <div class="contentessay">
+                <div class="list">全部</div>
+                <div class="list" style="display: none">已发布</div>
+                <div class="list" style="display: none">待审核</div>
+            </div>
+            <script>
+                $(function () {
+                    $(".navItem li").click(function () {//获取点击事件的对象
+                        var divShow = $(".contentessay").children('.list');//获取要显示或隐藏的对象
+                        if (!$(this).hasClass('selected')) {//判断当前对象是否被选中，如果没选中的话进入if循环
+                            var index = $(this).index();//获取当前对象的索引
+                            $(this).addClass('selected').siblings('li').removeClass('selected');//当前对象添加选中样式并且其同胞移除选中样式；
+                            $(divShow[index]).show();//索引对应的div块显示
+                            $(divShow[index]).siblings('.list').hide();//索引对应的div块的同胞隐藏
+                        }
+                    });
+                });
+            </script>

@@ -1,0 +1,254 @@
+﻿@*@model IEnumerable<NaturalDisasterDatabaseWebsite.Models.UsersViewModel>*@
+@*页面顶部的 @model 语句指定视图现在获取的是 PaginatedList<T> 对象，而不是 List<T> 对象*@
+@*@model PaginatedList<NaturalDisasterDatabaseWebsite.Models.UsersViewModel>*@
+@model PaginatedList<UsersViewModel>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList.Mvc.Common;
+@using X.PagedList;
+
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "用户管理";
+}
+<style>
+    .usermanage {
+        text-align: center;
+        width: 100%;
+        font-size: 18px;
+        font-weight: 500;
+        color: #808080;
+        letter-spacing: 3px;
+        margin-top: 20px;
+    }
+
+    .createuser {
+        display: inline-block;
+    }
+
+        .createuser i {
+            color: #333;
+        }
+
+        .createuser i, .createuser a {
+            font-size: 14px;
+        }
+
+            .createuser a span {
+                display: inline-block;
+                width: 60px;
+                height: 28px;
+                line-height: 28px;
+                background: #F1F3F4;
+                text-align: center;
+            }
+
+    .form_search {
+        float: right;
+    }
+
+    .table {
+        table-layout: fixed;
+    }
+
+    th, td {
+        overflow: hidden;
+        white-space: nowrap;
+        /*white-space:pre-wrap;*/
+        /*word-break:break-all;*/
+        /*word-wrap:break-word;*/
+        text-overflow: ellipsis;
+        text-align: center;
+    }
+
+    .th_Fwidth {
+        width: 6.5%;
+    }
+
+    .th_Swidth {
+        width: 10%;
+    }
+
+    .pagination {
+        margin: 0 auto;
+    }
+
+    .pages {
+        display: inline-block;
+        background: #DDDDDD;
+        width: 50px;
+        height: 35px;
+        line-height: 35px;
+        border-radius: 3px;
+    }
+
+    .active {
+        background: #0591f6;
+    }
+
+    .tiaozhuan {
+        width: 42px;
+        height: 34px;
+        text-align: center;
+        margin-left: 30px;
+    }
+</style>
+<p class="usermanage">用户管理</p>
+<div class="createuser">
+    <a asp-action="Create"><i class="glyphicon glyphicon-plus"></i><span>新增用户</span></a>
+</div>
+<form asp-controller="Users" asp-action="Index" method="get" class="form_search">
+    @*ViewData可以让控制器传值到视图*@
+    <input type="text" name="SearchString" placeholder="请输入关键词搜索" value="@ViewData["currentFilter"]" style="padding-left:6px;" />
+    <input type="submit" value="搜索" />
+</form>
+<hr style="margin-bottom:0px; border-width:2px; color:#DDDDDD;" />
+<table class="table">
+    <thead>
+        <tr>
+            <th style="width:4%;">序号</th>
+            <th class="th_Fwidth">
+                @*每个字段都使用DisplayNameFor和DisplayFor帮助器来显示*@
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">账号</a>
+            </th>
+            <th class="th_Fwidth"><a asp-action="Index" asp-route-sortOrder="@ViewData["PwdSortParm"]">密码</a></th>
+            <th style="width:4%;"><a asp-action="Index" asp-route-sortOrder="@ViewData["SexSortParm"]">性别</a></th>
+            <th class="th_Swidth"><a asp-action="Index" asp-route-sortOrder="@ViewData["EmailSortParm"]">邮箱</a></th>
+            <th class="th_Fwidth"><a asp-action="Index" asp-route-sortOrder="@ViewData["StatusSortParm"]">身份</a></th>
+            <th class="th_Swidth"><a asp-action="Index" asp-route-sortOrder="@ViewData["ImgSortParm"]">头像</a></th>
+            <th class="th_Swidth"><a asp-action="Index" asp-route-sortOrder="@ViewData["PhoneSortParm"]">电话</a></th>
+            <th class="th_Swidth"><a asp-action="Index" asp-route-sortOrder="@ViewData["PlaceSortParm"]">工作地点</a></th>
+            <th class="th_Swidth"><a asp-action="Index" asp-route-sortOrder="@ViewData["OccuSortParm"]">从事职业</a></th>
+            <th class="th_Swidth"><a asp-action="Index" asp-route-sortOrder="@ViewData["AddressSortParm"]">居住地址</a></th>
+            <th style="width:11%;">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 1;
+            var count = 0;
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="t_center">@i</td>
+                    @*@Html：@是Razor强制类型语法，Html标签助手*@
+                    <td>@Html.DisplayFor(modelItem => item.username)</td>
+                    <td>@Html.DisplayFor(modelItem => item.password)</td>
+                    <td>@Html.DisplayFor(modelItem => item.sex)</td>
+                    <td>@Html.DisplayFor(modelItem => item.email)</td>
+                    <td>@Html.DisplayFor(modelItem => item.status)</td>
+                    <td>@Html.DisplayFor(modelItem => item.img)</td>
+                    <td>@Html.DisplayFor(modelItem => item.telephone)</td>
+                    <td>@Html.DisplayFor(modelItem => item.workplace)</td>
+                    <td>@Html.DisplayFor(modelItem => item.occupation)</td>
+                    <td>@Html.DisplayFor(modelItem => item.address)</td>
+                    <td class="t_center">
+                        @*超链接URL由Razor视图中的标记帮助器语句创建;id参数与默认路由相匹配，因此id将添加到路由数据;item.id为6时会生成以下HTML：<a href="/Users/Edit/6"></a>;当id(如外键)与默认路由中的参数不匹配时，会将它作为查询字符串添加，如：<a href="/Users/Edit?scienceID=6">Edit</a>*@
+                        <a asp-action="Edit" asp-route-id="@item.ID">编辑</a> |
+                        <a asp-action="Details" asp-route-id="@item.ID">详情</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ID">删除</a>
+                    </td>
+                </tr>
+                i++;
+                count = i - 1;
+            }
+            @*@count;*@
+        }
+    </tbody>
+</table>
+@*简单分页实现E*@
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    var totalPages = Model.TotalPages;
+    var totalRows = Model.TotalRows;
+
+}
+<div style="margin:0 auto;text-align:center;" class="por">
+    <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-pageNumber="1" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-default @prevDisabled">首页</a>
+    <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-default @prevDisabled">
+        上一页
+    </a>
+    @if (@totalPages <= 10)
+    {
+        @for (@i = 1; i <= @totalPages; i++){
+            <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-pageNumber="@i" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-default">@i</a>
+        }
+    }
+    <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-default @nextDisabled">下一页</a>
+    <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-pageNumber="@totalPages" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-default @nextDisabled">尾页</a>
+    <input class="btn btn-default tiaozhuan" id="tiaozhuan" />
+    <button class="btn btn-info" id="tz" onclick="tz(); ">跳转</button>
+    <p style="margin-top:8px;">
+        每页显示 <strong> @ViewData["pageSize"] </strong>条记录，共 <strong class="pages"><span style="color:#0591f6;">@(@totalRows == 0 ? @Model.PageIndex = 0 : @Model.PageIndex)</span> / @totalPages</strong> 页，共 <strong>@totalRows</strong> 条记录
+        @*<select name="rows" id="rows"><option selected value="10">10</option><option value="20">20</option><option value="50">50</option><option value="@totalRows">全部</option></select>*@
+    </p>
+</div>
+@*简单分页实现S*@
+
+<script>
+    /*
+		changeURLPar()函数参数说明：
+			uri:需要改变的链接
+			par:需要改变或者增加的参数名称
+			par_value:需要改变或者曾加的参数值
+
+	*/
+    function changeURLPar(uri, par, par_value) {
+        var pattern = par + '=([^&]*)';
+        var replaceText = par + '=' + par_value;
+        if (uri.match(pattern)) {//如果连接中带这个参数
+            var tmp = '/\\' + par + '=[^&]*/';
+            tmp = uri.replace(eval(tmp), replaceText);
+            return (tmp);
+        }
+        else {
+            if (uri.match('[\?]')) {//如果链接中不带这个参数但是有其他参数
+                return uri + '&' + replaceText;
+            }
+            else {//如果链接中没有带任何参数
+                return uri + '?' + replaceText;
+            }
+        }
+        return uri + '\n' + par + '\n' + par_value;
+    }
+
+    function tz() {
+        var oTiaozhuan = document.getElementById('tiaozhuan').value;
+        var oTz = document.getElementById('tz');
+        if (oTiaozhuan) { //有值
+            if (oTiaozhuan <= @totalPages) {
+                var newurl = changeURLPar(window.location.href, 'pageNumber', oTiaozhuan);//将oTiaozhuan和现有的页面地址拼接
+                window.history.pushState(null, null, newurl);//向当前url添加参数
+                location.reload([true]); //添加参数后 刷新
+            } else {
+                alert("输入有误");
+            }
+        } else {
+            alert("请输入跳转页数");
+        }
+    }
+</script>
+@*复杂分页未实现*@
+@*<div>
+        <div style="display:inline-block;">显示第1到第10条记录，总共10条记录 每页显示10条记录</div>
+        <nav aria-label="Page navigation" style="display:inline-block;">
+            <ul class="pagination" id="pagination">
+                <li class="first disabled" jp-role="first" jp-data="1"><a href="javascript:;">首页</a></li>
+                <li class="prev disabled" jp-role="prev" jp-data="0"><a href="javascript:;" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                <li class="page active" jp-role="page" jp-data="1"><a href="javascript:;">1</a></li>
+                <li class="page" jp-role="page" jp-data="2"><a href="javascript:;">2</a></li>
+                <li class="page" jp-role="page" jp-data="3"><a href="javascript:;">3</a></li>
+                <li class="page" jp-role="page" jp-data="4"><a href="javascript:;">4</a></li>
+                <li class="page" jp-role="page"><a href="javascript:;">···</a></li>
+                <li class="page" jp-role="page" jp-data="5"><a href="javascript:;">5</a></li>
+                <li class="page" jp-role="page" jp-data="6"><a href="javascript:;">6</a></li>
+                <li class="page" jp-role="page" jp-data="7"><a href="javascript:;">7</a></li>
+                <li class="next" jp-role="next" jp-data="2"><a href="javascript:;" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+                <li class="last" jp-role="last" jp-data="12"><a href="javascript:;">尾页</a></li>
+            </ul>
+            <input type="hidden" id="PageCount" runat="server" value="89">
+            <input type="hidden" id="PageSize" runat="server" value="8">
+            <input type="hidden" id="countindex" runat="server" value="12.125">
+            <input type="hidden" id="visiblePages" runat="server" value="7">
+        </nav>
+    </div>*@

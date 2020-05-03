@@ -1,0 +1,189 @@
+﻿@using System.Security.Claims
+@{
+    @if (User.Identity.IsAuthenticated && User.FindFirstValue("status") == "管理员")
+    {
+        Layout = "_BackLayout";
+    }
+    ViewData["Title"] = "添加地质灾害时刻数据";
+}
+<script src="~/lib/ueditor-1.4.3.3/ueditor.parse.js"></script>
+<style>
+    .content_nav {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 15px;
+        margin-bottom: 0px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    label {
+        width: 100px;
+        text-align: center;
+    }
+
+    .form-control {
+        display: inline-block;
+        width: auto;
+    }
+</style>
+<div class="content_nav">
+    <div>
+        <a href="javascript:void(0)" style="text-decoration:none;" onclick="getLongDimen1();">@ViewData["Title"]</a>&emsp;
+        <input type="submit" value="提交" class="btn btn-default" form="form1" />
+    </div>
+    <div>
+        <a href="javascript:void(0)" style="text-decoration:none;display: inline-block;padding-top: 6px;" onclick="getLongDimen2();">获取经纬度</a>&emsp;
+    </div>
+    @if (User.Identity.IsAuthenticated && User.FindFirstValue("status") == "管理员")
+    {
+        <a asp-controller="DisasterData" asp-action="Index" style="padding-top: 5px;">返回灾害数据管理列表</a>
+        <a asp-controller="PersonCenter" asp-action="Index" style="padding-top: 5px;">返回个人中心</a>
+    }
+    else
+    {
+        <a asp-controller="PersonCenter" asp-action="Index" style="padding-top: 5px;">返回个人中心</a>
+    }
+</div>
+
+<hr style="margin-top:15px;" />
+<div style="margin:0 auto; text-align:center;" class="geologyform">
+    <form asp-controller="DisasterData" asp-action="CreateGeology" id="form1" name="form1">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input name="userID" type="hidden" value="@User.FindFirstValue("ID")" class="form-control" />
+        <table id="addTable">
+            <tbody style="">
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>时&emsp;&emsp;间</label>
+                            <input name="geologytime" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>经&emsp;&emsp;度(°)</label>
+                            <input name="geologylogitude" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>纬&emsp;&emsp;度(°)</label>
+                            <input name="geologydimension" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>灾害级别</label>
+                            <input name="geologylevel" class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>参考位置</label>
+                            <input name="geologyplace" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>灾害类型</label>
+                            <input name="geologystyle" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>伤亡人数(人)</label>
+                            <input name="geologycasualty" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>经济损失(万元)</label>
+                            <input name="geologyloss" class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>灾害范围(公顷)</label>
+                            <input name="geologyarea" class="form-control" />
+                        </div>
+                    </td>
+                    <td colspan="2">
+                        <span style="font-weight:600;">详情</span>
+                        <input name="geologydetails" class="form-control" id="content" type="hidden" />
+                        <div style="width:500px;">
+                            <textarea class="A4page" id="myEditor" name="NewsContent"></textarea>
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="4"><hr /></td>
+                </tr>
+            </tbody>
+
+            <tbody class="footTbody"></tbody>
+        </table>
+    </form>
+</div>
+<div style="display:none;" class="longdimen">
+    <p style="color:red;">获取坐标并复制,皆是经度在前，维度在后</p>
+    <iframe id="pickupZuobiao" name="pickupZuobiao" scrolling="no" style="width:100%; min-height:500px;" allowfullscreen="true" frameborder="0" src="https://api.map.baidu.com/lbsapi/getpoint/index.html" onload="frameauto()"></iframe>
+    <script>
+        function frameauto() {
+            window.onerror = function () { return true; }
+            $(function () {
+                headerH = 0;
+                var h = $(window).height();
+                $("#pickupZuobiao").height((h - headerH) + "px");
+            });
+        }
+    </script>
+</div>
+<script>
+    function getLongDimen1() {
+        $(".geologyform").show();
+        $(".longdimen").hide();
+    }
+    function getLongDimen2() {
+        $(".geologyform").hide();
+        $(".longdimen").show();
+    }
+</script>
+@*详情*@
+<script type="text/javascript">
+    $(function () {
+        UE.delEditor('myEditor');
+        var ue = UE.getEditor('myEditor', {
+            toolbars: [
+
+            ],
+            allowDivTransToP: false,//阻止div标签自动转换为p标签
+            autoHeightEnabled: true,
+            autoFloatEnabled: true,
+            maximumWords: 10000,
+            wordCount: false
+        });
+        //对编辑器的操作最好在编辑器ready之后再做
+        ue.ready(function () {
+
+            $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+        })
+
+    });
+    function cc() {
+        document.getElementById('content').value = UE.getEditor('myEditor').getContent();
+    }
+    setInterval(function () {
+        cc();
+    }, 100);
+</script>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

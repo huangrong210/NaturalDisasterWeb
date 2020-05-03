@@ -1,0 +1,94 @@
+﻿@model NaturalDisasterDatabaseWebsite.Models.Science_essayViewModel
+
+@{
+    ViewData["Title"] = Html.DisplayFor(model => model.title);
+}
+<meta charset="utf-8" />
+<script src="~/lib/ueditor-1.4.3.3/ueditor.parse.js"></script>
+<script src="~/lib/ueditor-1.4.3.3/lang/zh-cn/"></script>
+<style>
+    p {
+        padding-top: 20px;
+        font-size: 16px;
+    }
+        p span {
+            font-weight: 300;
+            /*letter-spacing:8px;*/
+        }
+    dt, dd {
+        margin-bottom: 8px;
+    }
+        dt::after {
+            content: "："
+        }
+    .content_title {
+        text-align: center;
+        font-weight: 700;
+        padding-top: 0px;
+        font-size:24px;
+    }
+
+    .content_source {
+        text-align: center;
+        color: #7E8489;
+        margin-bottom: 12px;
+    }
+
+        .content_source .span, .content_nav .span {
+            display: inline-block;
+            margin-right: 2em;
+        }
+
+    .content_txt {
+        /*padding: 15px 0 50px 0;*/
+        line-height: 30px;
+    }
+
+    .content_nav {
+        display: inline-block;
+    }
+
+        .content_nav i {
+            font-style: normal;
+            font-weight: 500;
+        }
+
+    #imgCent {
+        margin: 0 auto;
+        text-align: center;
+        width: 300px;
+        height: auto;
+    }
+
+        #imgCent img {
+            width: 300px;
+            height: auto;
+        }
+
+    .back {
+        display: inline-block;
+        float: right;
+        margin-top: 20px;
+        font-size: 16px;
+    }
+</style>
+<div style="margin-top:20px;">
+    <p class="content_title">@Html.DisplayFor(model => model.title)</p>
+    <div class="content_source">
+        <span class="span">发布时间：@Html.DisplayFor(model => model.fb_time)</span>
+        <span class="span">来源：@Html.DisplayFor(model => model.source)</span>
+        <span class="span">作者：@Html.DisplayFor(model => model.author)</span>
+        <span>类型：@Html.DisplayFor(model => model.wz_style)</span>
+    </div>
+    <div class="content_txt">
+        <div>
+            @*@Html.DisplayFor(model => model.wz_content)*@
+            @Html.Raw(System.Net.WebUtility.UrlDecode(@Model.wz_content))
+        </div>
+        @*<div id="imgCent">
+                <img alt="暂无图片" id="imgshow" src="~/upfiles/@Html.DisplayFor(model => model.wz_img)" />
+            </div>*@
+    </div>
+</div>
+
+@*<script src="~/js/isShowPic.js"></script>*@

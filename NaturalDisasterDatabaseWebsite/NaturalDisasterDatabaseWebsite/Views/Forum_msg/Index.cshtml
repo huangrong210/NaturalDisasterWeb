@@ -1,0 +1,164 @@
+﻿@model IEnumerable<NaturalDisasterDatabaseWebsite.Models.Forum_msgViewModel>
+
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "论坛管理";
+}
+
+<style>
+    .msgmanage {
+        text-align: center;
+        width: 100%;
+        font-size: 18px;
+        font-weight: 500;
+        color: #808080;
+        letter-spacing: 3px;
+        margin-top: 20px;
+    }
+
+    /*.createmsg {display: inline-block;}
+    .createmsg i {color: #333;}
+    .createmsg i, .createmsg a {font-size: 14px;}
+    .createmsg a span {
+        display: inline-block;
+        width: 60px;
+        height: 28px;
+        line-height: 28px;
+        background: #F1F3F4;
+        text-align: center;
+    }*/
+    table{
+        height:auto;
+    }
+    th {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+    th, td {
+        text-align: center;        
+        display: table-cell;
+        vertical-align: middle !important;
+    }
+    .th-width {
+        width:32%;
+    }
+    .btn{
+        padding:0;
+        border:none;
+        outline:none;
+    }
+    .btn:focus, .btn:active:focus {
+        outline: none;
+    }
+    .rawimg p{
+        margin-bottom:0px;
+    }
+    .rawimg p img {
+        width: 25px;
+        height: 25px;
+    }
+</style>
+<p class="msgmanage">论坛管理</p>
+@*<div class="createmsg">
+    <a asp-action="Create"><i class="glyphicon glyphicon-plus"></i><span>新增留言</span></a>
+</div>*@
+<form asp-controller="Forum_msg" asp-action="Index" method="get" class="form_search">
+    <input type="text" name="SearchString" placeholder="关键词搜索" value="@ViewData["currentFilter"]" style="padding-left:6px;" />
+    <input type="submit" value="搜索" />
+</form>
+<hr style="margin-bottom:0px; border-width:2px; color:#DDDDDD;" />
+<form asp-action="MulDelete" method="post" name="form1" id="form1" onsubmit="return sumbit_sure()"></form>
+<table class="table">
+    <thead>
+        <tr>
+            <th style="width:4%;">
+                <input type="submit" class="btn btn-link" value="删除" form="form1" />
+            </th>
+            <th style="width:4%;">
+                序号
+            </th>
+            <th class="th-width">
+                @Html.DisplayNameFor(model => model.comment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.comment_time)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.user.username)
+            </th>
+            <th class="th-width">
+                @Html.DisplayNameFor(model => model.essay.title)
+            </th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 1; //给每一条从留言表中读取的记录编号，因为表中的ID字段可能有些是不连续的
+                        //var count = 0; //计算表中记录的总数
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" value="@item.ID" name="checkedId" form="form1" />
+                    </td>
+                    <td>
+                        @i
+                    </td>
+                    <td style="text-align:left;">
+                        @*@Html.DisplayFor(modelItem => item.comment)*@
+                        <div class="text-overflow rawimg" style="overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;word-break: break-all;vertical-align:middle;">
+                            @*@Html.DisplayFor(modelItem => item.wz_content)*@
+                            @Html.Raw(System.Net.WebUtility.UrlDecode(@item.comment))
+                        </div>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.comment_time)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.user.username)
+                    </td>
+                    <td style="text-align:left;">
+                        @Html.DisplayFor(modelItem => item.essay.title)
+                    </td>
+                    @*<td>
+                            <a asp-action="Edit" asp-route-id="@item.ID">编辑</a> |
+                            <a asp-action="Details" asp-route-id="@item.ID">详情</a> |
+                            <a asp-action="Delete" asp-route-id="@item.ID">删除</a>
+                        </td>*@
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.ID">删除</a>
+                    </td>
+                </tr>
+                i++;
+                //count = i - 1;
+            }
+            @*@count;*@
+        }
+    </tbody>
+</table>
+<script language="javascript">
+    function sumbit_sure(){
+        var checked = document.getElementsByName("checkedId");
+        var checked_counts = 0;
+        var msg;
+        for (var i = 0; i < checked.length; i++) {
+            if (checked[i].checked) {
+                checked_counts++;
+            }
+        }
+        //alert(checked_counts);
+        if (checked_counts > 0) {
+            msg = "确定要删除这【" + checked_counts + "】条数据吗 ? ";
+            var gnl = confirm(msg);
+            if (gnl == true) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            alert("请选择要删除的数据");
+            return false;
+        }
+    }
+</script>

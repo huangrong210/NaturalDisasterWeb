@@ -1,0 +1,305 @@
+﻿@model NaturalDisasterDatabaseWebsite.Models.Science_essayViewModel
+
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "编辑文章";
+}
+<script src="~/lib/ueditor-1.4.3.3/ueditor.parse.js"></script>
+<style>
+    .content_nav {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+    }
+
+    .content_title {
+        text-align: center;
+        font-weight: 700;
+        padding-top: 0px;
+    }
+
+    .content_source {
+        text-align: center;
+        color: #7E8489;
+        margin-bottom:12px;
+    }
+
+        .content_source .span, .content_nav .span {
+            display: inline-block;
+            margin-right: 2em;
+        }
+
+    .content_txt {
+        line-height: 30px;
+    }
+
+    form {
+        /*width:100%;*/
+    }
+
+    .rowUpdate {
+        display: inline-block;
+        width: 100%;
+    }
+
+        .rowUpdate p {
+            display: inline-block;
+            width: 30%;
+            margin-right: 30px;
+        }
+
+        .rowUpdate .pspan {
+            padding-right: 8px;
+        }
+
+    .onerow {
+        display: inline-block;
+        width: 46.5%;
+    }
+
+    #imgCent {
+        margin: 0 auto;
+        text-align: center;
+        width: 300px;
+        height: auto;
+    }
+    #imgCent img {
+        width: 300px;
+        height: auto;
+    }
+</style>
+
+<p class="content_nav">审核或修改文章（<strong><span id="username"></span></strong>）<a asp-action="Index" style="float:right;">返回文章管理列表</a></p>
+@*<div style="margin-top:18px;">
+        <a asp-action="Index">返回文章管理列表</a>
+    </div>*@
+<hr style="margin-top:12px;" />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Edit" name="form1" id="form1">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="form-group">
+                @*<label asp-for="title" class="control-label"></label>*@
+                @*<input type="hidden" asp-for="title" class="form-control" id="title" />*@
+                @*<span asp-validation-for="title" class="text-danger"></span>*@
+                @*<span id="span_title"></span>*@
+            </div>
+            <div class="form-group">
+                @*<label asp-for="author" class="control-label"></label>*@
+                @*<input type="hidden" asp-for="author" class="form-control" id="author" />
+                <span asp-validation-for="author" class="text-danger"></span>*@
+                @*<span id="span_author"></span>*@
+            </div>
+            <div class="form-group">
+                @*<label asp-for="source" class="control-label"></label>*@
+                @*<input type="hidden" asp-for="source" class="form-control" id="source" />
+                <span asp-validation-for="source" class="text-danger"></span>*@
+                @*<span id="span_source"></span>*@
+            </div>
+            <div class="form-group">
+                @*<label asp-for="wz_content" class="control-label"></label>*@
+                <input type="hidden" asp-for="wz_content" id="content" />
+                @*<textarea asp-for="wz_content" rows="10" cols="100" id="wz_content"></textarea>*@
+                <span asp-validation-for="wz_content" class="text-danger"></span>
+                @*<span id="span_wz_content"></span>*@
+            </div>
+            @*<div class="form-group">
+                <label asp-for="wz_img" class="control-label"></label>
+                <input type="hidden" asp-for="wz_img" class="form-control" id="wz_img" />
+                <span asp-validation-for="wz_img" class="text-danger"></span>
+                <span id="span_wz_img"></span>
+            </div>*@
+            <div class="form-group">
+                @*<label asp-for="fb_time" class="control-label"></label>*@
+                <input type="hidden" asp-for="fb_time" class="form-control" id="fb_time" />
+                <input type="hidden" id="oldtime" value="@Model.fb_time.ToString("yyyy-MM-dd HH:mm:ss")" />
+                <span asp-validation-for="fb_time" class="text-danger"></span>
+                @*<span id="span_fb_time">@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")</span>*@
+            </div>
+            <div class="form-group rowUpdate">
+                <p>
+                    <label asp-for="wz_style" class="control-label">当前类型：</label>
+                    <input asp-for="wz_style" id="wz_style" type="hidden" />
+                    <span class="pspan" id="span_wz_style"></span>
+                    <select class="form-control onerow" onchange="document.getElementById('wz_style').value = this.value;">
+                        <option selected disabled value="" style="display:none;">请选择类型</option>
+                        <option value="地震灾害科普">地震灾害科普</option>
+                        <option value="气象灾害科普">气象灾害科普</option>
+                        <option value="海洋灾害科普">海洋灾害科普</option>
+                        <option value="洪水灾害科普">洪水灾害科普</option>
+                        <option value="地质灾害科普">地质灾害科普</option>
+                        <option value="农作物生物灾害科普">农作物生物灾害科普</option>
+                        <option value="森林生物灾害科普">森林生物灾害科普</option>
+                        <option value="森林火灾科普">森林火灾科普</option>
+                        <option value="地震灾害时政">地震灾害时政</option>
+                        <option value="气象灾害时政">气象灾害时政</option>
+                        <option value="海洋灾害时政">海洋灾害时政</option>
+                        <option value="洪水灾害时政">洪水灾害时政</option>
+                        <option value="地质灾害时政">地质灾害时政</option>
+                        <option value="农作物生物灾害时政">农作物生物灾害时政</option>
+                        <option value="森林生物灾害时政">森林生物灾害时政</option>
+                        <option value="森林火灾时政">森林火灾时政</option>
+                        <option value="未知">未知</option>
+                    </select>
+                    @*<select asp-for="wz_style" class="form-control onerow" asp-items="ViewBag.wz_style" id="wz_style"> </select>*@
+                    <span asp-validation-for="wz_style" class="text-danger"></span>
+                </p>
+                <p>
+                    <label asp-for="state" class="control-label">当前状态：</label>
+                    <input asp-for="state" id="state" type="hidden" />
+                    <span class="pspan" id="span_state"></span>
+                    <select class="form-control onerow" id="select">
+                        <option selected disabled value="" style="display:none;">请选择状态</option>
+                        <option value="已发布">已发布</option>
+                        <option value="待审核">待审核</option>
+                        <option value="不通过">不通过</option>
+                    </select>
+                    <span asp-validation-for="state" class="text-danger"></span>
+                </p>
+                <input type="submit" value="保存" class="btn btn-info" />
+            </div>
+            @*<div class="form-group">
+                    <label asp-for="userID" class="control-label"></label>
+                    <input asp-for="userID" class="form-control" />
+                    <span asp-validation-for="userID" class="text-danger"></span>
+                </div>*@
+            <div class="form-group">
+                @*<label asp-for="userID" class="control-label"></label>*@
+                <select asp-for="userID" class="form-control" asp-items="ViewBag.userID" id="select_name"></select>
+                <span asp-validation-for="userID" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+                    <input type="submit" value="保存" class="btn btn-default" />
+                </div>*@
+        </form>
+    </div>
+</div>
+<div>
+    <p class="content_title">
+        <label asp-for="title" class="control-label"></label>
+        <input type="text" asp-for="title" class="form-control" id="title" form="form1" style="text-align:center; width:97%; display:inline-block;" />
+        <span asp-validation-for="title" class="text-danger"></span>
+        @*@Html.DisplayFor(model => model.title)*@
+    </p>
+    <div class="content_source">
+        <span class="span" id="datetime">发布时间：@*@Html.DisplayFor(model => model.fb_time)*@</span>
+        <span class="span">
+            来源：@*@Html.DisplayFor(model => model.source)*@
+            <input type="text" asp-for="source" class="form-control" id="source" form="form1" style="display:inline-block; width:81%;" />
+            <span asp-validation-for="source" class="text-danger"></span>
+        </span>
+        <span class="span">
+            作者：@*@Html.DisplayFor(model => model.author)*@
+            <input type="text" asp-for="author" class="form-control" id="author" form="form1" style="display:inline-block; width:81%;" />
+            <span asp-validation-for="author" class="text-danger"></span>
+        </span>
+    </div>
+    <div class="content_txt">
+        <div class="parsetxt">
+            @*@Html.DisplayFor(model => model.wz_content)*@
+            @*@Html.Raw(System.Net.WebUtility.UrlDecode(@Model.wz_content))*@
+        </div>
+        @*<script type="text/javascript">
+            window.onload = function () {
+                var ue = UE.getEditor('editor');
+                ue.ready(function () {
+                    $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+                })
+            };
+        </script>*@
+        <script id="editor" type="text/plain" style="width:100%;height:auto;">
+            @Html.Raw(System.Net.WebUtility.UrlDecode(@Model.wz_content))
+        </script>
+        <script type="text/javascript">
+            $(function () {
+                UE.delEditor('editor');
+                var ue = UE.getEditor('editor', {
+                    //toolbars: [
+                    //    ['fullscreen', 'source', '|', 'undo', 'redo', '|',
+                    //        'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+                    //        'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+                    //        'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+                    //        'directionalityltr', 'directionalityrtl', 'indent', '|',
+                    //        'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
+                    //        'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
+                    //        'simpleupload', 'insertimage', 'insertvideo', 'emotion', 'scrawl', 'insertcode', 'pagebreak', 'template', 'background', '|',
+                    //        'horizontal', 'date', 'time', 'spechars', '|',
+                    //        'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+                    //        'print', 'preview', 'searchreplace', 'help', 'drafts']
+                    //],
+                    allowDivTransToP: false,//阻止div标签自动转换为p标签
+                    autoHeightEnabled: true,
+                    autoFloatEnabled: true
+                });
+                ue.ready(function () {
+                    $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+                })
+            })
+        </script>
+
+        <script>
+            function cc() {
+                document.getElementById('content').value = UE.getEditor('editor').getContent();
+            }
+            setInterval(function () {
+                cc();
+            }, 100);
+        </script>
+        @*<div id="imgCent">
+            <img alt="暂无图片" id="imgshow" src="~/upfiles/@Html.DisplayFor(model => model.wz_img)" />
+        </div>*@
+    </div>
+</div>
+
+@*<div style="margin-top:18px;">
+        <a asp-action="Index">返回文章管理列表</a>
+    </div>*@
+<script>
+    $(function () {
+        //获取select的文本值
+        var coach_name = $('#select_name option:selected').text();
+        document.getElementById('username').innerText = coach_name;
+        $('#select_name').css('display', 'none');
+        document.getElementById('span_wz_style').innerText = document.getElementById('wz_style').value;
+        document.getElementById('span_state').innerText = document.getElementById('state').value;
+    });
+    $(() => {
+        $('#select').change(() => {
+            // console.log('change');
+            // console.log($('#cont select option:selected').text());
+            var selectVal = $('#select').val();
+            document.getElementById('state').value = selectVal;
+            //发布时间
+            if (document.getElementById('state').value == "已发布") {
+                window.cleartime=setInterval(function () {
+                    var time = new Date();   // 程序计时的月从0开始取值后+1
+                    var m = time.getMonth() + 1;
+                    var d = time.getDate();
+                    var h = time.getHours();
+                    var mi = time.getMinutes();
+                    var s = time.getSeconds();
+                    if (m < 10) { m = '0' + m; }
+                    if (d < 10) { d = '0' + d; }
+                    if (h < 10) { h = '0' + h; }
+                    if (mi < 10) { mi = '0' + mi; }
+                    if (s < 10) { s = '0' + s; }
+                    var t = time.getFullYear() + "-" + m + "-"
+                        + d + " " + h + ":"
+                        + mi + ":" + s;
+                    document.getElementById('fb_time').value = t;
+                }, 1000);
+            } else {
+                clearInterval(window.cleartime);
+                document.getElementById('datetime').innerText = "发布时间：" + document.getElementById('oldtime').value;
+                document.getElementById('fb_time').value = document.getElementById('oldtime').value;
+            }
+        });
+    });
+</script>
+@*<script src="~/js/isShowPic.js"></script>*@
+@*<script>uParse('.parsetxt', { rootPath: '../' })</script>*@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

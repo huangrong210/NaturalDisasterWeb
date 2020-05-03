@@ -1,0 +1,62 @@
+﻿@model NaturalDisasterDatabaseWebsite.Models.Forum_msgViewModel
+
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "删除留言";
+}
+<style>
+    p{
+        padding-top:20px;
+        font-size:16px;
+    }
+    p strong{
+        display:inline-block;
+        margin:0 10px;
+    }
+    dt, dd {
+        margin-bottom: 8px;
+    }
+
+    dt::after {
+        content: "："
+    }
+</style>
+@*<h2>Delete</h2>*@
+
+<p>你确定要删除用户<strong>@Html.DisplayFor(model => model.user.username)</strong>的此留言吗?</p>
+<div>
+    @*<h4>Forum_msgViewModel</h4>*@
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.comment)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.comment)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.comment_time)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.comment_time)
+        </dd>
+        @*<dt>
+            @Html.DisplayNameFor(model => model.user)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.user.username)
+        </dd>*@
+        <dt style="margin-bottom: 0px;">
+            @Html.DisplayNameFor(model => model.essay)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.essay.title)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="删除" class="btn btn-default" /> |
+        <a asp-action="Index">返回论坛管理列表</a>
+    </form>
+</div>

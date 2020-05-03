@@ -1,0 +1,1328 @@
+﻿@using System.Security.Claims
+@*放置echarts图表*@
+<div id="firenum" style="width: 50%; height: 352px;"></div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+        var myFirenumCharts = echarts.init(document.getElementById('firenum'));
+        myFirenumCharts.clear();//用于清除已存在的内容
+        myFirenumCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetFireCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var fireyears = [], fTnum = [], fGnum = [], fMDnum = [], fMAnum = [], fSPnum = [];
+                    for (var i = 0; i < res.firelist.length; i++) {
+                        fireyears[i] = res.firelist[i].ffYears;
+                        fTnum[i] = res.firelist[i].ffNumbers;
+                        fGnum[i] = res.firelist[i].ffGeneralNumbers;
+                        fMDnum[i] = res.firelist[i].ffMiddleNumbers;
+                        fMAnum[i] = res.firelist[i].ffMajorNumbers;
+                        fSPnum[i] = res.firelist[i].ffSpecialNumbers;
+                    }
+                    //console.log(fireyears, fTnum, fGnum, fMDnum, fMAnum, fSPnum)
+                    myFirenumCharts.hideLoading();
+
+                    var spNum = 5, _max = 2000;
+                    var legendData = ['火灾总次数', '一般火灾', '较大火灾', '重大火灾', '特别重大火灾'];
+                    var _datamax = fTnum,
+                        _data1 = fGnum,
+                        _data2 = fMDnum,
+                        _data3 = fMAnum;
+                    _data4 = fSPnum;
+                    var fomatter_fn = function (v) {
+                        return (v.value / _max * 2000).toFixed(0)
+                    }
+                    var _label = {
+                        normal: {
+                            show: true,
+                            position: 'inside',
+                            formatter: fomatter_fn,
+                            textStyle: {
+                                color: '#fff',
+                            }
+                        }
+                    };
+                    option = {
+                        //backgroundColor: '#001CA7',
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.8)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.5)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        legend: {
+                            top: '1.8%',
+                            data: legendData,
+                            orient: 'horizontal', // 'vertical'
+                            x: '1%', // 'center' | 'left' | {number},
+                            y: 'middle',
+                            itemGap: 15,
+                            itemHeight: 12,//改变大小
+                            itemWidth: 12,//改变大小
+                            textStyle: {
+                                color: '#fff',
+                            }
+                        },
+                        grid: {
+                            containLabel: true,
+                            left: '3%',
+                            right: 0,
+                            bottom: '4%'
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            feature: {
+                                dataView: { //数据视图
+                                    show: true,
+                                    readOnly: false,
+                                    lang: ['', '关闭', '导出Excel'],
+                                    buttonColor: '#30C76C',
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    },
+                                    contentToOption: function (opts) {
+                                        //console.log(opts)
+                                        $.noConflict(); //请务必加上这一句，否则无法下载excel
+                                        $("#tableExcel_Fire").table2excel({ //通过id即tableExcel_Day
+                                            exclude: ".noExl", //过滤位置的 css 类名：有class="noExl"的行不被导出
+                                            name: "表格-" + new Date().getTime(),
+                                            filename: "广西森林火灾起数" + new Date().getTime() + ".xls", //文件名称
+                                            exclude_img: true,
+                                            exclude_links: true,
+                                            exclude_inputs: true
+                                        });
+                                    },
+                                    optionToContent: function (opt) {
+                                        //console.log(opt)
+                                        var axisData = opt.yAxis[0].data; // 坐标数据
+                                        var series = opt.series; // 折线图数据
+                                        var tdHeaders = '<td></td><td>年份</td>'; // 表头第一列
+                                        for (var k = 0; k < series.length; k++) {
+                                            tdHeaders += '<td style="padding:0px 2px;">' + series[k].name + '(次)</td>'; //组装表头
+
+                                        }
+                                        var table = '<div style="overflow-y:auto;height: 100%;width:100%;"><table id="tableExcel_Fire" class="table-bordered table-striped" style="text-align:center; border-collapse:collapse; margin:0 auto; text-align:center;" border="1" ><tbody><tr>' + tdHeaders + '</tr>';
+                                        var tdBodys = ''; // 表数据
+                                        for (var i = 0, l = axisData.length; i < l; i++) {
+                                            for (var j = 0; j < series.length; j++) {
+                                                var temp = series[j].data[i];
+                                                if (temp != null && temp != undefined) {
+                                                    tdBodys += '<td>' + series[j].data[i] + '</td>'; //组装表数据
+                                                } else {
+                                                    tdBodys += '<td></td>';
+                                                }
+                                            }
+                                            table += '<tr><td style="padding:0 6px;">' + (i + 1) + '</td><td style="padding: 0 10px">' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                                            tdBodys = '';
+                                        }
+                                        table += '</tbody></table></div>';
+                                        return table;
+                                    },
+                                },
+                                magicType: {
+                                    type: ['line', 'bar'],
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                restore: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                saveAsImage: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        //tooltip: {
+                        //    show: true,
+                        //    backgroundColor: '#fff',
+                        //    borderColor: '#ddd',
+                        //    borderWidth: 1,
+                        //    textStyle: {
+                        //        color: '#3c3c3c',
+                        //        fontSize: 16
+                        //    },
+                        //    formatter: function (p) {
+                        //        console.log(p);
+                        //        var _arr = p.seriesName.split('/'),
+                        //            idx = p.seriesIndex;//1，2，3
+                        //        return '名称：' + p.seriesName + '<br>' + '完成：' + p.value + '<br>' + '占比：' + (p.value / _max * 100).toFixed(0) + '%';
+                        //    },
+                        //    extraCssText: 'box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)'
+                        //},
+                        tooltip: {
+                            trigger: 'axis',
+                            padding: 5,
+                            backgroundColor: '#222',
+                            borderColor: '#777',
+                            borderWidth: 1,
+                            axisPointer: {
+                                type: 'none',
+                                label: {
+                                    backgroundColor: '#6a7985'
+                                },
+                                lineStyle: {
+                                    type: 'dashed',
+                                    width: 2,
+                                    color: '#4B941A'
+                                },
+                                animation: true
+                            },
+                            formatter: function (e) {
+                                //console.log(e)
+                                var str = '<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px; text-align:center;">' + '广西 ' + e[0].name + ' 年' + '</div>';
+                                for (var q = 0; q < e.length; q++) {
+                                    str += e[q].seriesName + "：" + '<span>&nbsp;&nbsp;</span>' + e[q].data + '次<br />';
+                                }
+                                return str;
+                            },
+                        },
+                        xAxis: {
+                            splitNumber: spNum,
+                            interval: _max / spNum,
+                            max: _max,
+                            axisLabel: {
+                                show: false,
+                                formatter: function (v) {
+                                    var _v = (v / _max * 100).toFixed(0);
+                                    return _v === 0 ? _v : _v + '%';
+                                }
+                            },
+                            axisLine: {
+                                show: false
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            splitLine: {
+                                show: false
+                            }
+                        },
+                        yAxis: [{
+                            data: fireyears,
+                            name: '年',
+                            nameGap: 5,
+                            nameTextStyle: {
+                                padding: [0, 50, 0, 0]    // 四个数字分别为上右下左与原位置距离
+                            },
+                            axisLabel: {
+                                fontSize: 14,
+                                color: '#fff',
+                                interval: 0,
+                                textStyle: {
+                                    verticalAlign: 'middle',
+                                    color: '#fff',  //坐标的字体颜色
+                                },
+                            },
+                            axisLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            axisTick: {
+                                show: true
+                            },
+                            splitLine: {
+                                show: false
+                            }
+                        }, {
+                            show: false,
+                            data: fireyears,
+                            axisLine: {
+                                show: false
+                            }
+                        }],
+                        series: [{
+                            type: 'bar',
+                            name: '火灾总次数',
+                            stack: '2',
+                            label: _label,
+                            legendHoverLink: false,
+                            barWidth: 8,
+                            itemStyle: {
+                                normal: {
+                                    color: '#0324C1'
+                                },
+                                emphasis: {
+                                    color: '#7E47FF'
+                                }
+                            },
+                            data: _datamax
+                        }, {
+                            type: 'bar',
+                            name: '一般火灾',
+                            stack: '2',
+                            label: _label,
+                            legendHoverLink: false,
+                            barWidth: 8,
+
+                            itemStyle: {
+                                normal: {
+                                    color: '#01A4F7'
+                                },
+                                emphasis: {
+                                    color: '#01A4F7'
+                                }
+                            },
+                            data: _data1
+                        }, {
+                            type: 'bar',
+                            name: '较大火灾',
+                            stack: '2',
+                            legendHoverLink: false,
+                            barWidth: 8,
+                            label: _label,
+                            itemStyle: {
+                                normal: {
+                                    color: '#FD5916'
+                                },
+                                emphasis: {
+                                    color: '#FD5916'
+                                }
+                            },
+                            data: _data2
+                        }, {
+                            type: 'bar',
+                            stack: '2',
+                            name: '重大火灾',
+                            legendHoverLink: false,
+                            barWidth: 8,
+                            label: _label,
+                            itemStyle: {
+                                normal: {
+                                    color: '#2EDDCD'
+                                },
+                                emphasis: {
+                                    color: '#2EDDCD'
+                                }
+                            },
+                            data: _data3
+                        }, {
+                            type: 'bar',
+                            stack: '2',
+                            name: '特别重大火灾',
+                            legendHoverLink: false,
+                            barWidth: 8,
+                            label: _label,
+                            itemStyle: {
+                                normal: {
+                                    color: '#dd4444',
+                                },
+                                emphasis: {
+                                    color: "#6F8FCF",
+                                }
+                            },
+
+                            data: _data4
+                        }]
+                    };
+
+                    myFirenumCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        var myFirenumCharts = echarts.init(document.getElementById('firenum'));
+        myFirenumCharts.clear();//用于清除已存在的内容
+        myFirenumCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetFireCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var fireyears = [], fTnum = [], fGnum = [], fMDnum = [], fMAnum = [], fSPnum = [];
+                    for (var i = 0; i < res.firelist.length; i++) {
+                        fireyears[i] = res.firelist[i].ffYears;
+                        fTnum[i] = res.firelist[i].ffNumbers;
+                        fGnum[i] = res.firelist[i].ffGeneralNumbers;
+                        fMDnum[i] = res.firelist[i].ffMiddleNumbers;
+                        fMAnum[i] = res.firelist[i].ffMajorNumbers;
+                        fSPnum[i] = res.firelist[i].ffSpecialNumbers;
+                    }
+                    //console.log(fireyears, fTnum, fGnum, fMDnum, fMAnum, fSPnum)
+                    myFirenumCharts.hideLoading();
+
+                    var spNum = 5, _max = 2000;
+                    var legendData = ['火灾总次数', '一般火灾', '较大火灾', '重大火灾', '特别重大火灾'];
+                    var _datamax = fTnum,
+                        _data1 = fGnum,
+                        _data2 = fMDnum,
+                        _data3 = fMAnum;
+                    _data4 = fSPnum;
+                    var fomatter_fn = function (v) {
+                        return (v.value / _max * 2000).toFixed(0)
+                    }
+                    var _label = {
+                        normal: {
+                            show: true,
+                            position: 'inside',
+                            formatter: fomatter_fn,
+                            textStyle: {
+                                color: '#fff',
+                            }
+                        }
+                    };
+                    option = {
+                        //backgroundColor: '#001CA7',
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.8)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.5)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        legend: {
+                            top: '1.8%',
+                            data: legendData,
+                            orient: 'horizontal', // 'vertical'
+                            x: '1%', // 'center' | 'left' | {number},
+                            y: 'middle',
+                            itemGap: 15,
+                            itemHeight: 12,//改变大小
+                            itemWidth: 12,//改变大小
+                            textStyle: {
+                                color: '#fff',
+                            }
+                        },
+                        grid: {
+                            containLabel: true,
+                            left: '3%',
+                            right: 0,
+                            bottom: '4%'
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            feature: {
+                                magicType: {
+                                    type: ['line', 'bar'],
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                restore: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            padding: 5,
+                            backgroundColor: '#222',
+                            borderColor: '#777',
+                            borderWidth: 1,
+                            axisPointer: {
+                                type: 'none',
+                                label: {
+                                    backgroundColor: '#6a7985'
+                                },
+                                lineStyle: {
+                                    type: 'dashed',
+                                    width: 2,
+                                    color: '#4B941A'
+                                },
+                                animation: true
+                            },
+                            formatter: function (e) {
+                                //console.log(e)
+                                var str = '<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px; text-align:center;">' + '广西 ' + e[0].name + ' 年' + '</div>';
+                                for (var q = 0; q < e.length; q++) {
+                                    str += e[q].seriesName + "：" + '<span>&nbsp;&nbsp;</span>' + e[q].data + '次<br />';
+                                }
+                                return str;
+                            },
+                        },
+                        xAxis: {
+                            splitNumber: spNum,
+                            interval: _max / spNum,
+                            max: _max,
+                            axisLabel: {
+                                show: false,
+                                formatter: function (v) {
+                                    var _v = (v / _max * 100).toFixed(0);
+                                    return _v === 0 ? _v : _v + '%';
+                                }
+                            },
+                            axisLine: {
+                                show: false
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            splitLine: {
+                                show: false
+                            }
+                        },
+                        yAxis: [{
+                            data: fireyears,
+                            name: '年',
+                            nameGap: 5,
+                            nameTextStyle: {
+                                padding: [0, 50, 0, 0]    // 四个数字分别为上右下左与原位置距离
+                            },
+                            axisLabel: {
+                                fontSize: 14,
+                                color: '#fff',
+                                interval: 0,
+                                textStyle: {
+                                    verticalAlign: 'middle',
+                                    color: '#fff',  //坐标的字体颜色
+                                },
+                            },
+                            axisLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            axisTick: {
+                                show: true
+                            },
+                            splitLine: {
+                                show: false
+                            }
+                        }, {
+                            show: false,
+                            data: fireyears,
+                            axisLine: {
+                                show: false
+                            }
+                        }],
+                        series: [{
+                            type: 'bar',
+                            name: '火灾总次数',
+                            stack: '2',
+                            label: _label,
+                            legendHoverLink: false,
+                            barWidth: 8,
+                            itemStyle: {
+                                normal: {
+                                    color: '#0324C1'
+                                },
+                                emphasis: {
+                                    color: '#7E47FF'
+                                }
+                            },
+                            data: _datamax
+                        }, {
+                            type: 'bar',
+                            name: '一般火灾',
+                            stack: '2',
+                            label: _label,
+                            legendHoverLink: false,
+                            barWidth: 8,
+
+                            itemStyle: {
+                                normal: {
+                                    color: '#01A4F7'
+                                },
+                                emphasis: {
+                                    color: '#01A4F7'
+                                }
+                            },
+                            data: _data1
+                        }, {
+                            type: 'bar',
+                            name: '较大火灾',
+                            stack: '2',
+                            legendHoverLink: false,
+                            barWidth: 8,
+                            label: _label,
+                            itemStyle: {
+                                normal: {
+                                    color: '#FD5916'
+                                },
+                                emphasis: {
+                                    color: '#FD5916'
+                                }
+                            },
+                            data: _data2
+                        }, {
+                            type: 'bar',
+                            stack: '2',
+                            name: '重大火灾',
+                            legendHoverLink: false,
+                            barWidth: 8,
+                            label: _label,
+                            itemStyle: {
+                                normal: {
+                                    color: '#2EDDCD'
+                                },
+                                emphasis: {
+                                    color: '#2EDDCD'
+                                }
+                            },
+                            data: _data3
+                        }, {
+                            type: 'bar',
+                            stack: '2',
+                            name: '特别重大火灾',
+                            legendHoverLink: false,
+                            barWidth: 8,
+                            label: _label,
+                            itemStyle: {
+                                normal: {
+                                    color: '#dd4444',
+                                },
+                                emphasis: {
+                                    color: "#6F8FCF",
+                                }
+                            },
+
+                            data: _data4
+                        }]
+                    };
+
+                    myFirenumCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+
+<div style="width: 50%; height: 352px; background:-webkit-gradient(linear, 0 0, 0 100%, from(rgba(0,0,255,0.5)), to(rgba(0,0,255,0.8)));">
+    <div id="fireTarea" style="width: 100%; height: 328px;" class="firefour0"></div>
+    <div id="fireSzarea" style="width: 100%; height: 328px; display:none;" class="firefour1"></div>
+    <div id="fireCasu" style="width: 100%; height: 328px; display:none;" class="firefour2"></div>
+    <div id="fireLoss" style="width: 100%; height: 328px; display:none;" class="firefour3"></div>
+    <p class="firefourbtn" style="margin:0 auto; text-align:center; color:#fff; height:24px; line-height:18px;">
+        <button id="tarea">火场总面积</button>&emsp;<button id="szforestarea">受灾森林面积</button>&emsp;<button id="casunum">伤亡人数</button>&emsp;<button id="jingjloss">经济损失</button>
+    </p>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(".firefourbtn button").click(function () {
+            var order = $(".firefourbtn button").index(this);//获取点击之后返回当前a标签index的值
+            $(".firefour" + order).show().siblings("div").hide();//显示class中con加上返回值所对应的DIV
+            var orderbtn = "firefour" + order;
+            if (orderbtn == "firefour1") {
+                szFArea();
+            } else if (orderbtn == "firefour2") {
+                swNums();
+            } else if (orderbtn == "firefour3") {
+                jingjiLoss();
+            } else if (orderbtn == "firefour0") {
+                firetotalA()
+            }
+        });
+    })
+</script>
+@*火场总面积*@
+<script type="text/javascript">
+    firetotalA();
+    function firetotalA() {
+        var myFiretareaCharts = echarts.init(document.getElementById('fireTarea'));
+        myFiretareaCharts.clear();//用于清除已存在的内容
+        myFiretareaCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetFireCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var firetyears = [], fTarea = [];
+                    for (var i = 0; i < res.firelist.length; i++) {
+                        firetyears[i] = res.firelist[i].ffYears;
+                        fTarea[i] = res.firelist[i].ffTFireArea;
+                    }
+                    myFiretareaCharts.hideLoading();
+
+                    option = {
+                        //backgroundColor: "#38445E",
+                        //backgroundColor: {
+                        //    type: 'linear',
+                        //    x: 0,                 // 左上角x
+                        //    y: 0,                 // 左上角y
+                        //    x2: 0,                // 右下角x
+                        //    y2: 1,                // 右下角y
+                        //    colorStops: [{
+                        //        offset: 0, color: 'rgba(0,0,255,0.8)' // 100% 处的颜色
+                        //    }, {
+                        //        offset: 1, color: 'rgba(0,0,255,0.5)' // 0% 处的颜色
+                        //    }],
+                        //    global: false // 缺省为 false
+                        //},
+                        grid: {
+                            left: '14.5%',
+                            top: '12%',
+                            bottom: '12%',
+                            right: '7%'
+                        },
+                        xAxis: {
+                            name: '年',
+                            data: firetyears,
+                            axisTick: {
+                                show: false
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    //color: 'rgba(255, 129, 109, 0.1)',
+                                    color: '#fff',
+                                    width: 1 //这里是为了突出显示加上的
+                                }
+                            },
+                            axisLabel: {
+                                interval: 0,
+                                rotate: -50,
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 12
+                                }
+                            }
+                        },
+                        yAxis: [
+                            {
+                                name: '火场总面积（单位：公顷）',
+
+                                splitNumber: 2,
+                                axisTick: {
+                                    show: false
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff',
+                                        width: 1 //这里是为了突出显示加上的
+                                    }
+                                },
+                                axisLabel: {
+                                    textStyle: {
+                                        color: '#fff'
+                                    }
+                                },
+                                splitArea: {
+                                    areaStyle: {
+                                        color: 'rgba(255,255,255,.5)'
+                                    }
+                                },
+                                splitLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        color: 'rgba(255, 129, 109, 0.1)',
+                                        width: 0.5,
+                                        type: 'dashed'
+                                    }
+                                }
+                            }
+                        ],
+                        series: [{
+                            name: 'hill',
+                            type: 'pictorialBar',
+                            barCategoryGap: '0%',
+                            symbol: 'path://M0,10 L10,10 C5.5,10 5.5,5 5,0 C4.5,5 4.5,10 0,10 z',
+                            label: {
+                                show: true,
+                                position: 'top',
+                                distance: 1,
+                                //color: '#DB5E6A',
+                                color: '#fff',
+                                fontWeight: 'bolder',
+                                fontSize: 9,
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: {
+                                        type: 'linear',
+                                        x: 0,
+                                        y: 0,
+                                        x2: 0,
+                                        y2: 1,
+                                        colorStops: [{
+                                            offset: 0,
+                                            color: 'rgba(255, 94, 106, .8)' //  0%  处的颜色
+                                        },
+                                        {
+                                            offset: 1,
+                                            color: 'rgba(255, 94, 106, .3)' //  100%  处的颜色
+                                        }
+                                        ],
+                                        global: false //  缺省为  false
+                                    }
+                                },
+                                emphasis: {
+                                    opacity: 1
+                                }
+                            },
+                            data: fTarea,
+                            z: 10
+                        }]
+                    };
+                    myFiretareaCharts.setOption(option);
+
+                }
+            })
+        })
+    }
+</script>
+@*受灾森林面积*@
+<script>
+    function szFArea() {
+        var myFiresareaCharts = echarts.init(document.getElementById('fireSzarea'));
+        myFiresareaCharts.clear();//用于清除已存在的内容
+        myFiresareaCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetFireCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var firesyears = [], fsarea = [];
+                    for (var i = 0; i < res.firelist.length; i++) {
+                        firesyears[i] = res.firelist[i].ffYears;
+                        fsarea[i] = res.firelist[i].ffTAffectedArea;
+                    }
+                    myFiresareaCharts.hideLoading();
+
+                    var charts = {
+                        unit: '受灾森林面积（公顷）',
+                        names: ['受灾森林面积'],
+                        lineX: firesyears,
+                        value: [
+                            fsarea
+                        ]
+
+                    }
+                    var color = ['rgba(23, 255, 243', 'rgba(255,100,97']
+                    var lineY = []
+
+
+                    for (var i = 0; i < charts.names.length; i++) {
+                        var x = i
+                        if (x > color.length - 1) {
+                            x = color.length - 1
+                        }
+                        var data = {
+                            name: charts.names[i],
+                            type: 'line',
+                            color: color[x] + ')',
+                            smooth: true,
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 0,
+                                        color: color[x] + ', 0.3)'
+                                    }, {
+                                        offset: 0.8,
+                                        color: color[x] + ', 0)'
+                                    }], false),
+                                    shadowColor: 'rgba(0, 0, 0, 0.1)',
+                                    shadowBlur: 10
+                                }
+                            },
+                            symbol: 'circle',
+                            symbolSize: 5,
+                            data: charts.value[i]
+                        }
+                        lineY.push(data)
+                    }
+
+
+                    var option = {
+                        tooltip: {
+                            trigger: 'axis',
+                            formatter: function (e) {
+                                //console.log(e)
+                                return e[0].name + "年：" + e[0].data + '公顷<br />';
+                            },
+                        },
+
+                        grid: {
+                            left: '5.5%',
+                            top: '12%',
+                            bottom: '5.5%',
+                            right: '7%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'category',
+                            name: '年',
+                            color: '#fff',
+                            boundaryGap: false,
+                            data: charts.lineX,
+                            axisLabel: {
+                                interval: 0,
+                                rotate: -50,
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 12
+                                },
+                                formatter: function (params) {
+                                    return params.split(' ')[0]
+                                }
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    //color: 'rgba(255, 129, 109, 0.1)',
+                                    color: '#fff',
+                                    width: 1 //这里是为了突出显示加上的
+                                }
+                            },
+                        },
+                        yAxis: {
+                            name: charts.unit,
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value}',
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            splitLine: {
+                                show: false
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        series: lineY
+                    }
+                    myFiresareaCharts.setOption(option);
+                }
+            })
+        })
+    }
+</script>
+@*伤亡人数*@
+<script>
+    function swNums() {
+        var myFireCaCharts = echarts.init(document.getElementById('fireCasu'));
+        myFireCaCharts.clear();//用于清除已存在的内容
+        myFireCaCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetFireCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var firecayears = [], fireca = [], whiteb = [], outb = [], outc = [];
+                    for (var ir = 0; ir < res.firelist.length; ir++) {
+                        firecayears[ir] = res.firelist[ir].ffYears + '年';
+                        fireca[ir] = res.firelist[ir].ffCasualtiesNumbers;
+                        whiteb[ir] = 99.5;
+                        outb[ir] = 100;
+                        outc[ir] = 0;
+                    }
+                    whiteb[0] = 99;
+                    myFireCaCharts.hideLoading();
+
+
+                    var myColor = ['#eb2100', '#d0a00e', '#34da62', '#c487ee', '#235894', '#deb140', '#49dff0', '#034079', '#6f81da', '#00ffb4', '#d0570e', '#00e9db', '#00c0e9', '#0096f3', '#eb3600', '#096', '#ffde33', '#7e0023', '#660099', '#cc0033', '#ff9933', '#33CCFF', '#33FFCC'];
+                    option = {
+                        title: {
+                            text: '伤亡人数（含失踪、死亡人数）',
+                            textStyle: {
+                                color: '#fff',
+                                fontWeight: 'normal',
+                                fontSize: 14
+                            },
+                            top: '2.5%',
+                            left: '2%'
+                        },
+                        tooltip: {
+                            show: true,
+                            formatter: function (e) {
+                                //console.log(e)
+                                return e.marker + " " + e.name + "：" + e.data + "人" + '<br />';
+                            }
+                        },
+                        grid: {
+                            left: '4%',
+                            top: '12%',
+                            bottom: '0%',
+                            right: '3%',
+                            containLabel: true
+                        },
+                        xAxis: [{
+                            show: false,
+                        }],
+                        yAxis: [{
+                            axisTick: 'none',
+                            axisLine: 'none',
+                            offset: '7',
+                            axisLabel: {
+                                intervar: 0,
+                                textStyle: {
+                                    color: '#ffffff',
+                                }
+                            },
+                            data: firecayears
+                        }, {
+                            axisTick: 'none',
+                            axisLine: 'none',
+                            axisLabel: {
+                                interval: 0,
+                                textStyle: {
+                                    color: '#ffffff',
+                                    fontSize: '14',
+                                }
+                            },
+                            data: []
+                        }, {
+                            nameGap: '5',
+                            nameTextStyle: {
+                                color: '#ffffff',
+                                fontSize: '14',
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: 'rgba(0,0,0,0)'
+                                }
+                            },
+                            data: [],
+                        }],
+                        series: [{
+                            name: '',
+                            type: 'bar',
+                            yAxisIndex: 0,
+                            data: fireca,
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'right',
+                                    textStyle: {
+                                        color: '#ffffff',
+                                    }
+                                }
+                            },
+                            barWidth: 4,
+                            itemStyle: {
+                                normal: {
+                                    color: function (params) {
+                                        var num = myColor.length;
+                                        return myColor[params.dataIndex % num]
+                                    },
+                                }
+                            },
+                            z: 2
+                        }, {
+                            tooltip: {
+                                show: false
+                            },
+                            name: '白框',
+                            type: 'bar',
+                            yAxisIndex: 1,
+                            barGap: '-100%',
+                            data: whiteb,
+                            barWidth: 8,
+                            itemStyle: {
+                                normal: {
+                                    color: '#0e2147',
+                                    barBorderRadius: 5,
+                                }
+                            },
+                            z: 1
+                        }, {
+                            tooltip: {
+                                show: false
+                            },
+                            name: '外框',
+                            type: 'bar',
+                            yAxisIndex: 2,
+                            barGap: '-100%',
+                            data: outb,
+                            barWidth: 10,
+                            itemStyle: {
+                                normal: {
+                                    color: function (params) {
+                                        var num = myColor.length;
+                                        return myColor[params.dataIndex % num]
+                                    },
+                                    barBorderRadius: 5,
+                                }
+                            },
+                            z: 0
+                        },
+                        {
+                            tooltip: {
+                                show: false
+                            },
+                            name: '外圆',
+                            type: 'scatter',
+                            hoverAnimation: false,
+                            data: outc,
+                            yAxisIndex: 2,
+                            symbolSize: 12,
+                            itemStyle: {
+                                normal: {
+                                    color: function (params) {
+                                        var num = myColor.length;
+                                        return myColor[params.dataIndex % num]
+                                    },
+                                    opacity: 1,
+                                }
+                            },
+                            z: 2
+                        }
+                        ]
+                    };
+                    myFireCaCharts.setOption(option);
+                }
+            })
+        })
+    }
+</script>
+@*经济损失*@
+<script>
+    function jingjiLoss() {
+        var myFirelossCharts = echarts.init(document.getElementById('fireLoss'));
+        myFirelossCharts.clear();//用于清除已存在的内容
+        myFirelossCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetFireCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var firelyears = [], firelo = [];
+                    for (var r = 0; r < res.firelist.length; r++) {
+                        firelyears[r] = res.firelist[r].ffYears;
+                        firelo[r] = res.firelist[r].ffEconomicLossed;
+                    }
+                    myFirelossCharts.hideLoading();
+
+                    var yMax = 1000;
+                    var dataShadow = [];
+
+                    for (var i = 0; i < firelo.length; i++) {
+                        dataShadow.push(yMax);
+                    }
+
+                    option = {
+                        grid: {
+                            left: '10%',
+                            top: '12%',
+                            bottom: '12%',
+                            right: '7%'
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            padding: 5,
+                            backgroundColor: '#222',
+                            borderColor: '#777',
+                            borderWidth: 1,
+                            axisPointer: {
+                                type: 'none',
+                                label: {
+                                    backgroundColor: '#6a7985'
+                                },
+                                lineStyle: {
+                                    type: 'dashed',
+                                    width: 2,
+                                    color: '#4B941A'
+                                },
+                                animation: true
+                            },
+                            formatter: function (e) {
+                                //console.log(e)
+                                return e[1].name + "年：" + e[1].data + '万元<br />';
+                            },
+                        },
+                        xAxis: {
+                            data: firelyears,
+                            name: '年',
+                            color: '#fff',
+                            axisLabel: {
+                                //inside: true,
+                                interval: 0,
+                                rotate: -50,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLine: {
+                                symbol: ['none', 'arrow'],
+                                symbolSize: [4, 8],
+                                lineStyle: {
+                                    //color: 'rgba(255, 129, 109, 0.1)',
+                                    color: '#fff',
+                                    width: 1 //这里是为了突出显示加上的
+                                }
+                            },
+                            z: 10
+                        },
+                        yAxis: {
+                            name: '经济损失（万元）',
+                            axisLine: {
+                                symbol: ['none', 'arrow'],
+                                symbolSize: [4, 8],
+                                lineStyle: {
+                                    color: '#fff',
+                                    width: 1 //这里是为了突出显示加上的
+                                }
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            splitLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: 'rgba(255, 255, 255, 0)',
+                                    width: 0.5,
+                                    type: 'dashed'
+                                }
+                            }
+                        },
+                        dataZoom: [
+                            {
+                                type: 'inside'
+                            }
+                        ],
+                        series: [
+                            { // For shadow
+                                type: 'bar',
+                                itemStyle: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                },
+                                barGap: '-100%',
+                                barCategoryGap: '40%',
+                                data: dataShadow,
+                                animation: false
+                            },
+                            {
+                                type: 'bar',
+                                itemStyle: {
+                                    color: new echarts.graphic.LinearGradient(
+                                        0, 0, 0, 1,
+                                        [
+                                            { offset: 0, color: '#83bff6' },
+                                            { offset: 0.5, color: '#188df0' },
+                                            { offset: 1, color: '#188df0' }
+                                        ]
+                                    )
+                                },
+                                emphasis: {
+                                    itemStyle: {
+                                        color: new echarts.graphic.LinearGradient(
+                                            0, 0, 0, 1,
+                                            [
+                                                { offset: 0, color: '#2378f7' },
+                                                { offset: 0.7, color: '#2378f7' },
+                                                { offset: 1, color: '#83bff6' }
+                                            ]
+                                        )
+                                    }
+                                },
+                                data: firelo
+                            }
+                        ]
+                    };
+
+                    // Enable data zoom when user click bar.
+                    var zoomSize = 6;
+                    myFirelossCharts.on('click', function (params) {
+                        //console.log(firelyears[Math.max(params.dataIndex - zoomSize / 2, 0)]);
+                        myFirelossCharts.dispatchAction({
+                            type: 'dataZoom',
+                            startValue: firelyears[Math.max(params.dataIndex - zoomSize / 2, 0)],
+                            endValue: firelyears[Math.min(params.dataIndex + zoomSize / 2, firelo.length - 1)]
+                        });
+                    });
+
+                    myFirelossCharts.setOption(option);
+                }
+            })
+        })
+    }
+</script>

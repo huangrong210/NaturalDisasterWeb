@@ -1,0 +1,953 @@
+﻿@using System.Security.Claims
+@*放置echarts图表*@
+@*农作物生物灾害发生面积和防治面积*@
+<div id="crop" style="width: 50%; height: 302px;"></div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+        var myCropCharts = echarts.init(document.getElementById('crop'));
+        myCropCharts.clear();//用于清除已存在的内容
+        myCropCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetCropCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var objyears = [];
+                    var objoccur = [];
+                    var objcontrol = [];
+                    for (var i = 0; i < res.croplist.length; i++) {
+                        objyears[i] = res.croplist[i].cbYears;
+                        objoccur[i] = res.croplist[i].cbOccurArea;
+                        objcontrol[i] = res.croplist[i].cbControlArea;
+                    }
+                    //console.log(objyears, objoccur, objcontrol, objsaveeconomic, objrealeconomic)
+                    myCropCharts.hideLoading();
+                    var itemStyle = {
+                        opacity: 0.8,
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowOffsetY: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    };
+                    option = {
+                        color: ['#99FF99', '#7fc6fa'], //设置颜色
+                        title: {
+                            text: '农作物生物灾害',
+                            top: 5,
+                            left: 'center',
+                            textStyle: {
+                                color: '#fff',
+                                fontWeight: 'normal',
+                                fontSize: 16
+                            }
+                        },
+                        //backgroundColor: '#4f4f9f',
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.46)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.88)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        tooltip: {
+                            padding: 5,
+                            backgroundColor: '#222',
+                            borderColor: '#777',
+                            borderWidth: 1,
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'cross',
+                                label: {
+                                    backgroundColor: '#6a7985'
+                                }
+                            },
+                            formatter: function (e) {
+                                //console.log(e)
+                                return '<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px; text-align:center;">' + '广西 ' + e[0].name + ' 年' + '</div>' + e[0].seriesName + '：' + e[0].value + ' 万公顷次<br />' + e[1].seriesName + '：' + e[1].value + ' 万公顷次<br />';
+                            }
+                        },
+                        legend: {
+                            top: 35,
+                            textStyle: {
+                                color: "#fff"
+                            },
+                            data: ['发生面积', '防治面积']
+                        },
+                        noDataLoadingOption: {
+                            text: '暂无数据',
+                            effect: 'bubble',
+                            effectOption: {
+                                effect: {
+                                    n: 0
+                                }
+                            }
+                        },
+
+                        toolbox: {
+                            showTitle: false,
+                            feature: {
+                                dataView: { //数据视图
+                                    show: true,
+                                    readOnly: false,
+                                    lang: ['', '关闭', '导出Excel'],
+                                    buttonColor: '#30C76C',
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    },
+                                    contentToOption: function (opts) {
+                                        //console.log(opts)
+                                        $.noConflict(); //请务必加上这一句，否则无法下载excel
+                                        $("#tableExcel_Crop").table2excel({ //通过id即tableExcel_Day
+                                            exclude: ".noExl", //过滤位置的 css 类名：有class="noExl"的行不被导出
+                                            name: "表格-" + new Date().getTime(),
+                                            filename: "广西农作物生物灾害发生面积和防治面积" + new Date().getTime() + ".xls", //文件名称
+                                            exclude_img: true,
+                                            exclude_links: true,
+                                            exclude_inputs: true
+                                        });
+                                    },
+                                    optionToContent: function (opt) {
+                                        //console.log(opt)
+                                        var axisData = opt.xAxis[0].data; // 坐标数据
+                                        var series = opt.series; // 折线图数据
+                                        //console.log(axisData, series)
+                                        var tdHeaders = '<td></td><td>年份</td>'; // 表头第一列
+                                        series.forEach(function (item) {
+                                            tdHeaders += '<td style="padding:0px 2px;">' + item.name + '(万公顷次)</td>'; //组装表头
+                                        });
+                                        var table = '<div style="overflow-y:auto;height: 100%; width:100%;"><table id="tableExcel_Crop" class="table-bordered table-striped" style="text-align:center; border-collapse:collapse; margin:0 auto; text-align:center;" border="1" ><tbody><tr>' + tdHeaders + '</tr>';
+                                        var tdBodys = ''; // 表数据
+                                        for (var i = 0, l = axisData.length; i < l; i++) {
+                                            for (var j = 0; j < series.length; j++) {
+                                                var temp = series[j].data[i];
+                                                if (temp != null && temp != undefined) {
+                                                    tdBodys += '<td>' + series[j].data[i] + '</td>'; //组装表数据
+                                                } else {
+                                                    tdBodys += '<td></td>';
+                                                }
+                                            }
+                                            table += '<tr><td style="padding:0 6px;">' + (i + 1) + '</td><td style="padding: 0 10px">' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                                            tdBodys = '';
+                                        }
+                                        table += '</tbody></table></div>';
+                                        return table;
+                                    },
+                                },
+                                magicType: {
+                                    type: ['line', 'bar'],
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                restore: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                saveAsImage: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        grid: {
+                            left: '6%',
+                            right: '7%',
+                            bottom: '5%',
+                            containLabel: true
+                        },
+                        xAxis: [
+                            {
+                                type: 'category',
+                                name: '年',
+                                color: '#fff',
+                                max: objyears[length - 1],
+                                min: objyears[0],
+                                splitLine: {
+                                    show: false
+                                },
+                                axisLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        color: '#fff' //x轴坐标轴颜色
+                                    }
+                                },
+                                axisTick: {
+                                    lineStyle: { color: '#fff' }    // x轴刻度的颜色
+                                },
+                                axisLabel: {
+                                    color: '#fff', //x轴字体颜色
+                                    rotate: -50,
+                                    interval: 0,
+                                },
+                                boundaryGap: false,
+                                data: objyears
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: '面积（单位：万公顷次）',
+                                splitLine: {
+                                    show: false
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff' //y轴坐标轴颜色
+                                    }
+                                },
+                                axisLabel: {
+                                    show: true,
+                                    color: '#fff'
+                                },
+                                axisTick: {
+                                    lineStyle: { color: '#fff' }    // y轴刻度的颜色
+                                },
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '发生面积',
+                                type: 'line',
+                                symbolSize: 14,
+                                hoverAnimation: true,
+                                animation: true,
+                                itemStyle: itemStyle,
+                                areaStyle: {},
+                                data: objoccur
+                            },
+                            {
+                                name: '防治面积',
+                                type: 'line',
+                                symbolSize: 10,
+                                animation: true,
+                                itemStyle: itemStyle,
+                                areaStyle: {},
+                                data: objcontrol
+                            }
+                        ]
+                    };
+                    myCropCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        var myCropCharts = echarts.init(document.getElementById('crop'));
+        myCropCharts.clear();//用于清除已存在的内容
+        myCropCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetCropCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var objyears = [];
+                    var objoccur = [];
+                    var objcontrol = [];
+                    for (var i = 0; i < res.croplist.length; i++) {
+                        objyears[i] = res.croplist[i].cbYears;
+                        objoccur[i] = res.croplist[i].cbOccurArea;
+                        objcontrol[i] = res.croplist[i].cbControlArea;
+                    }
+                    //console.log(objyears, objoccur, objcontrol, objsaveeconomic, objrealeconomic)
+                    myCropCharts.hideLoading();
+                    var itemStyle = {
+                        opacity: 0.8,
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowOffsetY: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    };
+                    option = {
+                        color: ['#99FF99', '#7fc6fa'], //设置颜色
+                        title: {
+                            text: '农作物生物灾害',
+                            top: 5,
+                            left: 'center',
+                            textStyle: {
+                                color: '#fff',
+                                fontWeight: 'normal',
+                                fontSize: 16
+                            }
+                        },
+                        //backgroundColor: '#4f4f9f',
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.46)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.88)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        tooltip: {
+                            padding: 5,
+                            backgroundColor: '#222',
+                            borderColor: '#777',
+                            borderWidth: 1,
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'cross',
+                                label: {
+                                    backgroundColor: '#6a7985'
+                                }
+                            },
+                            formatter: function (e) {
+                                //console.log(e)
+                                return '<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px; text-align:center;">' + '广西 ' + e[0].name + ' 年' + '</div>' + e[0].seriesName + '：' + e[0].value + ' 万公顷次<br />' + e[1].seriesName + '：' + e[1].value + ' 万公顷次<br />';
+                            }
+                        },
+                        legend: {
+                            top: 35,
+                            textStyle: {
+                                color: "#fff"
+                            },
+                            data: ['发生面积', '防治面积']
+                        },
+                        noDataLoadingOption: {
+                            text: '暂无数据',
+                            effect: 'bubble',
+                            effectOption: {
+                                effect: {
+                                    n: 0
+                                }
+                            }
+                        },
+
+                        toolbox: {
+                            showTitle: false,
+                            feature: {
+                                magicType: {
+                                    type: ['line', 'bar'],
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                restore: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        grid: {
+                            left: '6%',
+                            right: '7%',
+                            bottom: '5%',
+                            containLabel: true
+                        },
+                        xAxis: [
+                            {
+                                type: 'category',
+                                name: '年',
+                                color: '#fff',
+                                max: objyears[length - 1],
+                                min: objyears[0],
+                                splitLine: {
+                                    show: false
+                                },
+                                axisLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        color: '#fff' //x轴坐标轴颜色
+                                    }
+                                },
+                                axisTick: {
+                                    lineStyle: { color: '#fff' }    // x轴刻度的颜色
+                                },
+                                axisLabel: {
+                                    color: '#fff', //x轴字体颜色
+                                    rotate: -50,
+                                    interval: 0,
+                                },
+                                boundaryGap: false,
+                                data: objyears
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: '面积（单位：万公顷次）',
+                                splitLine: {
+                                    show: false
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff' //y轴坐标轴颜色
+                                    }
+                                },
+                                axisLabel: {
+                                    show: true,
+                                    color: '#fff'
+                                },
+                                axisTick: {
+                                    lineStyle: { color: '#fff' }    // y轴刻度的颜色
+                                },
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '发生面积',
+                                type: 'line',
+                                symbolSize: 14,
+                                hoverAnimation: true,
+                                animation: true,
+                                itemStyle: itemStyle,
+                                areaStyle: {},
+                                data: objoccur
+                            },
+                            {
+                                name: '防治面积',
+                                type: 'line',
+                                symbolSize: 10,
+                                animation: true,
+                                itemStyle: itemStyle,
+                                areaStyle: {},
+                                data: objcontrol
+                            }
+                        ]
+                    };
+                    myCropCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+@*农作物生物灾害挽回损失和实际损失*@
+<div id="cropEconomic" style="width: 50%; height: 302px;"></div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+        var myCropECharts = echarts.init(document.getElementById('cropEconomic'));
+        myCropECharts.clear();//用于清除已存在的内容
+        myCropECharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetCropCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var cropobjyears = [];
+                    var objsaveeconomic = [];
+                    var objrealeconomic = [];
+                    for (var i = 0; i < res.croplist.length; i++) {
+                        cropobjyears[i] = res.croplist[i].cbYears;
+                        objsaveeconomic[i] = res.croplist[i].cbSaveEconomic;
+                        objrealeconomic[i] = res.croplist[i].cbRealEconomic;
+                    }
+                    var asave = [];
+                    var breal = [];
+                    asave = objsaveeconomic.map(Number);
+                    breal = objrealeconomic.map(Number);
+                    //console.log(cropobjyears, objsaveeconomic, objrealeconomic)
+                    //console.log(asave, breal)
+                    myCropECharts.hideLoading();
+
+                    // option
+                    option = {
+                        title: {
+                            text: '农作物生物灾害',
+                            top: 5,
+                            left: 'center',
+                            textStyle: {
+                                color: '#fff',
+                                fontWeight: 'normal',
+                                fontSize: 16
+                            }
+                        },
+                        //backgroundColor: '#0f375f',
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.8)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.7)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        tooltip: {
+                            padding: 5,
+                            backgroundColor: '#222',
+                            borderColor: '#777',
+                            borderWidth: 1,
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow',
+                                label: {
+                                    backgroundColor: '#6a7985'
+                                }
+                            },
+                            formatter: function (e) {
+                                //console.log(e)
+                                return '<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px; text-align:center;">' + '广西 ' + e[0].name + ' 年' + '</div>' + e[0].seriesName + '：' + e[0].value + ' 万吨<br />' + e[1].seriesName + '：' + e[1].value + ' 万吨<br />';
+                            }
+                        },
+                        legend: {
+                            data: ['挽回损失', '实际损失'],
+                            top: 35,
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        },
+                        noDataLoadingOption: {
+                            text: '暂无数据',
+                            effect: 'bubble',
+                            effectOption: {
+                                effect: {
+                                    n: 0
+                                }
+                            }
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            feature: {
+                                dataView: { //数据视图
+                                    show: true,
+                                    readOnly: false,
+                                    lang: ['', '关闭', '导出Excel'],
+                                    buttonColor: '#30C76C',
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    },
+                                    contentToOption: function (opts) {
+                                        //console.log(opts)
+                                        $.noConflict(); //请务必加上这一句，否则无法下载excel
+                                        $("#tableExcel").table2excel({ //通过id即tableExcel_Day
+                                            exclude: ".noExl", //过滤位置的 css 类名：有class="noExl"的行不被导出
+                                            name: "表格-" + new Date().getTime(),
+                                            filename: "广西农作物生物灾害防治后挽回损失和实际损失" + new Date().getTime() + ".xls", //文件名称
+                                            exclude_img: true,
+                                            exclude_links: true,
+                                            exclude_inputs: true
+                                        });
+                                    },
+                                    optionToContent: function (opt) {
+                                        var axisData = opt.xAxis[0].data; // 坐标数据
+                                        var series = opt.series; // 折线图数据
+                                        var tdHeaders = '<td></td><td>年份</td>'; // 表头第一列
+                                        for (var k = 0; k < series.length - 1; k++) {
+                                            tdHeaders += '<td style="padding:0px 2px;">' + series[k].name + '(万吨)</td>'; //组装表头
+
+                                        }
+                                        var table = '<div style="overflow-y:auto;height: 100%;width:100%;"><table id="tableExcel" class="table-bordered table-striped" style="text-align:center; border-collapse:collapse; margin:0 auto; text-align:center;" border="1" ><tbody><tr>' + tdHeaders + '</tr>';
+                                        var tdBodys = ''; // 表数据
+                                        for (var i = 0, l = axisData.length; i < l; i++) {
+                                            for (var j = 0; j < series.length - 1; j++) {
+                                                var temp = series[j].data[i];
+                                                if (temp != null && temp != undefined) {
+                                                    tdBodys += '<td>' + series[j].data[i] + '</td>'; //组装表数据
+                                                } else {
+                                                    tdBodys += '<td></td>';
+                                                }
+                                            }
+                                            table += '<tr><td style="padding:0 6px;">' + (i + 1) + '</td><td style="padding: 0 10px">' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                                            tdBodys = '';
+                                        }
+                                        table += '</tbody></table></div>';
+                                        return table;
+                                    },
+                                },
+                                magicType: {
+                                    type: ['line', 'bar'],
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                restore: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                saveAsImage: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        grid: {
+                            left: '6%',
+                            right: '7%',
+                            bottom: '5%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            name: '年',
+                            color: '#fff',
+                            max: cropobjyears[length - 1],
+                            min: cropobjyears[0],
+                            data: cropobjyears,
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            axisLabel: {
+                                color: '#fff', //x轴字体颜色
+                                rotate: -50,
+                                interval: 0,
+                            },
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '经济损失（单位：万吨）',
+                            splitLine: { show: false },
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        series: [{
+                            name: '挽回损失',
+                            type: 'line',
+                            smooth: true,
+                            showAllSymbol: true,
+                            symbol: 'emptyCircle',
+                            symbolSize: 15,
+                            data: asave //
+                        }, {
+                            name: '实际损失',
+                            type: 'bar',
+                            barWidth: 10,
+                            itemStyle: {
+                                barBorderRadius: 5,
+                                color: new echarts.graphic.LinearGradient(
+                                    0, 0, 0, 1,
+                                    [
+                                        { offset: 0, color: '#14c8d4' },
+                                        { offset: 1, color: '#43eec6' }
+                                    ]
+                                )
+                            },
+                            data: breal //
+                        }, {
+                            name: '实际损失',
+                            type: 'bar',
+                            barGap: '-100%',
+                            barWidth: 10,
+                            itemStyle: {
+                                color: new echarts.graphic.LinearGradient(
+                                    0, 0, 0, 1,
+                                    [
+                                        { offset: 0, color: 'rgba(20,200,212,0.5)' },
+                                        { offset: 0.2, color: 'rgba(20,200,212,0.2)' },
+                                        { offset: 1, color: 'rgba(20,200,212,0)' }
+                                    ]
+                                )
+                            },
+                            z: -12,
+                            data: asave //
+                        }]
+                    };
+                    myCropECharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        var myCropECharts = echarts.init(document.getElementById('cropEconomic'));
+        myCropECharts.clear();//用于清除已存在的内容
+        myCropECharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetCropCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var cropobjyears = [];
+                    var objsaveeconomic = [];
+                    var objrealeconomic = [];
+                    for (var i = 0; i < res.croplist.length; i++) {
+                        cropobjyears[i] = res.croplist[i].cbYears;
+                        objsaveeconomic[i] = res.croplist[i].cbSaveEconomic;
+                        objrealeconomic[i] = res.croplist[i].cbRealEconomic;
+                    }
+                    var asave = [];
+                    var breal = [];
+                    asave = objsaveeconomic.map(Number);
+                    breal = objrealeconomic.map(Number);
+                    //console.log(cropobjyears, objsaveeconomic, objrealeconomic)
+                    //console.log(asave, breal)
+                    myCropECharts.hideLoading();
+
+                    // option
+                    option = {
+                        title: {
+                            text: '农作物生物灾害',
+                            top: 5,
+                            left: 'center',
+                            textStyle: {
+                                color: '#fff',
+                                fontWeight: 'normal',
+                                fontSize: 16
+                            }
+                        },
+                        //backgroundColor: '#0f375f',
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.8)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.7)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        tooltip: {
+                            padding: 5,
+                            backgroundColor: '#222',
+                            borderColor: '#777',
+                            borderWidth: 1,
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow',
+                                label: {
+                                    backgroundColor: '#6a7985'
+                                }
+                            },
+                            formatter: function (e) {
+                                //console.log(e)
+                                return '<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px; text-align:center;">' + '广西 ' + e[0].name + ' 年' + '</div>' + e[0].seriesName + '：' + e[0].value + ' 万吨<br />' + e[1].seriesName + '：' + e[1].value + ' 万吨<br />';
+                            }
+                        },
+                        legend: {
+                            data: ['挽回损失', '实际损失'],
+                            top: 35,
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        },
+                        noDataLoadingOption: {
+                            text: '暂无数据',
+                            effect: 'bubble',
+                            effectOption: {
+                                effect: {
+                                    n: 0
+                                }
+                            }
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            feature: {
+                                magicType: {
+                                    type: ['line', 'bar'],
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                                restore: {
+                                    iconStyle: {
+                                        borderColor: '#fff'
+                                    },
+                                    emphasis: {
+                                        iconStyle: {
+                                            borderColor: '#f00'
+                                        },
+                                    }
+                                },
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        grid: {
+                            left: '6%',
+                            right: '7%',
+                            bottom: '5%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            name: '年',
+                            color: '#fff',
+                            max: cropobjyears[length - 1],
+                            min: cropobjyears[0],
+                            data: cropobjyears,
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            axisLabel: {
+                                color: '#fff', //x轴字体颜色
+                                rotate: -50,
+                                interval: 0,
+                            },
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '经济损失（单位：万吨）',
+                            splitLine: { show: false },
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        series: [{
+                            name: '挽回损失',
+                            type: 'line',
+                            smooth: true,
+                            showAllSymbol: true,
+                            symbol: 'emptyCircle',
+                            symbolSize: 15,
+                            data: asave //
+                        }, {
+                            name: '实际损失',
+                            type: 'bar',
+                            barWidth: 10,
+                            itemStyle: {
+                                barBorderRadius: 5,
+                                color: new echarts.graphic.LinearGradient(
+                                    0, 0, 0, 1,
+                                    [
+                                        { offset: 0, color: '#14c8d4' },
+                                        { offset: 1, color: '#43eec6' }
+                                    ]
+                                )
+                            },
+                            data: breal //
+                        }, {
+                            name: '实际损失',
+                            type: 'bar',
+                            barGap: '-100%',
+                            barWidth: 10,
+                            itemStyle: {
+                                color: new echarts.graphic.LinearGradient(
+                                    0, 0, 0, 1,
+                                    [
+                                        { offset: 0, color: 'rgba(20,200,212,0.5)' },
+                                        { offset: 0.2, color: 'rgba(20,200,212,0.2)' },
+                                        { offset: 1, color: 'rgba(20,200,212,0)' }
+                                    ]
+                                )
+                            },
+                            z: -12,
+                            data: asave //
+                        }]
+                    };
+                    myCropECharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}

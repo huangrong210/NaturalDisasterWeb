@@ -1,0 +1,908 @@
+﻿@using System.Security.Claims
+@*放置echarts图表*@
+@*农作物生物灾害发生面积和防治面积*@
+<div id="marine" style="width: 50%; height: 302px;"></div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+        var myMarineCharts = echarts.init(document.getElementById('marine'));
+        myMarineCharts.clear();//用于清除已存在的内容
+        myMarineCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetMarineCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var mayears = [], maoccurnum = [], macasual = [];
+                    //定义两个上下箭头的矢量路径
+                    var up = 'path://M286.031,265l-16.025,3L300,223l29.994,45-16.041-3-13.961,69Z';
+                    var down = 'path://M216.969,292l16.025-3L203,334l-29.994-45,16.041,3,13.961-69Z'
+                    //遍历macasual里面元素的正负定义一个矢量路径的数组
+                    var path = [up, down, up, down, down, down, up]
+
+                    for (var ma = 0; ma < res.marinelist.length; ma++) {
+                        mayears[ma] = res.marinelist[ma].maYears;
+                        maoccurnum[ma] = res.marinelist[ma].maTOccurNumber;
+                        macasual[ma] = -1 * res.marinelist[ma].maCasualtiesNumbers;
+                        path[ma] = down;
+                    }
+                    //console.log(mayears, maoccurnum, macasual)
+
+                    myMarineCharts.hideLoading();
+
+                    option = {
+                        color: ['#3398DB'],
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.8)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.4)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                            },
+                            formatter: function (e) {
+                                var index = e[0].dataIndex;
+                                var macasualindex = -1 * macasual[index];
+                                return "<p style='text-align:center;padding-bottom:0;margin-bottom:0;'>" + e[0].name + "年</p>" + e[1].marker + " " + e[1].seriesName + "：" + e[0].value + " 次<br />" + e[0].marker + " " + e[0].seriesName + "：" + macasualindex + " 人";
+                            }
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            iconStyle: {
+                                borderColor: '#fff'
+                            },
+                            emphasis: {
+                                iconStyle: {
+                                    borderColor: '#f00'
+                                },
+                            },
+                            feature: {
+                                dataView: { //数据视图
+                                    show: true,
+                                    readOnly: false,
+                                    lang: ['', '关闭', '导出Excel'],
+                                    buttonColor: '#30C76C',
+                                    contentToOption: function (opts) {
+                                        //console.log(opts)
+                                        $.noConflict(); //请务必加上这一句，否则无法下载excel
+                                        $("#tableExcel_Marine").table2excel({ //通过id即tableExcel_Day
+                                            exclude: ".noExl", //过滤位置的 css 类名：有class="noExl"的行不被导出
+                                            name: "表格-" + new Date().getTime(),
+                                            filename: "海洋灾害发生次数&伤亡人数" + new Date().getTime() + ".xls", //文件名称
+                                            exclude_img: true,
+                                            exclude_links: true,
+                                            exclude_inputs: true
+                                        });
+                                    },
+                                    optionToContent: function (opt) {
+                                        //console.log(opt)
+                                        var axisData = opt.xAxis[0].data; // 坐标数据
+                                        var series = opt.series; // 折线图数据
+                                        var tdHeaders = '<td></td><td>年份</td>'; // 表头第一列
+                                        series.forEach(function (item) {
+                                            if (item.name == "发生次数") {
+                                                tdHeaders += '<td style="padding:0px 2px;">' + item.name + '(次)</td>'; //组装表头
+                                            } else {
+                                                tdHeaders += '<td style="padding:0px 2px;">' + item.name + '(人)</td>'; //组装表头
+                                            }
+                                        });
+                                        var table = '<div style="overflow-y:auto;height: 100%; width:100%;"><table id="tableExcel_Marine" class="table-bordered table-striped" style="text-align:center; border-collapse:collapse; margin:0 auto; text-align:center;" border="1" ><tbody><tr>' + tdHeaders + '</tr>';
+                                        var tdBodys = ''; // 表数据
+                                        for (var i = 0, l = axisData.length; i < l; i++) {
+                                            for (var j = 0; j < series.length; j++) {
+                                                var temp = series[j].data[i];
+                                                if (temp != null && temp != undefined) {
+                                                    if (series[j].name == "伤亡人数") {
+                                                        var macasualindex2 = -1 * macasual[i];
+                                                        tdBodys += '<td>' + macasualindex2 + '</td>'; //组装表数据
+                                                    } else {
+                                                        tdBodys += '<td>' + series[j].data[i] + '</td>'; //组装表数据
+                                                    }
+                                                } else {
+                                                    tdBodys += '<td></td>';
+                                                }
+                                            }
+                                            table += '<tr><td style="padding:0 6px;">' + (i + 1) + '</td><td style="padding: 0 10px">' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                                            tdBodys = '';
+                                        }
+                                        table += '</tbody></table></div>';
+                                        return table;
+                                    },
+                                },
+                                magicType: {
+                                    show: true,
+                                    type: ['line', 'bar'],
+                                },
+                                restore: {
+                                    show: true
+                                },
+                                saveAsImage: {
+                                    show: true
+                                }
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        grid: {
+                            left: '6%',
+                            right: '6%',
+                            bottom: '6%',
+                            top: '16%',
+                            containLabel: true
+                        },
+                        xAxis: [
+                            {
+                                type: 'category',
+                                name: '年',
+                                data: mayears,
+                                axisTick: {
+                                    alignWithLabel: true
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff'
+                                    }
+                                },
+                                axisLabel: {
+                                    color: '#fff', //x轴字体颜色
+                                    rotate: -50,
+                                    interval: 0,
+                                },
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: '发生次数&伤亡人数',
+                                splitLine: { show: false },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }
+                        ],
+                        series: [
+                            {
+                                "name": "伤亡人数",
+                                type: 'pictorialBar',
+                                symbol: function (data, params) {
+                                    return path[params.dataIndex]
+                                },
+                                symbolSize: [10, 20],
+                                symbolOffset: [0, -20],
+                                color: 'orange',
+                                symbolPosition: 'end',
+                                label: {
+                                    show: true,
+                                    position: "top",
+                                    formatter: function (params) {
+                                        return macasual[params.dataIndex]
+                                    },
+                                    fontSize: 10,
+                                    fontWeight: 'bold',
+                                    color: '#34DCFF'
+                                },
+                                data: maoccurnum
+                            },
+                            {
+                                name: '发生次数',
+                                type: 'bar',
+                                barWidth: '40%',
+                                data: maoccurnum
+                            }
+                        ]
+                    };
+                    myMarineCharts.setOption(option);
+                }
+            })
+        })
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        var myMarineCharts = echarts.init(document.getElementById('marine'));
+        myMarineCharts.clear();//用于清除已存在的内容
+        myMarineCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetMarineCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var mayears = [], maoccurnum = [], macasual = [];
+                    //定义两个上下箭头的矢量路径
+                    var up = 'path://M286.031,265l-16.025,3L300,223l29.994,45-16.041-3-13.961,69Z';
+                    var down = 'path://M216.969,292l16.025-3L203,334l-29.994-45,16.041,3,13.961-69Z'
+                    //遍历macasual里面元素的正负定义一个矢量路径的数组
+                    var path = [up, down, up, down, down, down, up]
+
+                    for (var ma = 0; ma < res.marinelist.length; ma++) {
+                        mayears[ma] = res.marinelist[ma].maYears;
+                        maoccurnum[ma] = res.marinelist[ma].maTOccurNumber;
+                        macasual[ma] = -1 * res.marinelist[ma].maCasualtiesNumbers;
+                        path[ma] = down;
+                    }
+                    //console.log(mayears, maoccurnum, macasual)
+
+                    myMarineCharts.hideLoading();
+
+                    option = {
+                        color: ['#3398DB'],
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,                 // 左上角x
+                            y: 0,                 // 左上角y
+                            x2: 0,                // 右下角x
+                            y2: 1,                // 右下角y
+                            colorStops: [{
+                                offset: 0, color: 'rgba(0,0,255,0.8)' // 0% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,255,0.4)' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                            },
+                            formatter: function (e) {
+                                var index = e[0].dataIndex;
+                                var macasualindex = -1 * macasual[index];
+                                return "<p style='text-align:center;padding-bottom:0;margin-bottom:0;'>" + e[0].name + "年</p>" + e[1].marker + " " + e[1].seriesName + "：" + e[0].value + " 次<br />" + e[0].marker + " " + e[0].seriesName + "：" + macasualindex + " 人";
+                            }
+                        },
+                        toolbox: {
+                            showTitle: false,
+                            iconStyle: {
+                                borderColor: '#fff'
+                            },
+                            emphasis: {
+                                iconStyle: {
+                                    borderColor: '#f00'
+                                },
+                            },
+                            feature: {
+                                magicType: {
+                                    show: true,
+                                    type: ['line', 'bar'],
+                                },
+                                restore: {
+                                    show: true
+                                },
+                            },
+                            tooltip: {
+                                show: true,
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        grid: {
+                            left: '6%',
+                            right: '6%',
+                            bottom: '6%',
+                            top: '16%',
+                            containLabel: true
+                        },
+                        xAxis: [
+                            {
+                                type: 'category',
+                                name: '年',
+                                data: mayears,
+                                axisTick: {
+                                    alignWithLabel: true
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff'
+                                    }
+                                },
+                                axisLabel: {
+                                    color: '#fff', //x轴字体颜色
+                                    rotate: -50,
+                                    interval: 0,
+                                },
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: '发生次数&伤亡人数',
+                                splitLine: { show: false },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }
+                        ],
+                        series: [
+                            {
+                                "name": "伤亡人数",
+                                type: 'pictorialBar',
+                                symbol: function (data, params) {
+                                    return path[params.dataIndex]
+                                },
+                                symbolSize: [10, 20],
+                                symbolOffset: [0, -20],
+                                color: 'orange',
+                                symbolPosition: 'end',
+                                label: {
+                                    show: true,
+                                    position: "top",
+                                    formatter: function (params) {
+                                        return macasual[params.dataIndex]
+                                    },
+                                    fontSize: 10,
+                                    fontWeight: 'bold',
+                                    color: '#34DCFF'
+                                },
+                                data: maoccurnum
+                            },
+                            {
+                                name: '发生次数',
+                                type: 'bar',
+                                barWidth: '40%',
+                                data: maoccurnum
+                            }
+                        ]
+                    };
+                    myMarineCharts.setOption(option);
+                }
+            })
+        })
+    </script>
+}
+
+<div id="marineEconomic" style="width: 50%; height: 302px;"></div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script type="text/javascript">
+        var myMarineEcoCharts = echarts.init(document.getElementById('marineEconomic'));
+        myMarineEcoCharts.clear();//用于清除已存在的内容
+        myMarineEcoCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetMarineCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var maeyears = [], maeyears2 = [], maeconomic = [], gxmaeconomic = [];
+                    for (var mae = 0; mae < res.marinelist.length; mae++) {
+                        maeyears[mae] = res.marinelist[mae].maYears;
+                        maeyears2[mae + 1] = res.marinelist[mae].maYears;
+                        maeconomic[mae + 1] = res.marinelist[mae].maEconomicLosses;
+                        gxmaeconomic[mae + 1] = res.marinelist[mae].maGXEconomicLoss;
+                    }
+                    maeyears2[0] = 0,
+                        maeconomic[0] = 0,
+                        gxmaeconomic[0] = 0,
+                        //console.log(maeyears, maeconomic, gxmaeconomic)
+                        myMarineEcoCharts.hideLoading();
+
+                    dataMap = {};
+                    function dataFormatter(obj) {
+                        var pList = maeyears2;
+                        var temp;
+                        for (var month = 1; month <= 2; month++) {
+                            temp = obj[month.toString()];
+                            obj[month + 'sum'] = temp[0];
+                            for (var i = 1, len = temp.length; i < len; i++) {
+                                obj[month.toString()][i] = {
+                                    name: pList[i],
+                                    value: temp[i]
+                                }
+                            }
+                            obj[month.toString()].shift()
+                        }
+                        return obj;
+                    }
+
+                    dataMap.dataMonth = dataFormatter({
+                        //max : 60000,
+                        '1': maeconomic,
+                        '2': gxmaeconomic
+                    }
+                    );
+
+                    option = {
+
+                        baseOption: {
+                            //backgroundColor: new echarts.graphic.RadialGradient(0.3, 0.3, 0.8,
+                            //    [{
+                            //        offset: 0,
+                            //        color: '#f7f8fa'
+                            //    }, {
+                            //        offset: 1,
+                            //        color: '#cdd0d5'
+                            //        }]),
+                            backgroundColor: {
+                                type: 'linear',
+                                x: 0,                 // 左上角x
+                                y: 0,                 // 左上角y
+                                x2: 0,                // 右下角x
+                                y2: 1,                // 右下角y
+                                colorStops: [{
+                                    offset: 0, color: 'rgba(0,0,255,0.4)' // 0% 处的颜色
+                                }, {
+                                    offset: 1, color: 'rgba(0,0,255,0.8)' // 100% 处的颜色
+                                }],
+                                global: false // 缺省为 false
+                            },
+                            timeline: {
+                                data: ['全国', '广西'],
+                                orient: 'vertical',
+                                y: 0,
+                                axisType: 'category',
+                                autoPlay: true,
+                                playInterval: 1500,
+                                left: null,
+                                right: '0%',
+                                top: '36%',
+                                bottom: '36%',
+                                width: 42,
+                                height: null,
+                                inverse: true,
+                                symbol: 'emptyCircle',
+                                lineStyle: {
+                                    color: '#fff'
+                                },
+                                checkpointStyle: {
+                                    color: '#ff0',
+                                    borderColor: '#777',
+                                    borderWidth: 2
+                                },
+                                label: {
+                                    normal: {
+                                        textStyle: {
+                                            color: '#fff',
+                                            fontSize: 10
+                                        }
+                                    },
+                                    emphasis: {
+                                        textStyle: {
+                                            color: '#fff',
+                                            fontSize: 15
+                                        }
+                                    },
+                                    formatter: function (s) {
+                                        return s
+                                    }
+                                },
+                                controlStyle: {
+                                    showNextBtn: false,
+                                    showPrevBtn: false,
+                                    normal: {
+                                        color: '#fff',
+                                        borderColor: '#fff',
+                                    },
+                                    emphasis: {
+                                        color: '#00f0f0',
+                                        borderColor: '#00f'
+                                    }
+                                },
+                                tooltip: {
+                                    show: false,
+                                }
+                            },
+                            // title: {
+                            //     text: '海洋灾害经济损失'
+                            // },
+                            tooltip: {
+                                formatter: function (e) {
+                                    //console.log(e)
+                                    return '<p style="text-align:center;padding-bottom:0;margin-bottom:0">' + e.seriesName + '</p>' + e.marker + " " + e.name + "年：" + e.value + " 亿元";
+                                }
+                            },
+                            toolbox: {
+                                showTitle: false,
+                                iconStyle: {
+                                    borderColor: '#fff'
+                                },
+                                emphasis: {
+                                    iconStyle: {
+                                        borderColor: '#f00'
+                                    },
+                                },
+                                feature: {
+                                    dataView: { //数据视图
+                                        show: true,
+                                        readOnly: false,
+                                        lang: ['', '关闭', '导出Excel'],
+                                        buttonColor: '#30C76C',
+                                        contentToOption: function (opts) {
+                                            //console.log(opts)
+                                            $.noConflict(); //请务必加上这一句，否则无法下载excel
+                                            $("#tableExcel_MarineEco").table2excel({ //通过id即tableExcel_Day
+                                                exclude: ".noExl", //过滤位置的 css 类名：有class="noExl"的行不被导出
+                                                name: "表格-" + new Date().getTime(),
+                                                filename: "海洋灾害经济损失" + new Date().getTime() + ".xls", //文件名称
+                                                exclude_img: true,
+                                                exclude_links: true,
+                                                exclude_inputs: true
+                                            });
+                                        },
+                                        optionToContent: function (opt) {
+                                            console.log(opt)
+                                            var axisData = opt.xAxis[0].data; // 坐标数据
+                                            var series = opt.series; // 折线图数据
+                                            var tdHeaders = '<td></td><td>年份</td>'; // 表头第一列
+                                            for (var k = 0; k < series.length; k++) {
+                                                tdHeaders += '<td style="padding:0px 2px;">' + series[k].name + '(亿元)</td>'; //组装表头
+
+                                            }
+                                            var table = '<div style="overflow-y:auto;height: 100%;width:100%;"><table id="tableExcel_MarineEco" class="table-bordered table-striped" style="text-align:center; border-collapse:collapse; margin:0 auto; text-align:center;" border="1" ><tbody><tr>' + tdHeaders + '</tr>';
+                                            var tdBodys = ''; // 表数据
+                                            for (var i = 0, l = axisData.length; i < l; i++) {
+                                                for (var j = 0; j < series.length; j++) {
+                                                    var temp = series[j].data[i];
+                                                    if (temp != null && temp != undefined) {
+                                                        tdBodys += '<td>' + series[j].data[i].value + '</td>'; //组装表数据
+                                                    } else {
+                                                        tdBodys += '<td></td>';
+                                                    }
+                                                }
+                                                table += '<tr><td style="padding:0 6px;">' + (i + 1) + '</td><td style="padding: 0 10px">' + axisData[i] + '</td>' + tdBodys + '</tr>';
+                                                tdBodys = '';
+                                            }
+                                            table += '</tbody></table></div>';
+                                            return table;
+                                        },
+                                    },
+                                    magicType: {
+                                        show: true,
+                                        type: ['line', 'bar'],
+                                    },
+                                    restore: {
+                                        show: true
+                                    },
+                                    saveAsImage: {
+                                        show: true
+                                    }
+                                },
+                                tooltip: {
+                                    show: true,
+                                    textStyle: {
+                                        color: '#fff'
+                                    }
+                                }
+                            },
+                            calculable: true,
+                            grid: {
+                                top: 40,
+                                bottom: '13%',
+                                left: '13%',
+                                right: '6%'
+                            },
+                            xAxis: [
+                                {
+                                    name: "年",
+                                    'type': 'category',
+                                    'axisLabel': { 'interval': 0 },
+                                    'data': maeyears,
+                                    axisTick: {
+                                        show: true
+                                    },
+                                    axisLine: {
+                                        show: true,
+                                        lineStyle: {
+                                            color: '#fff'
+                                        }
+                                    },
+                                    axisLabel: {
+                                        color: '#fff', //x轴字体颜色
+                                        rotate: -50,
+                                        interval: 0,
+                                    },
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    name: '经济损失（单位：亿元）',
+                                    // max: 53500
+                                    //max : 100
+                                    splitLine: { show: false },
+                                    axisLine: {
+                                        lineStyle: {
+                                            color: '#fff'
+                                        }
+                                    }
+                                }
+                            ],
+                            series: [
+                                { name: '经济损失', type: 'bar' }
+                            ]
+                        },
+                        options: [
+                            {
+                                series: [
+                                    {
+                                        data: dataMap.dataMonth['1'], itemStyle: {
+                                            normal: {
+                                                color: "#39DfE4"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                series: [{
+                                    data: dataMap.dataMonth['2'], itemStyle: {
+                                        normal: {
+                                            color: "#50FA9D"
+                                        }
+                                    }
+                                }]
+                            }
+                        ]
+                    };
+
+                    myMarineEcoCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        var myMarineEcoCharts = echarts.init(document.getElementById('marineEconomic'));
+        myMarineEcoCharts.clear();//用于清除已存在的内容
+        myMarineEcoCharts.showLoading();
+        $(document).ready(function () {
+            $.ajax({
+                type: "get",
+                url: "/Home/GetMarineCharts",
+                dataType: 'json',
+                data: {},
+                cache: false,
+                success: function (res) {
+                    //console.log(res);
+                    var maeyears = [], maeyears2 = [], maeconomic = [], gxmaeconomic = [];
+                    for (var mae = 0; mae < res.marinelist.length; mae++) {
+                        maeyears[mae] = res.marinelist[mae].maYears;
+                        maeyears2[mae + 1] = res.marinelist[mae].maYears;
+                        maeconomic[mae + 1] = res.marinelist[mae].maEconomicLosses;
+                        gxmaeconomic[mae + 1] = res.marinelist[mae].maGXEconomicLoss;
+                    }
+                    maeyears2[0] = 0,
+                        maeconomic[0] = 0,
+                        gxmaeconomic[0] = 0,
+                        //console.log(maeyears, maeconomic, gxmaeconomic)
+                        myMarineEcoCharts.hideLoading();
+
+                    dataMap = {};
+                    function dataFormatter(obj) {
+                        var pList = maeyears2;
+                        var temp;
+                        for (var month = 1; month <= 2; month++) {
+                            temp = obj[month.toString()];
+                            obj[month + 'sum'] = temp[0];
+                            for (var i = 1, len = temp.length; i < len; i++) {
+                                obj[month.toString()][i] = {
+                                    name: pList[i],
+                                    value: temp[i]
+                                }
+                            }
+                            obj[month.toString()].shift()
+                        }
+                        return obj;
+                    }
+
+                    dataMap.dataMonth = dataFormatter({
+                        //max : 60000,
+                        '1': maeconomic,
+                        '2': gxmaeconomic
+                    }
+                    );
+
+                    option = {
+                        baseOption: {
+                            backgroundColor: {
+                                type: 'linear',
+                                x: 0,                 // 左上角x
+                                y: 0,                 // 左上角y
+                                x2: 0,                // 右下角x
+                                y2: 1,                // 右下角y
+                                colorStops: [{
+                                    offset: 0, color: 'rgba(0,0,255,0.4)' // 0% 处的颜色
+                                }, {
+                                    offset: 1, color: 'rgba(0,0,255,0.8)' // 100% 处的颜色
+                                }],
+                                global: false // 缺省为 false
+                            },
+                            timeline: {
+                                data: ['全国', '广西'],
+                                orient: 'vertical',
+                                y: 0,
+                                axisType: 'category',
+                                autoPlay: true,
+                                playInterval: 1500,
+                                left: null,
+                                right: '0%',
+                                top: '36%',
+                                bottom: '36%',
+                                width: 42,
+                                height: null,
+                                inverse: true,
+                                symbol: 'emptyCircle',
+                                lineStyle: {
+                                    color: '#fff'
+                                },
+                                checkpointStyle: {
+                                    color: '#ff0',
+                                    borderColor: '#777',
+                                    borderWidth: 2
+                                },
+                                label: {
+                                    normal: {
+                                        textStyle: {
+                                            color: '#fff',
+                                            fontSize: 10
+                                        }
+                                    },
+                                    emphasis: {
+                                        textStyle: {
+                                            color: '#fff',
+                                            fontSize: 15
+                                        }
+                                    },
+                                    formatter: function (s) {
+                                        return s
+                                    }
+                                },
+                                controlStyle: {
+                                    showNextBtn: false,
+                                    showPrevBtn: false,
+                                    normal: {
+                                        color: '#fff',
+                                        borderColor: '#fff',
+                                    },
+                                    emphasis: {
+                                        color: '#00f0f0',
+                                        borderColor: '#00f'
+                                    }
+                                },
+                                tooltip: {
+                                    show: false,
+                                }
+                            },
+                            tooltip: {
+                                formatter: function (e) {
+                                    //console.log(e)
+                                    return '<p style="text-align:center;padding-bottom:0;margin-bottom:0">' + e.seriesName + '</p>' + e.marker + " " + e.name + "年：" + e.value + " 亿元";
+                                }
+                            },
+                            toolbox: {
+                                showTitle: false,
+                                iconStyle: {
+                                    borderColor: '#fff'
+                                },
+                                emphasis: {
+                                    iconStyle: {
+                                        borderColor: '#f00'
+                                    },
+                                },
+                                feature: {
+                                    magicType: {
+                                        show: true,
+                                        type: ['line', 'bar'],
+                                    },
+                                    restore: {
+                                        show: true
+                                    },
+                                },
+                                tooltip: {
+                                    show: true,
+                                    textStyle: {
+                                        color: '#fff'
+                                    }
+                                }
+                            },
+                            calculable: true,
+                            grid: {
+                                top: 40,
+                                bottom: '13%',
+                                left: '13%',
+                                right: '6%'
+                            },
+                            xAxis: [
+                                {
+                                    name: "年",
+                                    'type': 'category',
+                                    'axisLabel': { 'interval': 0 },
+                                    'data': maeyears,
+                                    axisTick: {
+                                        show: true
+                                    },
+                                    axisLine: {
+                                        show: true,
+                                        lineStyle: {
+                                            color: '#fff'
+                                        }
+                                    },
+                                    axisLabel: {
+                                        color: '#fff', //x轴字体颜色
+                                        rotate: -50,
+                                        interval: 0,
+                                    },
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    name: '经济损失（单位：亿元）',
+                                    // max: 53500
+                                    //max : 100
+                                    splitLine: { show: false },
+                                    axisLine: {
+                                        lineStyle: {
+                                            color: '#fff'
+                                        }
+                                    }
+                                }
+                            ],
+                            series: [
+                                { name: '经济损失', type: 'bar' }
+                            ]
+                        },
+                        options: [
+                            {
+                                series: [
+                                    {
+                                        data: dataMap.dataMonth['1'], itemStyle: {
+                                            normal: {
+                                                color: "#39DfE4"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                series: [{
+                                    data: dataMap.dataMonth['2'], itemStyle: {
+                                        normal: {
+                                            color: "#50FA9D"
+                                        }
+                                    }
+                                }]
+                            }
+                        ]
+                    };
+
+                    myMarineEcoCharts.setOption(option);
+
+                }
+            })
+        })
+    </script>
+}

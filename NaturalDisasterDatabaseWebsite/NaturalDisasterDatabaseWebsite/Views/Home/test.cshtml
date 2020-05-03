@@ -1,0 +1,230 @@
+﻿<style>
+    .BMap_cpyCtrl { 
+        /*去掉底部百度版权字样*/
+        display: none;
+    }
+    .anchorBL {
+        /*去掉底部百度logo*/
+        display: none;
+    }
+</style>
+<div id="chinamap" style="width: 100%; height: 600px;">@*放置echarts图表*@</div>
+<script type="text/javascript">
+    var mychinaCharts = echarts.init(document.getElementById('chinamap'));
+    mychinaCharts.clear();//用于清除已存在的内容
+    mychinaCharts.showLoading();
+
+    //定义每个位置需要显示的量的值
+    var data = [
+        { name: '贺州', value: 75 },
+        { name: '南宁', value: 145 },
+        { name: '柳州', value: 175 },
+        { name: '防城港', value: 279 },
+        { name: '崇左', value: 175 },
+        { name: '来宾', value: 194 },
+        { name: '桂林', value: 193 },
+        { name: '梧州', value: 229 },
+        { name: '玉林', value: 175 },
+        { name: '贵港', value: 177 },
+        { name: '百色', value: 77 },
+        { name: '钦州', value: 107 },
+        { name: '河池', value: 273 },
+        { name: '北海', value: 170 }
+    ];
+
+    //定义需要显示对应信息的位置坐标，按照[经度，维度]的格式
+    var geoCoordMap = {
+        //[经度，维度]
+        '贺州': [111.574198, 24.424904],
+        '南宁': [108.370768, 22.827283],
+        '柳州': [109.430913, 24.349077],
+        '防城港': [108.36157, 21.697035],
+        '崇左': [107.361217, 22.39597],
+        '来宾': [109.228542, 23.766213],
+        '桂林': [110.185202, 25.255944],
+        '梧州': [111.28904, 23.494997],
+        '玉林': [110.185202, 22.677973],
+        '贵港': [109.596488, 23.129659],
+        '百色': [106.625325, 23.918522],
+        '钦州': [108.658226, 21.993329],
+        '河池': [108.08791, 24.710947],
+        '北海': [109.127357, 21.503466]
+    };
+
+    //将坐标信息和对应物理量的值合在一起
+    var convertData = function (data) {
+        var res = [];
+        for (var i = 0; i < data.length; i++) {
+            var geoCoord = geoCoordMap[data[i].name]; //根据data中的name作为键值读入地理坐标
+            if (geoCoord) {
+                res.push({
+                    name: data[i].name,
+                    value: geoCoord.concat(data[i].value) //将地理坐标与对应信息值衔接起来
+                    //成为了[name 经度 维度 value]的形式
+                });
+            }
+        }
+        //console.log(res)
+        return res;
+    };
+    mychinaCharts.hideLoading();
+
+    option = {
+        tooltip: {
+            trigger: 'item',
+            //formatter: function (e) {
+            //    //console.log(e)
+            //    return e.marker + " " + e.name + "：" + e.value[2]
+            //}
+        },
+        bmap: { //加载bmap组件：百度地图api的设置
+            //center: [104.114129, 37.550339],
+            center: [108.282519, 23.9355], //地图准心：经纬度表示，在此以广西 古筹为中心点坐标
+            zoom: 8, //地图缩放大小：越大越细致
+            roam: true, //是否可拖拽等用户操作，可以只设置 'scale' 或者 'move'
+            mapStyle: { //地图样式设置（各个指标的json定义）：具体到地图的陆地、海、铁路、主要交通干道、边界、绿化等
+                styleJson: [{
+                    'featureType': 'water', //水域
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#BDE3FD' //颜色
+                    }
+                }, {
+                    'featureType': 'land', //陆地
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#f3f3f3'
+                    }
+                },/* {
+                    'featureType': 'railway', //铁路
+                    'elementType': 'all',
+                    'stylers': {
+                        'visibility': 'off' //不显示
+                    }
+                },*/ {
+                    'featureType': 'highway', //高速路
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#FDDC84'
+                    }
+                }, {
+                    'featureType': 'highway', //高速路标签
+                    'elementType': 'labels',
+                    'stylers': {
+                        'visibility': 'off'
+                    }
+                }, {
+                    'featureType': 'arterial', //道路 干线
+                    'elementType': 'geometry',
+                    'stylers': {
+                        'color': '#fefefe'
+                    }
+                }, {
+                    'featureType': 'arterial',
+                    'elementType': 'geometry.fill',
+                    'stylers': {
+                        'color': '#fefefe'
+                    }
+                }, {
+                    'featureType': 'poi', //感兴趣点
+                    'elementType': 'all',
+                    'stylers': {
+                        'visibility': 'off'
+                    }
+                },/* {
+                    'featureType': 'green', //绿地
+                    'elementType': 'all',
+                    'stylers': {
+                        'visibility': 'off'
+                    }
+                }, */{
+                    'featureType': 'subway', //地铁
+                    'elementType': 'all',
+                    'stylers': {
+                        'visibility': 'off'
+                    }
+                }, {
+                    'featureType': 'manmade', //人造
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#d1d1d1'
+                    }
+                }, {
+                    'featureType': 'local',
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#d1d1d1'
+                    }
+                },/* {
+                    'featureType': 'arterial',
+                    'elementType': 'labels',
+                    'stylers': {
+                        'visibility': 'off'
+                    }
+                },*/ {
+                    'featureType': 'boundary',
+                    'elementType': 'all',
+                    'stylers': {
+                        //'color': '#989898'
+                        'color': '#490202'
+                    }
+                    }, {
+                        'featureType': 'district',  //行政区标签
+                        'elementType': 'all',
+                        'stylers': {
+                            'color': '#eeeeee'
+                        }
+                    }, {
+                    'featureType': 'building', //建筑
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#d1d1d1'
+                    }
+                }, {
+                    'featureType': 'label', //标签字体填充
+                    'elementType': 'labels.text.fill',
+                    'stylers': {
+                        'color': '#999999'
+                    }
+                }]
+            }
+        },
+        series: [
+            {
+                name: 'test',
+                type: 'effectScatter',
+                coordinateSystem: 'bmap',
+                data: convertData(data),
+                symbolSize: function (val) {
+                    return val[2] / 10;
+                },
+                showEffectOn: 'render',
+                rippleEffect: {
+                    brushType: 'stroke'
+                },
+                hoverAnimation: true,
+                label: {
+                    normal: {
+                        formatter: '{b}',
+                        position: 'right',
+                        show: true,
+                        fontSize:10
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        //color: 'purple',
+                        shadowBlur: 5,
+                        shadowColor: '#333'
+                    }
+                },
+                zlevel: 1
+            }
+        ]
+    };
+    mychinaCharts.setOption(option);
+
+    // 获取百度地图实例，使用百度地图自带的控件
+    //var bmap = chart.getModel().getComponent('bmap').getBMap();
+    //bmap.addControl(new BMap.MapTypeControl());
+</script>

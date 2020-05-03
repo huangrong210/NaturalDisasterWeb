@@ -1,0 +1,224 @@
+﻿@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "灾害数据管理";
+}
+<script src="~/lib/jquery-table2excel/dist/jquery.table2excel.js"></script>
+<style>
+    .msgmanage {
+        text-align: center;
+        width: 100%;
+        font-size: 18px;
+        font-weight: 500;
+        color: #808080;
+        letter-spacing: 3px;
+        margin-top: 15px;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        display: flex;
+        justify-content: space-around;
+        cursor: pointer;
+        border-bottom: 1px solid #fd0;
+    }
+
+    .timedatamana {
+        width: 100%;
+        min-height: 492px;
+    }
+
+    .hideyear {
+        display: none;
+    }
+
+    .table th, .table td {
+        text-align: center;
+        display: table-cell;
+        vertical-align: middle !important;
+    }
+
+    .newsInfo:hover {
+        background: #eee;
+        color: #333;
+        z-index: 999;
+    }
+
+    .newsInfo {
+        position: relative;
+        z-index: 0;
+        cursor: pointer;
+    }
+
+        .newsInfo span {
+            display: none;
+        }
+
+        .newsInfo:hover span {
+            display: block;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            border: 1px solid #cccccc;
+            background: #ddd;
+            color: #333;
+            padding: 5px;
+            text-align: left;
+            overflow: hidden;
+        }
+
+    .newInfoTruncation {
+        display: -webkit-box;
+        width: 100%;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+
+    .createdidata {
+        display: inline-block;
+    }
+
+        .createdidata i {
+            color: #333;
+        }
+
+        .createdidata i, .createdidata a {
+            font-size: 14px;
+        }
+
+            .createdidata a span {
+                display: inline-block;
+                width: 230px;
+                height: 28px;
+                line-height: 28px;
+                background: #F1F3F4;
+                text-align: center;
+            }
+
+    .form_search {
+        float: right;
+    }
+
+    .timeli {
+        list-style: none;
+        display: flex;
+        justify-content: space-around;
+        padding-left: 0px;
+        border-bottom: 1px solid #fd0;
+        padding-bottom: 8px;
+    }
+
+     .timeli li:hover {
+            color: #ccc;
+            cursor: pointer;
+        }
+</style>
+<div class="msgmanage">
+    <span class="momentdata" style="color:#ca0c16;">时刻数据管理</span>
+    <span class="yeardata">年度数据管理</span>
+</div>
+
+@*时刻*@
+<div class="timedatamana hidetime">
+    <ul class="timeli point1">
+        <li style="color:#ca0c16;">农作物生物灾害</li>
+        <li>森林生物灾害</li>
+        <li>地质灾害</li>
+        <li>森林火灾</li>
+        <li>洪水灾害</li>
+        <li>气象灾害</li>
+        <li>海洋灾害</li>
+        <li>地震灾害</li>
+    </ul>
+
+    @*农作物生物灾害*@
+    <div class="createdidata con0"> @{ await Html.RenderPartialAsync("TimeCrop"); } </div>
+    @*森林生物灾害*@
+    <div class="createdidata con1" style="display: none"> @{ await Html.RenderPartialAsync("TimeForest"); } </div>
+    @*地质灾害*@
+    <div class="createdidata con2" style="display: none"> @{ await Html.RenderPartialAsync("TimeGeology"); } </div>
+    @*森林火灾*@
+    <div class="createdidata con3" style="display: none"> @{ await Html.RenderPartialAsync("TimeFire"); } </div>
+    @*洪水灾害*@
+    <div class="createdidata con4" style="display: none"> @{ await Html.RenderPartialAsync("TimeFlood"); } </div>
+    @*气象灾害*@
+    <div class="createdidata con5" style="display: none"> @{ await Html.RenderPartialAsync("TimeMeteorology"); } </div>
+    @*海洋灾害*@
+    <div class="createdidata con6" style="display: none"> @{ await Html.RenderPartialAsync("TimeMarine"); } </div>
+    @*地震灾害*@
+    <div class="createdidata con7" style="display: none"> @{ await Html.RenderPartialAsync("TimeQuake"); } </div>
+
+</div>
+@*年度*@
+<div class="timedatamana hideyear">
+    <ul class="timeli point2">
+        <li style="color:#ca0c16;">农作物生物灾害</li>
+        <li>森林生物灾害</li>
+        <li>地质灾害</li>
+        <li>森林火灾</li>
+        <li>洪水灾害</li>
+        <li>气象灾害</li>
+        <li>海洋灾害</li>
+        <li>地震灾害</li>
+    </ul>
+    @*农作物生物灾害*@
+    <div class="createdidata yearcon0"> @{ await Html.RenderPartialAsync("YearCrop"); } </div>
+    @*森林生物灾害*@
+    <div class="createdidata yearcon1" style="display: none"> @{ await Html.RenderPartialAsync("YearForest"); } </div>
+    @*地质灾害*@
+    <div class="createdidata yearcon2" style="display: none"> @{ await Html.RenderPartialAsync("YearGeology"); } </div>
+    @*森林火灾*@
+    <div class="createdidata yearcon3" style="display: none"> @{ await Html.RenderPartialAsync("YearFire"); } </div>
+    @*洪水灾害*@
+    <div class="createdidata yearcon4" style="display: none"> @{ await Html.RenderPartialAsync("YearFlood"); } </div>
+    @*气象灾害*@
+    <div class="createdidata yearcon5" style="display: none"> @{ await Html.RenderPartialAsync("YearMeteorology"); } </div>
+    @*海洋灾害*@
+    <div class="createdidata yearcon6" style="display: none"> @{ await Html.RenderPartialAsync("YearMarine"); } </div>
+    @*地震灾害*@
+    <div class="createdidata yearcon7" style="display: none"> @{ await Html.RenderPartialAsync("YearQuake"); } </div>
+</div>
+
+@*显示隐藏时刻或年度数据管理列表*@
+<script>
+    $(".momentdata").click(function () {
+        $(".hidetime").show();
+        $(".hideyear").hide();
+        $(".momentdata").css("color", "#ca0c16");
+        $(".yeardata").css("color", "#808080");
+    });
+    $(".yeardata").click(function () {
+        $(".hideyear").show();
+        $(".hidetime").hide();
+        $(".yeardata").css("color", "#ca0c16");
+        $(".momentdata").css("color", "#808080");
+    })
+</script>
+@*超过宽度 加上省略号*@
+<script>
+    var txtData = $(".newInfoTruncation3").text();
+    if (txtData.length > 50) {
+        txtData = txtData.slice(0, 50) + "...";
+    }
+    $("#boxId").text(txtData);
+</script>
+@*时刻管理数据：切换灾害类别*@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".point1 li").click(function () {
+            var order = $(".point1 li").index(this);//获取点击之后返回当前a标签index的值
+            $(".point1 li").css("color", "#333333");
+            $(this).css("color", "#ca0c16");
+            $(".con" + order).show().siblings("div").hide();//显示class中con加上返回值所对应的DIV
+        });
+    })
+</script>
+@*年度管理数据：切换灾害类别*@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".point2 li").click(function () {
+            var order = $(".point2 li").index(this);//获取点击之后返回当前a标签index的值
+            $(".point2 li").css("color", "#333333");
+            $(this).css("color", "#ca0c16");
+            $(".yearcon" + order).show().siblings("div").hide();//显示class中con加上返回值所对应的DIV
+        });
+    })
+</script>

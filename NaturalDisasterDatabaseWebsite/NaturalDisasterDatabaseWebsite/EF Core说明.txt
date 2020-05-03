@@ -1,0 +1,40 @@
+ ASP.NET Core MVC 中的模型和 Entity Framework 有相当大的关系，所以，在了解模型之前，要先了解一下 Entity Framework Core 和如何配置它。
+本项目设置和配置应用程序以保存和读取 SQL Server 数据库中的数据。
+为了在 ASP.NET Core MVC 应用程序中使用数据库，使用实体框架 ( Entity Framework ，简称 EF ) ，该框架被重新编写以适应新的 .NET Framework 框架。
+
+结合Entity Framework Core（EF Core）这些类来处理数据库。
+EF Core是对象关系映射（ORM）框架，可以简化需要编写的数据访问代码。
+
+模型类称为POCO类（源自“简单传统CLR对象”），因为它们与EF Core没有任何依赖关系。它们之定义将存储在数据库汇总的数据的属性
+
+EF Core版本遇到问题（版本过低）
+
+执行原始SQL查询
+1、使用Entity Framework的优点之一是它可以避免你编写跟数据库过于耦合的代码。它会自动生成SQL查询和命令，使得你无需自行编写。但有一些特殊情况，你需要执行手动创建的特定SQL查询。对于这些情况，Entity Framework Code First SPider包括直接传递SQL命令将到数据库的方法
+2、在 EF Core 1.0 中具有以下选项：
+·使用DbSet.FromSql返回实体类型的查询方法。 返回的对象必须是DbSet对象期望的类型，并且它们会自动跟踪数据库上下文中除非你手动关闭跟踪。
+·对于非查询命令使用Database.ExecuteSqlCommand。
+3、如果需要运行该返回类型不是实体的查询，可以使用由 EF 提供的 ADO.NET 中使用数据库连接。 数据库上下文不会跟踪返回的数据，即使你使用该方法来检索实体类型也是如此。
+4、在 Web 应用程序中执行 SQL 命令时，请务必采取预防措施来保护站点免受 SQL 注入攻击。 一种方法是使用参数化查询，确保不会将网页提交的字符串视为 SQL 命令。
+
+一、检查是否已安装 EF Core 框架 ( Entity Framework Core )
+Entity Framework Core 的命名空间为 Microsoft.EntityFrameworkCore
+总共需要安装四个包，分别是
+
+包名	                                   说明
+Microsoft.EntityFrameworkCore	           Entity Framework Core
+Microsoft.EntityFrameworkCore.Design	    为 EF 框架提供设计时工具
+Microsoft.EntityFrameworkCore.Tools	         EF 框架，合并、更新、删除数据的工具
+Microsoft.EntityFrameworkCore.SqlServer	    EF 框架 SQL Server 驱动
+
+二、EF 框架 ( Entity Framework ) 使我们能够使用称为实体 ( Entity) 的公共语言运行时 （ CLR ) 对象查询，插入，更新和删除数据
+
+EF 框架将模型中定义的实体和关系映射到数据库。除此之外，它还具有以下能力：
+
+将从数据库返回的数据实体化为实体对象
+跟踪我们对实体对象所做的更改
+并发处理特性
+将对象的更改更新到数据库
+将对象绑定到控件
+
+三、

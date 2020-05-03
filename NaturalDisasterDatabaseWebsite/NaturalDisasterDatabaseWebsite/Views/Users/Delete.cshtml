@@ -1,0 +1,138 @@
+﻿@*@model NaturalDisasterDatabaseWebsite.Models.UsersViewModel*@
+@model UsersViewModel
+
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "删除用户";
+}
+<style>
+    p {
+        padding-top: 20px;
+        font-size: 16px;
+    }
+
+    dt, dd {
+        margin-bottom: 8px;
+    }
+
+        dt::after {
+            content: "："
+        }
+
+    .icon {
+        margin: 0 auto;
+        text-align: center;
+        border-radius: 50%;
+        width: 100px;
+        height: auto;
+    }
+
+        .icon img {
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            margin-bottom: 16px;
+        }
+
+    .dl {
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    dt, dd {
+        display: inline-block;
+        width: 500px;
+    }
+
+    dt {
+        text-align: right;
+    }
+
+    dd {
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .block {
+        display: block;
+    }
+
+        .block::after {
+            content: '';
+        }
+</style>
+@*<h2>删除用户</h2>*@
+
+<p>你确定要删除该用户吗?</p>
+<span class="text-danger">@ViewData["ErrorMessage"]</span>
+<div>
+    <hr />
+    <div class="icon">
+        <img alt="头像" src="~/upfiles/@Html.DisplayFor(model => model.img)" />
+    </div>
+    <div class="dl">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.username)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.username)
+            </dd>
+            <dt class="block"></dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.password)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.password)
+            </dd>
+            <dt class="block"></dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.email)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.email)
+            </dd>
+            <dt class="block"></dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.status)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.status)
+            </dd>
+            <dt class="block"></dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.telephone)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.telephone)
+            </dd>
+            <dt class="block"></dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.workplace)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.workplace)
+            </dd>
+            <dt class="block"></dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.occupation)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.occupation)
+            </dd>
+            <dt class="block"></dt>
+            <dt style="margin-bottom:0px;">
+                @Html.DisplayNameFor(model => model.address)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.address)
+            </dd>
+        </dl>
+    </div>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="删除" class="btn btn-default" /> |
+        <a asp-action="Index">返回用户管理列表</a>
+    </form>
+</div>

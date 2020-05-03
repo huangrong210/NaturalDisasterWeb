@@ -1,0 +1,135 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "_BackLayout";
+    ViewData["Title"] = "添加地质灾害年度数据";
+}
+<script src="~/lib/ueditor-1.4.3.3/ueditor.parse.js"></script>
+<style>
+    .content_nav {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 15px;
+        margin-bottom: 0px;
+        display:flex;
+        justify-content:space-between;
+    }
+
+    label {
+        width: 130px;
+        text-align: center;
+    }
+
+    .form-control {
+        display: inline-block;
+        width: auto;
+    }
+</style>
+<div class="content_nav">
+    <div>
+        @ViewData["Title"]&emsp;
+        <input type="submit" value="提交" class="btn btn-default" form="form1" />
+    </div>
+    <a asp-controller="DisasterData" asp-action="Index" style="padding-top: 5px;">返回灾害数据管理列表</a>
+</div>
+
+<hr style="margin-top:15px;" />
+<div style="margin:0 auto; text-align:center;">
+    <form asp-controller="DisasterData" asp-action="YearCreateGeology" id="form1" name="form1">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <table id="addTable" style="width:100%">
+            <tbody style="">
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>年&emsp;&emsp;份</label>
+                            <input name="gYears" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>发生次数(次)</label>
+                            <input name="gTOccurNumbers" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>伤亡人数(人)</label>
+                            <input name="gCasualtiesNumbers" class="form-control" />
+                        </div>
+                    </td>
+                    </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>防治项目数(个)</label>
+                            <input name="gCProjectNumbers" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>防治投资(万元)</label>
+                            <input name="gControlInvest" class="form-control" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label>治理面积(千公顷)</label>
+                            <input name="gZhiliArea" class="form-control" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>经济损失(万元)</label>
+                            <input name="gEconomicLosses" class="form-control" />
+                        </div>
+                    </td>
+                    <td colspan="2">
+                        <span style="font-weight:600;">备注</span>
+                        <input name="gRemarks" class="form-control" id="content" type="hidden" />
+                        <div style="width:500px; margin:0 auto;text-align:center;">
+                            <textarea class="A4page" id="myEditor" name="NewsContent"></textarea>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3"><hr /></td>
+                </tr>
+            </tbody>
+            <tbody class="footTbody"></tbody>
+        </table>
+    </form>
+</div>
+@*备注*@
+<script type="text/javascript">
+    $(function () {
+        UE.delEditor('myEditor');
+        var ue = UE.getEditor('myEditor', {
+            toolbars: [
+
+            ],
+            allowDivTransToP: false,//阻止div标签自动转换为p标签
+            autoHeightEnabled: true,
+            autoFloatEnabled: true,
+            maximumWords: 10000,
+            wordCount: false
+        });
+        //对编辑器的操作最好在编辑器ready之后再做
+        ue.ready(function () {
+
+            $(".edui-editor-messageholder.edui-default").css({ "visibility": "hidden" });
+        })
+
+    });
+    function cc() {
+        document.getElementById('content').value = UE.getEditor('myEditor').getContent();
+    }
+    setInterval(function () {
+        cc();
+    }, 100);
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
