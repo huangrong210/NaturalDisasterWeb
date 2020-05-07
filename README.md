@@ -9,6 +9,8 @@
 
 成果视频展示：
 
+链接：https://pan.baidu.com/s/1z9GRgptlPoACxGc6AE9EyQ
 
+提取码：7fva
 
 ![image](https://github.com/huangrong210/NaturalDisasterWeb/blob/master/ProductImgs/xiaoyi.jpg)
