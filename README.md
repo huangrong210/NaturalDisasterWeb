@@ -13,4 +13,4 @@
 
 提取码：7fva
 
-![image](https://github.com/huangrong210/NaturalDisasterWeb/blob/master/ProductImgs/xiaoyi.jpg)
+[image](https://github.com/huangrong210/NaturalDisasterWeb/blob/master/ProductImgs/xiaoyi.jpg)
