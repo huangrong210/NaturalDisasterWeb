@@ -13,4 +13,4 @@
 
 提取码：7fva
 
-[image](https://github.com/huangrong210/NaturalDisasterWeb/blob/master/ProductImgs/%E5%89%8D%E5%8F%B0%E9%A6%96%E9%A1%B5%EF%BC%88%E5%B7%B2%E7%99%BB%E5%BD%95%EF%BC%89.png)
+[https://github.com/huangrong210/NaturalDisasterWeb/blob/master/ProductImgs/%E5%89%8D%E5%8F%B0%E9%A6%96%E9%A1%B5%EF%BC%88%E5%B7%B2%E7%99%BB%E5%BD%95%EF%BC%89.png](https://github.com/huangrong210/NaturalDisasterWeb/blob/master/ProductImgs/%E5%89%8D%E5%8F%B0%E9%A6%96%E9%A1%B5%EF%BC%88%E5%B7%B2%E7%99%BB%E5%BD%95%EF%BC%89.png)
