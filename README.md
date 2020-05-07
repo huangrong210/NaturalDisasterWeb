@@ -7,4 +7,4 @@
 
 提取码：lahi
 
-![ad](https://github.com/huangrong210/NaturalDisasterWeb/blob/master/ProductImgs/xiaoyi.jpg)
+![image](https://github.com/huangrong210/NaturalDisasterWeb/blob/master/ProductImgs/xiaoyi.jpg)
