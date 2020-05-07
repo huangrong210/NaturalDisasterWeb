@@ -7,3 +7,4 @@
 
 提取码：lahi
 
+![image](https://github.com/huangrong210/NaturalDisasterWeb/blob/master/ProductImgs/xiaoyi.jpg)
