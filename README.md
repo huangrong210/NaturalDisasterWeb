@@ -13,4 +13,5 @@
 
 提取码：7fva
 
+更好更多的查看该项目的大概功能图片，请到博客：https://blog.csdn.net/hr226/article/details/105903655
 ![image](https://github.com/huangrong210/NaturalDisasterWeb/blob/master/ProductImgs/%E5%89%8D%E5%8F%B0%E9%A6%96%E9%A1%B5%EF%BC%88%E5%B7%B2%E7%99%BB%E5%BD%95%EF%BC%89.png)
