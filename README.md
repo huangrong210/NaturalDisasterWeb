@@ -17,7 +17,9 @@
 
 方式二：
 
-https://v.youku.com/v_show/id_XNDY2NzIwNTQyOA==.html
+优酷视频：https://v.youku.com/v_show/id_XNDY2NzIwNTQyOA==.html
+
+<iframe height=498 width=510 src='https://player.youku.com/embed/XNDY2NzIwNTQyOA==' frameborder=0 'allowfullscreen'></iframe>
 
 更好更多的查看该项目的大概功能图片，请到博客：https://blog.csdn.net/hr226/article/details/105903655
 
