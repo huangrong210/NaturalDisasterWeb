@@ -73,7 +73,7 @@ using NaturalDisasterDatabaseWebsite.Controllers;
             WriteLiteral("<meta charset=\"utf-8\" />\r\n");
             EndContext();
             BeginContext(166, 62, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("script", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "1382638ed60947908c8b07acd34411c5", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("script", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "52506ed4fc9646fb8605a4e197212ecc", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -91,7 +91,7 @@ using NaturalDisasterDatabaseWebsite.Controllers;
             WriteLiteral("\r\n");
             EndContext();
             BeginContext(230, 57, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("script", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "dc29f826908d49f4a35c7369a5e8211e", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("script", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "cbd41712f22f4d7ca4a585ecb5d703f2", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -224,7 +224,7 @@ Write(ViewData["Title"]);
             WriteLiteral("</strong>）\r\n</p>\r\n\r\n<div class=\"back\">\r\n    ");
             EndContext();
             BeginContext(1906, 52, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "708ec361d79648618076f2483579eb88", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "2b021cb70d9c4d868180f62473640561", async() => {
                 BeginContext(1952, 2, true);
                 WriteLiteral("编辑");
                 EndContext();
@@ -259,7 +259,7 @@ Write(ViewData["Title"]);
             WriteLiteral(" |\r\n    ");
             EndContext();
             BeginContext(1966, 34, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "bd4ca678d67545c2ae9f8f159e710e99", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6cf6afbb9fe944babeee7d9cd35e2c63", async() => {
                 BeginContext(1988, 8, true);
                 WriteLiteral("返回文章管理列表");
                 EndContext();

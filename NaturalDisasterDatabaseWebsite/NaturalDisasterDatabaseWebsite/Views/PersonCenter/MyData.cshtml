@@ -62,7 +62,7 @@
             @foreach (var imgsrc1 in ViewBag.imgsrc1)
             {
                 <li><span>账&emsp;&emsp;号：</span>@imgsrc1.username<span class="xiugaiziliao" onclick="xgzl1()">修改资料</span></li>
-                <li><span>性&emsp;&emsp;别：</span>@imgsrc1.sex</li>
+                <li><span>性&emsp;&emsp;别：</span><span id="sexmodify" style="text-align:left;">@imgsrc1.sex</span></li>
                 <li><span>邮&emsp;&emsp;箱：</span>@imgsrc1.email</li>
                 <li><span>手机号码：</span>@imgsrc1.telephone</li>
                 <li><span>工作地点：</span>@imgsrc1.workplace</li>
@@ -88,7 +88,7 @@
                     <option value="男">男</option>
                     <option value="女">女</option>
                 </select>
-                <span id="xb">@User.FindFirstValue("sex")</span>
+                <span id="xb"></span>                
                 <span asp-validation-for="sex" class="text-danger"></span>
             </div>
             <div class="form-group right">
@@ -125,3 +125,7 @@
         </div>
     </div>
 </div>
+<script>
+    var a = $("#sexmodify").text();
+    $("#xb").text(a);
+</script>

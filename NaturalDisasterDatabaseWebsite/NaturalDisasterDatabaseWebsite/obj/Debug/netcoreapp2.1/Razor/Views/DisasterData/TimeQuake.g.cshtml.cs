@@ -62,7 +62,7 @@ using NaturalDisasterDatabaseWebsite.Controllers;
             WriteLiteral("<div style=\"\">\r\n    ");
             EndContext();
             BeginContext(20, 128, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "32ed416bb33744b9be01259c437a1f6c", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "ec38c26e35264e0799763749063cc060", async() => {
                 BeginContext(78, 66, true);
                 WriteLiteral("<i class=\"glyphicon glyphicon-plus\"></i><span>添加时刻灾害数据：地震灾害</span>");
                 EndContext();
@@ -268,7 +268,7 @@ using NaturalDisasterDatabaseWebsite.Controllers;
             WriteLiteral("</td>\r\n                    <td class=\"noExl\">\r\n                        ");
             EndContext();
             BeginContext(2544, 91, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "023b59ab1fe94bd5a31ef6ecb5c4c9eb", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "23db3ae1fa844a5395317d76634ac66e", async() => {
                 BeginContext(2629, 2, true);
                 WriteLiteral("编辑");
                 EndContext();
@@ -305,7 +305,7 @@ using NaturalDisasterDatabaseWebsite.Controllers;
             WriteLiteral("\r\n                        ");
             EndContext();
             BeginContext(2661, 93, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "0c4e55f0216342d8bd24d1a9f9ebbee7", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "1bf12e9ab62645aca2fd26fca85e996a", async() => {
                 BeginContext(2748, 2, true);
                 WriteLiteral("删除");
                 EndContext();

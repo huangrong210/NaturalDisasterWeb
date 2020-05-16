@@ -149,7 +149,7 @@ ViewData["Title"] = "科普";
             <span>");
             EndContext();
             BeginContext(1909, 34, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "3581ed5249f24b49984059d309595ef6", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d17659b526504157994e4fe78894ecec", async() => {
                 BeginContext(1935, 4, true);
                 WriteLiteral("灾害知识");
                 EndContext();
@@ -181,7 +181,7 @@ ViewData["Title"] = "科普";
             WriteLiteral("</span>\r\n            ");
             EndContext();
             BeginContext(1990, 82, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "e25c7b4d98394e8b807a125865e79698", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "f6abc08f159049c8bcbfb0c829d5091e", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -211,7 +211,7 @@ ViewData["Title"] = "科普";
             WriteLiteral("                    <li id=\"li1\">\r\n                        ");
             EndContext();
             BeginContext(2521, 95, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "07c8be3a3bce442cad383dc463cbe960", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "4530cdc1f448450fb682ec5d0ef0a654", async() => {
                 BeginContext(2575, 37, false);
 #line 95 "D:\bishe\NaturalDisasterDatabaseWebsite\NaturalDisasterDatabaseWebsite\Views\Home\MorePScience.cshtml"
                                                                         Write(Html.DisplayFor(modelItem => e.title));

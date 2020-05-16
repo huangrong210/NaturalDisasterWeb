@@ -79,7 +79,7 @@ using System.Security.Claims;
 #line default
 #line hidden
             BeginContext(106, 62, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("script", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "ba8fd2592e904532a32668ea8ccfb38f", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("script", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "59ed1dbff2d841f6801aeefc1fe940ed", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -130,7 +130,7 @@ using System.Security.Claims;
             WriteLiteral("&emsp;\r\n        <input type=\"submit\" value=\"提交\" class=\"btn btn-default\" form=\"form1\" />\r\n    </div>\r\n    ");
             EndContext();
             BeginContext(715, 92, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "1c2bb3db12d7415cbc6a09f7a09263fa", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "e37739e9ac7742b0b133c29bd568c991", async() => {
                 BeginContext(793, 10, true);
                 WriteLiteral("返回灾害数据管理列表");
                 EndContext();
@@ -155,12 +155,12 @@ using System.Security.Claims;
             WriteLiteral("\r\n</div>\r\n\r\n<hr style=\"margin-top:15px;\" />\r\n<div style=\"margin:0 auto; text-align:center;\">\r\n    ");
             EndContext();
             BeginContext(905, 2916, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "24ca08ee37b543119d83ff2d3d2de1db", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d8fd26c77f2f40d3bc8c04f356cbd044", async() => {
                 BeginContext(996, 10, true);
                 WriteLiteral("\r\n        ");
                 EndContext();
                 BeginContext(1006, 66, false);
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "979d7e56a4994dc78e143f853de269e5", async() => {
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "54b0a49658e84884bf1bf766bca3c60b", async() => {
                 }
                 );
                 __Microsoft_AspNetCore_Mvc_TagHelpers_ValidationSummaryTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.TagHelpers.ValidationSummaryTagHelper>();

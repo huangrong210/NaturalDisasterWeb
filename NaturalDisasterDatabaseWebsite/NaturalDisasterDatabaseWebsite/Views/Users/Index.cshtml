@@ -155,7 +155,7 @@
         }
     </tbody>
 </table>
-@*简单分页实现E*@
+@*简单分页实现S*@
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
@@ -170,7 +170,8 @@
     </a>
     @if (@totalPages <= 10)
     {
-        @for (@i = 1; i <= @totalPages; i++){
+        @for (@i = 1; i <= @totalPages; i++)
+        {
             <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-pageNumber="@i" asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-default">@i</a>
         }
     }
@@ -183,8 +184,8 @@
         @*<select name="rows" id="rows"><option selected value="10">10</option><option value="20">20</option><option value="50">50</option><option value="@totalRows">全部</option></select>*@
     </p>
 </div>
-@*简单分页实现S*@
-
+@*简单分页实现E*@
+@*输入具体页码跳转S*@
 <script>
     /*
 		changeURLPar()函数参数说明：
@@ -228,6 +229,8 @@
         }
     }
 </script>
+@*输入具体页码跳转E*@
+
 @*复杂分页未实现*@
 @*<div>
         <div style="display:inline-block;">显示第1到第10条记录，总共10条记录 每页显示10条记录</div>

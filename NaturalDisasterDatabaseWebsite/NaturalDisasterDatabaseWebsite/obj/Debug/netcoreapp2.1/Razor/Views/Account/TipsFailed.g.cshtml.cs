@@ -82,7 +82,7 @@ using NaturalDisasterDatabaseWebsite.Controllers;
     <h4>失 败 ! 请 在 次 尝 试 . . . ");
             EndContext();
             BeginContext(406, 54, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "b6dcff2584df4f218dccbfb453976692", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "e4b28fa9d2184ff181bd17730924852e", async() => {
                 BeginContext(453, 3, true);
                 WriteLiteral("注 册");
                 EndContext();

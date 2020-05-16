@@ -62,7 +62,7 @@ using NaturalDisasterDatabaseWebsite.Controllers;
             WriteLiteral("<div style=\"\">\r\n    ");
             EndContext();
             BeginContext(20, 132, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "a4f7bb0a29674ee887e2412281024b3a", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "7f93517a9c09486884571cece58e8960", async() => {
                 BeginContext(82, 66, true);
                 WriteLiteral("<i class=\"glyphicon glyphicon-plus\"></i><span>添加年度灾害数据：地震灾害</span>");
                 EndContext();
@@ -189,7 +189,7 @@ using NaturalDisasterDatabaseWebsite.Controllers;
             WriteLiteral("</span>\r\n                    </td>\r\n                    <td class=\"noExl\">\r\n                        ");
             EndContext();
             BeginContext(1639, 95, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "0e5d17d73f344e63b24cb6a8eac04b61", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "c4be20a07ff54733b17389c1d2dfbca1", async() => {
                 BeginContext(1728, 2, true);
                 WriteLiteral("编辑");
                 EndContext();
@@ -226,7 +226,7 @@ using NaturalDisasterDatabaseWebsite.Controllers;
             WriteLiteral("\r\n                        ");
             EndContext();
             BeginContext(1760, 97, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "b529b489b9e94c61a76d5f7975f54603", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "35380f99553842659f0aece8b3a555fd", async() => {
                 BeginContext(1851, 2, true);
                 WriteLiteral("删除");
                 EndContext();

@@ -164,7 +164,7 @@ WriteAttributeValue("", 1183, User.FindFirstValue("ID"), 1183, 26, false);
             WriteLiteral("</span>\r\n                        <p class=\"article-list-item-txt \">\r\n                            ");
             EndContext();
             BeginContext(1949, 98, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37303b517ced4128bd9c5f862b5af6b2", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "f07a7000bd074aa8b598ab0b28b83e8d", async() => {
                 BeginContext(2021, 22, false);
 #line 39 "D:\bishe\NaturalDisasterDatabaseWebsite\NaturalDisasterDatabaseWebsite\Views\PersonCenter\MyEssays.cshtml"
                                                                                               Write(ViewBag.essay[i].title);
@@ -217,7 +217,7 @@ WriteAttributeValue("", 1183, User.FindFirstValue("ID"), 1183, 26, false);
             WriteLiteral("\r\n                            </span>\r\n                            <span class=\"article-list-item-readComment\">\r\n                                ");
             EndContext();
             BeginContext(2698, 65, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "904d3ba7d1604c2db9e63b2308b9d48b", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "2a8b475671ae420abb732521b96b182b", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -248,7 +248,7 @@ WriteAttributeValue("", 1183, User.FindFirstValue("ID"), 1183, 26, false);
             WriteLiteral("\r\n                            </span>\r\n                        </div>\r\n                        <div class=\"item-info-oper\">\r\n                            ");
             EndContext();
             BeginContext(2971, 93, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "039962da155444018f484cddc60c619e", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "f84bd49e0a9442ceab39db6654a0002b", async() => {
                 BeginContext(3058, 2, true);
                 WriteLiteral("编辑");
                 EndContext();
@@ -295,7 +295,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral(" />\r\n                            ");
             EndContext();
             BeginContext(3192, 107, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "f1816eef9d9346d7a08b5961eae674bd", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "39f64583b17f46c389ad7be7d52b3979", async() => {
                 BeginContext(3293, 2, true);
                 WriteLiteral("删除");
                 EndContext();
@@ -356,7 +356,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("                    <p class=\"article-list-item-txt \">\r\n                        ");
             EndContext();
             BeginContext(3823, 130, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "a0215448577642d6a278cae09225162d", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "3e34717763cf4c459c53831dc5808b30", async() => {
                 BeginContext(3926, 23, false);
 #line 71 "D:\bishe\NaturalDisasterDatabaseWebsite\NaturalDisasterDatabaseWebsite\Views\PersonCenter\MyEssays.cshtml"
                                                                                                                          Write(ViewBag.essay2[j].title);
@@ -411,7 +411,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("\r\n                        </span>\r\n                        <span class=\"article-list-item-readComment\">\r\n                            ");
             EndContext();
             BeginContext(4565, 63, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagOnly, "2e59d798e7cf4d8ca78c0ba4285666f6", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagOnly, "059aaa366eb64e549396d53426a58f84", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -442,7 +442,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("\r\n                        </span>\r\n                    </div>\r\n                    <div class=\"item-info-oper\">\r\n                        ");
             EndContext();
             BeginContext(4817, 94, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "b0fa3e68f5954898a2eb1990f54e2780", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "e668231d842b441f9639494f580c0dc6", async() => {
                 BeginContext(4905, 2, true);
                 WriteLiteral("编辑");
                 EndContext();
@@ -482,7 +482,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("                        ");
             EndContext();
             BeginContext(5036, 108, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "85d43c87eeb24860922200f69f2f44f5", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "b61c7a2fce054a6b984fa5fb7f59862c", async() => {
                 BeginContext(5138, 2, true);
                 WriteLiteral("删除");
                 EndContext();
@@ -543,7 +543,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("                    <p class=\"article-list-item-txt \">\r\n                        ");
             EndContext();
             BeginContext(5636, 130, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "fc070a73e5fd4e9199e6146d89e84916", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "2b06e7016e50477ba581bbecac2ff286", async() => {
                 BeginContext(5739, 23, false);
 #line 102 "D:\bishe\NaturalDisasterDatabaseWebsite\NaturalDisasterDatabaseWebsite\Views\PersonCenter\MyEssays.cshtml"
                                                                                                                          Write(ViewBag.essay3[k].title);
@@ -598,7 +598,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("\r\n                        </span>\r\n                        <span class=\"article-list-item-readComment\">\r\n                            ");
             EndContext();
             BeginContext(6378, 63, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagOnly, "88c650a380a74706b1fa89ac7a4ba10d", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagOnly, "634b6aecdfe24dc28867691d77626157", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -629,7 +629,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("\r\n                        </span>\r\n                    </div>\r\n                    <div class=\"item-info-oper\">\r\n                        ");
             EndContext();
             BeginContext(6630, 94, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "ee79e2d31e2a4103be56166d43e1e67b", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "8744b78065754e20a5d5f5ff15f8975b", async() => {
                 BeginContext(6718, 2, true);
                 WriteLiteral("编辑");
                 EndContext();
@@ -669,7 +669,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("                        ");
             EndContext();
             BeginContext(6849, 108, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "67167f31b44d4a569bd06f5e7a7b531a", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "f71a3def63864026b1f7d7f40b0d24a3", async() => {
                 BeginContext(6951, 2, true);
                 WriteLiteral("删除");
                 EndContext();
@@ -730,7 +730,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("                    <p class=\"article-list-item-txt \">\r\n                        ");
             EndContext();
             BeginContext(7449, 130, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "c5160d856f8b45cd9968a602fd626c3f", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "cdbb148d4f3e4ab2b96e88d18e773ebd", async() => {
                 BeginContext(7552, 23, false);
 #line 133 "D:\bishe\NaturalDisasterDatabaseWebsite\NaturalDisasterDatabaseWebsite\Views\PersonCenter\MyEssays.cshtml"
                                                                                                                          Write(ViewBag.essay4[o].title);
@@ -785,7 +785,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("\r\n                        </span>\r\n                        <span class=\"article-list-item-readComment\">\r\n                            ");
             EndContext();
             BeginContext(8191, 63, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagOnly, "2efad5a4fab74f3e87a4dc0da1b7336d", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagOnly, "96f13a824b38491e99c137263d05fd4b", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -816,7 +816,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("\r\n                        </span>\r\n                    </div>\r\n                    <div class=\"item-info-oper\">\r\n                        ");
             EndContext();
             BeginContext(8443, 94, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "07b1c05daa2a4690aaa1c2380474f0f4", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "ff6a2f4de81b4accbf9290195e29e5bd", async() => {
                 BeginContext(8531, 2, true);
                 WriteLiteral("编辑");
                 EndContext();
@@ -856,7 +856,7 @@ WriteAttributeValue("", 3138, ViewBag.essay[i].ID, 3138, 20, false);
             WriteLiteral("                        ");
             EndContext();
             BeginContext(8662, 108, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "9e3e9a15d5334198b2cc5725e1da419b", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "f19ee977fe6844c184ad68b13a75a17c", async() => {
                 BeginContext(8764, 2, true);
                 WriteLiteral("删除");
                 EndContext();

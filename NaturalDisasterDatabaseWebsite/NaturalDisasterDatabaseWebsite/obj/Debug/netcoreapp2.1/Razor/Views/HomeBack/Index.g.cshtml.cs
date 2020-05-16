@@ -221,9 +221,9 @@ WriteAttributeValue("", 1071, User.FindFirstValue("ID"), 1071, 26, false);
                                         <p>点击导航栏的用户管理，来到用户管理界面：再点击新增用户，进入新增用户界面，就可以新增用户啦");
             EndContext();
             BeginContext(4853, 143, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "3157f4b8a9e442fb97fba034ab9058f9", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "0ebc9959ff214a8bab84eaae38672f68", async() => {
                 BeginContext(4899, 89, false);
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "7a0adec834824319a2bb371c94982e78", async() => {
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "9f7348027d734af0a9c5862374df7429", async() => {
                 }
                 );
                 __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -261,7 +261,7 @@ WriteAttributeValue("", 1071, User.FindFirstValue("ID"), 1071, 26, false);
             WriteLiteral("</p> &emsp;&emsp;\r\n                                        ");
             EndContext();
             BeginContext(5055, 34, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "1c61ac1e6db04825b6ab0433f55cb748", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "bbe81f9dc390466db7c39b9653480edb", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -287,9 +287,9 @@ WriteAttributeValue("", 1071, User.FindFirstValue("ID"), 1071, 26, false);
                                         <p>方式一：此方式可以用网站现有的任一账号进行新添文章<br />点击导航栏的文章管理，来到文章管理界面：再点击新添文章，进入新添文章界面，就可以提交文章啦。如果要发布文章，需要管理员到文章编辑功能处进行审核，审核通过才是正式发布文章，在前端灾害知识模块中才能看到哦");
             EndContext();
             BeginContext(5612, 151, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "1e0a1c087db841cc93c5790e3bac190b", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "0628ec65e69340dc900b59a3bd1fc209", async() => {
                 BeginContext(5666, 89, false);
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "b1868c2b616240a486de83f101620b59", async() => {
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "518b2f56713e41149b2ce8e21f0faa53", async() => {
                 }
                 );
                 __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -324,7 +324,7 @@ WriteAttributeValue("", 1071, User.FindFirstValue("ID"), 1071, 26, false);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             EndContext();
             BeginContext(5763, 38, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "99c1dd5625d9495fb1bc5e57cf85b576", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "bb864e24925f4df4a26d321437023143", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -342,9 +342,9 @@ WriteAttributeValue("", 1071, User.FindFirstValue("ID"), 1071, 26, false);
             WriteLiteral("</p>\r\n                                        <p>方式二：此方式仅限于当前登录账号进行新添文章<br />点击导航栏中的头像，快速来到个人中心，再点击写文章，就可以提交文章啦");
             EndContext();
             BeginContext(5912, 151, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "1759c96c91fb4ca6b4bae58ff24048c2", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "53142116befa4b91a0bef211fda8bb26", async() => {
                 BeginContext(5965, 89, false);
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "59bb4660f2914a0cb335752935f91153", async() => {
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("img", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "6e351b541bba4041a332fd0bc384962a", async() => {
                 }
                 );
                 __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
@@ -400,7 +400,7 @@ WriteAttributeValue("", 1071, User.FindFirstValue("ID"), 1071, 26, false);
 ");
             EndContext();
             BeginContext(6666, 71, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("script", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "51d40cdf29ff43258cc38533222eb28a", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("script", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "b38d57458ca8431787100bcbe6872e2e", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_Razor_TagHelpers_UrlResolutionTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.Razor.TagHelpers.UrlResolutionTagHelper>();
